@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ACE.Trading.Analytics.Slopes
 {
-    internal class TrainingData
+    public class TrainingData
     {
         private List<TrainingDataLine> Lines = new List<TrainingDataLine>();
 
@@ -31,7 +31,7 @@ namespace ACE.Trading.Analytics.Slopes
 
     }
 
-    internal class TrainingDataLine
+    public class TrainingDataLine
     {
         private string _prompt;
         private string _completion;

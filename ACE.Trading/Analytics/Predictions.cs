@@ -22,7 +22,7 @@ namespace ACE.Trading.Analytics
             internal const string DATACACHE_FILENAME = "C:\\Users\\Toby\\.ace\\ACE-PREDICTIONHISTORY.x3";
 
         }
-        public static void addPrediction(string symbol, Model model, List<Price> Input, List<Price> Output)
+        public static void addPrediction(string symbol, Model model, List<PricePoint> Input, List<PricePoint> Output)
         {
             long id = cache.data.Count;
             PredictedHistory ph = new PredictedHistory(id, symbol, model, Input, Output);
@@ -107,15 +107,15 @@ namespace ACE.Trading.Analytics
 
         // Input to base the prediction from
         [JsonProperty("PredictedInput")]
-        List<Price>? PredictionInput { get; set; }
+        List<PricePoint>? PredictionInput { get; set; }
 
         // predicted outcome
         [JsonProperty("PredictionOutput")]
-        List<Price>? PredictionOutput { get; set; }
+        List<PricePoint>? PredictionOutput { get; set; }
 
         // Real outcome
         [JsonProperty("RealResult")]
-        List<Price>? RealResult { get; set; }
+        List<PricePoint>? RealResult { get; set; }
 
         // bool represents if all the required data is present to do calcs
         [JsonProperty("Complete")]
@@ -134,7 +134,7 @@ namespace ACE.Trading.Analytics
         public string getSymbol { get { return Symbol; } }
         #endregion
 
-        public PredictedHistory(long id, string symbol, Model model, List<Price> input, List<Price> output)
+        public PredictedHistory(long id, string symbol, Model model, List<PricePoint> input, List<PricePoint> output)
         {
             this.Id = id;
             this.Symbol = symbol;
@@ -144,20 +144,20 @@ namespace ACE.Trading.Analytics
                 this.PredictionInput = input;
                 this.PredictionOutput = output; 
                 
-                RealResult = new List<Price>();
+                RealResult = new List<PricePoint>();
                 // Find bars from datacache that match predicted output timestamps
                 foreach (var item in output)
                 {
-                    List<Price> p = DataCache.findAllByTime(symbol, item.timeUtc);
+                    List<PricePoint> p = DataCache.findAllByTime(symbol, item.timeUtc);
                     if (p != null && p?.Count > 0)
                     {
                         decimal avg = 0.0m;
-                        foreach(Price price in p)
+                        foreach(PricePoint price in p)
                         {
-                            avg += price.getDeltaPrice;
+                            avg += price.deltaPrice;
                         }
                         avg /= p.Count;
-                        Price price1 = new Price { _deltaPrice = avg, timeUtc = item.timeUtc };
+                        PricePoint price1 = new PricePoint { deltaPrice = avg, timeUtc = item.timeUtc };
                         RealResult.Add(price1);
                     }
                 }
@@ -187,7 +187,7 @@ namespace ACE.Trading.Analytics
                 List<decimal> accuracyPerPrice = new List<decimal>();
                 for (int i = 0; i < PredictionOutput?.Count; i++)
                 {
-                    decimal x = (100.00m / RealResult[i].getDeltaPrice) * PredictionOutput[i].getDeltaPrice;
+                    decimal x = (100.00m / RealResult[i].deltaPrice) * PredictionOutput[i].deltaPrice;
                     accuracyPerPrice.Add(x);
                 }
             }

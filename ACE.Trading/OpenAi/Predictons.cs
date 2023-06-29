@@ -21,7 +21,7 @@ namespace ACE.Trading
         {
             Analytics.Predictions.Load();
         }
-        public async Task<List<Price>> predict(string symbol, Model model)
+        public async Task<List<PricePoint>> predict(string symbol, Model model)
         {
             // retrieve symbol data
             SymbolData sd = DataCache.GetSymbolData(symbol);
@@ -32,7 +32,7 @@ namespace ACE.Trading
             }
 
             // retrieves logged price history
-            List<Price> lastHour = sd.priceHistory.FindAll(ph => ph.timeUtc >= DateTime.UtcNow.AddHours(-1));
+            List<PricePoint> lastHour = sd.getPriceHistory.FindAll(ph => ph.timeUtc >= DateTime.UtcNow.AddHours(-1));
 
             // check validity of price history
             if (lastHour == null && lastHour?.Count == 0)
@@ -43,7 +43,7 @@ namespace ACE.Trading
 
             // translate to 2d array
             List<string[]> strings = new List<string[]>();
-            foreach (Price price in lastHour)
+            foreach (PricePoint price in lastHour)
             {
                 //strings.Add(new string[] { price.timeUtc.ToString(), price.averagePrice.ToString() });    // --> Uses the average price
                 strings.Add(new string[] { price.timeUtc.ToString(), price.getDeltaPrice.ToString() });          // --> Uses the price change from the previous bar
@@ -57,7 +57,7 @@ namespace ACE.Trading
             string[][] predictedStrs = OpenAi.Encoding.Decode(prediction);
 
             // translate to local Price object
-            List<Price> PredictedPrices = new List<Price>();
+            List<PricePoint> PredictedPrices = new List<PricePoint>();
             foreach (string[] str in predictedStrs)
             {
                 // Check vars
@@ -73,7 +73,7 @@ namespace ACE.Trading
                 }
 
 
-                Price price = new Price { timeUtc = DateTime.Parse(str[0]), _deltaPrice = decimal.Parse(str[1]) };
+                PricePoint price = new PricePoint { timeUtc = DateTime.Parse(str[0]), deltaPrice = decimal.Parse(str[1]) };
                 PredictedPrices.Add(price);
             }
 
@@ -91,7 +91,7 @@ namespace ACE.Trading
             DateTime start = end.AddHours(-hours);
 
             var sd = DataCache.GetSymbolData(symbol);
-            var list = sd.priceHistory.FindAll(p => p.timeUtc >= start && p.timeUtc < end);
+            List<PricePoint> list = sd.getPriceHistory.FindAll(p => p.timeUtc >= start && p.timeUtc < end);
 
             if (list.Count == 0) return false;
 
@@ -121,7 +121,7 @@ namespace ACE.Trading
 
                 foreach (var pricePoint in pricePoints)
                 {
-                    priceAvg += type == OpenAi.Encoding.priceType.DeltaPrice ? pricePoint.getDeltaPrice : pricePoint.averagePrice;
+                    priceAvg += type == OpenAi.Encoding.priceType.DeltaPrice ? pricePoint.geltaPrice : pricePoint.averagePrice;
                 }
 
                 priceAvg /= pricePoints.Count;

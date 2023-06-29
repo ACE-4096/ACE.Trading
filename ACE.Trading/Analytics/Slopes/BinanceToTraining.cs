@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using ACE.Sandbox.BinanceConvertions;
+//using ACE.Sandbox.BinanceConvertions;
 using ACE.Trading.Analytics.Slopes;
+using ACE.Trading.Data;
 
 namespace ACE.Trading.Analytics.Slopes
 {
@@ -14,7 +15,7 @@ namespace ACE.Trading.Analytics.Slopes
     public class Encoding{
         public static string formatString = "Open Time (Unix): {0}, Open Price: {1}, Close Time (Unix): {2}, Close Price: {3}{4}";
         public static string formatSlopeString = "Open Time (Unix): {0}, Open Price: {1}, Slope Gradient: {2}, Duration: {3}, Price Change: {4}, Close Time (Unix): {5}, Close Price: {6}{7}";
-        public static string lineSeperator = "\n\n###\n\n";
+        public static string lineSeperator = " ||| ";
     }
 
     public static class BinanceToTraining

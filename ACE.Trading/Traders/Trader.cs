@@ -80,7 +80,7 @@ namespace ACE.Trading.Traders
             {
 
                 //predict price based on latest info
-                List<Price> predictedPrices = await p.predict(_symbol, _model);
+                List<PricePoint> predictedPrices = await p.predict(_symbol, _model);
 
 
                 // assess weather current predictions are accurate
@@ -138,10 +138,10 @@ namespace ACE.Trading.Traders
             decimal profit = averageRevenue - fee;
             avgProfit += profit;
         }
-        private bool isDownwardTrend(List<Price> predictedPrices)
+        private bool isDownwardTrend(List<PricePoint> predictedPrices)
         {
             predictedPrices.Sort(DataHandling.sortTime_earliestFirst);
-            if (predictedPrices.First().averagePrice < predictedPrices.Last().averagePrice)
+            if (predictedPrices.First().avgPrice < predictedPrices.Last().avgPrice)
             {
                 return true;
             }
@@ -150,10 +150,10 @@ namespace ACE.Trading.Traders
                 return false;
             }
         }
-        private bool isUpwardTrend(List<Price> predictedPrices)
+        private bool isUpwardTrend(List<PricePoint> predictedPrices)
         {
             predictedPrices.Sort(DataHandling.sortTime_earliestFirst);
-            if (predictedPrices.First().averagePrice > predictedPrices.Last().averagePrice)
+            if (predictedPrices.First().avgPrice > predictedPrices.Last().avgPrice)
             {
                 return true;
             }

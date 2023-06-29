@@ -88,7 +88,7 @@ namespace ACE.Trading.Data
             List<string> symbolList = new List<string>();
             foreach (SymbolData data in cache.data)
             {
-                symbolList.Add(data.symbol);
+                symbolList.Add(data.getSymbol);
             }
             return symbolList.ToArray();
         }
@@ -101,8 +101,8 @@ namespace ACE.Trading.Data
         public static SymbolData GetSymbolData(string symbol)
         {
             if (cache == null) return null;
-            var sd1 = cache.data.Find(sd => sd.symbol == symbol);
-            if (sd1 != null) sd1.priceHistory.Sort(DataHandling.sortTime_earliestFirst); 
+            var sd1 = cache.data.Find(sd => sd.getSymbol == symbol);
+            if (sd1 != null) sd1.getPriceHistory.Sort(DataHandling.sortTime_earliestFirst); 
             return sd1;
         }
 
@@ -115,13 +115,13 @@ namespace ACE.Trading.Data
         public static void update(string symbol, decimal price, DateTime time)
         {
             while (_blockChanges) ;
-            var data = cache.data.Find(sd => sd.symbol == symbol);
+            var data = cache.data.Find(sd => sd.getSymbol == symbol);
             if (data == null)
             {
                 data = new SymbolData();
-                data.symbol = symbol;
+                data.getSymbol = symbol;
                 PricePoint p = new PricePoint { avgPrice = price, timeUtc = time };
-                data.priceHistory = new List<PricePoint>();
+                data.getPriceHistory = new List<PricePoint>();
                 data.priceHistory.Add(p);
                 cache.data.Add(data);
             }

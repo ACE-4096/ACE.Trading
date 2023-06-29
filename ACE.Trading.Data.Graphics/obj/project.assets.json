@@ -3632,11 +3632,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Toby\\source\\repos\\OpenAiCryptoTrader\\ACE.Trading.Data.Graphics\\ACE.Trading.Data.Graphics.csproj",
+      "projectUniqueName": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\ACE.Trading.Data.Graphics.csproj",
       "projectName": "ACE.Trading.Data.Graphics",
-      "projectPath": "C:\\Users\\Toby\\source\\repos\\OpenAiCryptoTrader\\ACE.Trading.Data.Graphics\\ACE.Trading.Data.Graphics.csproj",
+      "projectPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\ACE.Trading.Data.Graphics.csproj",
       "packagesPath": "C:\\Users\\Toby\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Toby\\source\\repos\\OpenAiCryptoTrader\\ACE.Trading.Data.Graphics\\obj\\",
+      "outputPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -3658,8 +3658,8 @@
         "net6.0-windows7.0": {
           "targetAlias": "net6.0-windows",
           "projectReferences": {
-            "C:\\Users\\Toby\\source\\repos\\OpenAiCryptoTrader\\ACE.Trading\\ACE.Trading.csproj": {
-              "projectPath": "C:\\Users\\Toby\\source\\repos\\OpenAiCryptoTrader\\ACE.Trading\\ACE.Trading.csproj"
+            "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\ACE.Trading.csproj": {
+              "projectPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\ACE.Trading.csproj"
             }
           }
         }

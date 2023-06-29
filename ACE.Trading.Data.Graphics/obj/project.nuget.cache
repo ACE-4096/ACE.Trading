@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jLfjA64fvi75wljxcH+Ntsq9qCPL7rkwn+gHO3IV74U7o/8ksaFVWsSyLW+VLmIZiTVob7MKamgB8nI1SW989w==",
+  "dgSpecHash": "J5HfVby29oc1naJ8CxLMn6ZW0SXg+9cJSc5Ox9yuxr9xuD3lmyd9wlPbJohAhq4D1W9zEsNleh2t4/PrRkAnpQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Toby\\source\\repos\\OpenAiCryptoTrader\\ACE.Trading.Data.Graphics\\ACE.Trading.Data.Graphics.csproj",
+  "projectFilePath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\ACE.Trading.Data.Graphics.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Toby\\.nuget\\packages\\binance.net\\8.6.2\\binance.net.8.6.2.nupkg.sha512",
     "C:\\Users\\Toby\\.nuget\\packages\\cryptoexchange.net\\5.4.3\\cryptoexchange.net.5.4.3.nupkg.sha512",

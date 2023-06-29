@@ -144,8 +144,8 @@ namespace ACE.Trading.OpenAi
 
 
 
-            sd.priceHistory.Sort(DataHandling.sortTime_latestFirst);
-            var sortedList = sd.priceHistory;
+            sd.getPriceHistory.Sort(DataHandling.sortTime_latestFirst);
+            var sortedList = sd.getPriceHistory;
 
             DateTime end = DateTime.UtcNow;
             DateTime start = end.AddHours(-hours);
@@ -167,7 +167,7 @@ namespace ACE.Trading.OpenAi
             if (intervalInMinutes == 0) return false;
 
             // gets data from timeframe
-            var list = sortedList.FindAll(p => p.timeUtc >= start && p.timeUtc < end);
+            List<PricePoint> list = sortedList.FindAll(p => p.timeUtc >= start && p.timeUtc < end);
             // sorts to oldest first
             list.Sort(DataHandling.sortTime_latestFirst);
             if (list.Count == 0) return false;
@@ -176,17 +176,17 @@ namespace ACE.Trading.OpenAi
             int numOfPricePoints = (hours * 60) / intervalInMinutes;
             for (int i = 0; i < numOfPricePoints; i++)
             {
-                var pricePoints = list.FindAll(p => ((p.timeUtc.CompareTo(start) > 0) && p.timeUtc.CompareTo(start.AddMinutes(intervalInMinutes)) < 0));
+                PricePoint[] pricePoints = list.FindAll(p => ((p.timeUtc.CompareTo(start) > 0) && p.timeUtc.CompareTo(start.AddMinutes(intervalInMinutes)) < 0)).ToArray();
 
-                if (pricePoints.Count == 0) continue;
+                if (pricePoints.Length == 0) continue;
                 decimal priceAvg = 0.0m;
 
                 foreach (var pricePoint in pricePoints)
                 {
-                    priceAvg += type == priceType.DeltaPrice ? pricePoint.getDeltaPrice : pricePoint.averagePrice;
+                    priceAvg += type == priceType.DeltaPrice ? pricePoint.deltaPrice : pricePoint.avgPrice;
                 }
 
-                priceAvg /= pricePoints.Count;
+                priceAvg /= pricePoints.Length;
                 output += string.Format(Encoding.formatString, start.ToString(), priceAvg, Encoding.seperator);
                 start = start.AddMinutes(intervalInMinutes);
             }
