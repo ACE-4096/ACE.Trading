@@ -60,7 +60,7 @@ namespace OpenAI_API.FineTune
         /// What sampling temperature to use. Higher values means the model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones with a well-defined answer. It is generally recommend to use this or <see cref="TopP"/> but not both.
         /// </summary>
         [JsonProperty("prompt_loss_weight")]
-        public double? PromptLoseWeight { get; set; }
+        public double? PromptLossWeight { get; set; }
         
         /// <summary>
         /// An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered. It is generally recommend to use this or <see cref="Temperature"/> but not both.
@@ -112,7 +112,7 @@ namespace OpenAI_API.FineTune
             this.NumberOfEpochs = basedOn.NumberOfEpochs;
             this.BatchSize = basedOn.BatchSize;
             this.LearningRateMultiplier = basedOn.LearningRateMultiplier;
-            this.PromptLoseWeight = basedOn.PromptLoseWeight;
+            this.PromptLossWeight = basedOn.PromptLossWeight;
             this.ComputeClassificationMetrics = basedOn.ComputeClassificationMetrics;
             this.ClassNumberOfClasses = basedOn.ClassNumberOfClasses;
             this.ClassPositiveClass = basedOn.ClassPositiveClass;
@@ -151,7 +151,7 @@ namespace OpenAI_API.FineTune
             int? NumberOfEpochs = null,
             int? BatchSize = null,
             double? LearningRateMultiplier = null,
-            double? PromptLoseWeight = null,
+            double? PromptLossWeight = null,
             bool ComputeClassificationMetrics = false,
             int? ClassNumberOfClasses = null,
             string ClassPositiveClass = null,
@@ -164,7 +164,7 @@ namespace OpenAI_API.FineTune
             this.NumberOfEpochs = NumberOfEpochs;
             this.BatchSize = BatchSize;
             this.LearningRateMultiplier = LearningRateMultiplier;
-            this.PromptLoseWeight = PromptLoseWeight;
+            this.PromptLossWeight = PromptLossWeight;
             this.ComputeClassificationMetrics = ComputeClassificationMetrics;
             this.ClassNumberOfClasses = ClassNumberOfClasses;
             this.ClassPositiveClass = ClassPositiveClass;

@@ -10,7 +10,7 @@ using ACE.Trading.Data;
 
 namespace ACE.Trading.Analytics.Slopes
 {
-
+    
 
     public class Encoding{
         public static string formatString = "Open Time (Unix): {0}, Open Price: {1}, Close Time (Unix): {2}, Close Price: {3}{4}";
@@ -57,10 +57,10 @@ namespace ACE.Trading.Analytics.Slopes
 
             for (int i = 0; i < (slopes.Count - (numOfSlopesPerPrompt + numOfSlopesPerCompletion)); i += numOfSlopesPerPrompt + numOfSlopesPerCompletion)
             {
-                string prompt = "", completion = "";
+                string prompt = Encoding.lineSeperator, completion = "";
                 for (int j = 0; j < numOfSlopesPerPrompt; j++)
                 {
-                    prompt += Encoding.lineSeperator + formatBinanceLine(slopes[i + j]);
+                    prompt += formatBinanceLine(slopes[i + j]);
                 }
                 for (int k = 0; k < numOfSlopesPerCompletion; k++)
                 {

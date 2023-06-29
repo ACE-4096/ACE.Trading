@@ -6,26 +6,26 @@ using System.Threading.Tasks;
 
 namespace ACE.Trading.OpenAi.TrainingData
 {
-    public class Convertions
+    public static class Convertions
     {
         // Converts a single delta prompt
         public static DataFile ExtrapolateFromSinglePrompt(string input)
         {
             DataFile trainingDataFile = new DataFile();
-            string[] lines = input.Split(Encoding.seperator);
+            string[] lines = input.Split(SimpleEncoding.seperator);
 
             Random randy = new Random();
 
             for (int i = 0; i < lines.Length - 12; i += 12)
             {
-                string prompt = Encoding.seperator, completion = "";
+                string prompt = SimpleEncoding.seperator, completion = "";
                 for (int j = i; j < i + 9; j++)
                 {
-                    prompt += lines[j] + Encoding.seperator;
+                    prompt += lines[j] + SimpleEncoding.seperator;
                 }
                 for (int k = i + 9; k < i + 12; k++)
                 {
-                    completion += lines[k] + Encoding.seperator;
+                    completion += lines[k] + SimpleEncoding.seperator;
                 }
                 trainingDataFile.Add(prompt, completion);
             }
@@ -45,7 +45,7 @@ namespace ACE.Trading.OpenAi.TrainingData
                 string prompt = "", completion = "";
                 for (int j = 0; j < promptInputs; j++)
                 {
-                    prompt += Encoding.seperator + formatBinanceLine(inLines[i + j]);
+                    prompt += SimpleEncoding.seperator + formatBinanceLine(inLines[i + j]);
                 }
                 for (int k = 0; k < completionOutputs; k++)
                 {
@@ -66,7 +66,7 @@ namespace ACE.Trading.OpenAi.TrainingData
         private static string formatBinanceLine(string input)
         {
             string[] inputs = input.Split(',');
-            return string.Format(Encoding.formatString, inputs[0], getAvg(decimal.Parse(inputs[1]), decimal.Parse(inputs[4])));
+            return string.Format(SimpleEncoding.formatString, inputs[0], getAvg(decimal.Parse(inputs[1]), decimal.Parse(inputs[4])));
         }
         private static decimal getAvg(decimal d1, decimal d2)
         {

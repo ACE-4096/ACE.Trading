@@ -9,7 +9,7 @@ namespace OpenAI_API.FineTune
     /// <summary>
     /// Represents a completion choice returned by the FineTune API.  
     /// </summary>
-    public class Event
+    public class Event : Usage
     {
         /// <summary>
         /// The main text of the completion
@@ -47,7 +47,7 @@ namespace OpenAI_API.FineTune
     /// <summary>
     /// API usage as reported by the OpenAI API for this request
     /// </summary>
-    public class HyperParams : Usage
+    public class HyperParams
     {
         /// <summary>
         /// How many tokens are in the completion(s)

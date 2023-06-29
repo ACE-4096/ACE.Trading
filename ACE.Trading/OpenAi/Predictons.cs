@@ -52,9 +52,9 @@ namespace ACE.Trading
 
             // Predict
             OpenAi.OpenAiIntegration pe = new OpenAi.OpenAiIntegration();
-            var encodedStrs = OpenAi.Encoding.Encode(strings.ToArray());
+            var encodedStrs = OpenAi.SimpleEncoding.Encode(strings.ToArray());
             string prediction = await pe.PredictFromFineTune(encodedStrs, model);
-            string[][] predictedStrs = OpenAi.Encoding.Decode(prediction);
+            string[][] predictedStrs = OpenAi.SimpleEncoding.Decode(prediction);
 
             // translate to local Price object
             List<PricePoint> PredictedPrices = new List<PricePoint>();
@@ -83,10 +83,10 @@ namespace ACE.Trading
             return PredictedPrices;
         }
 
-        public bool genTrainingDataFromDataCache(string inputFilename, string outputFilename, string symbol, OpenAi.Encoding.priceInterval interval, OpenAi.Encoding.priceType type, int hours, out string output)
+        public bool genTrainingDataFromDataCache(string inputFilename, string outputFilename, string symbol, OpenAi.SimpleEncoding.priceInterval interval, OpenAi.SimpleEncoding.priceType type, int hours, out string output)
         {
 
-            output = OpenAi.Encoding.seperator;
+            output = OpenAi.SimpleEncoding.seperator;
             DateTime end = DateTime.UtcNow;
             DateTime start = end.AddHours(-hours);
 
@@ -98,13 +98,13 @@ namespace ACE.Trading
             int intervalInMinutes = 0;
             switch (interval)
             {
-                case OpenAi.Encoding.priceInterval.OneMinute:
+                case OpenAi.SimpleEncoding.priceInterval.OneMinute:
                     intervalInMinutes = 1; break;
-                case OpenAi.Encoding.priceInterval.FiveMinute:
+                case OpenAi.SimpleEncoding.priceInterval.FiveMinute:
                     intervalInMinutes = 5; break;
-                case OpenAi.Encoding.priceInterval.FifteenMinutes:
+                case OpenAi.SimpleEncoding.priceInterval.FifteenMinutes:
                     intervalInMinutes = 15; break;
-                case OpenAi.Encoding.priceInterval.OneHour:
+                case OpenAi.SimpleEncoding.priceInterval.OneHour:
                     intervalInMinutes = 60; break;
             }
             if (intervalInMinutes == 0) return false;
@@ -121,11 +121,11 @@ namespace ACE.Trading
 
                 foreach (var pricePoint in pricePoints)
                 {
-                    priceAvg += type == OpenAi.Encoding.priceType.DeltaPrice ? pricePoint.deltaPrice : pricePoint.avgPrice;
+                    priceAvg += type == OpenAi.SimpleEncoding.priceType.DeltaPrice ? pricePoint.deltaPrice : pricePoint.avgPrice;
                 }
 
                 priceAvg /= pricePoints.Count;
-                output += string.Format("Time: {0} | Price: {1}{2}", start.ToString(), priceAvg, OpenAi.Encoding.seperator);
+                output += string.Format("Time: {0} | Price: {1}{2}", start.ToString(), priceAvg, OpenAi.SimpleEncoding.seperator);
                 start = start.AddMinutes(intervalInMinutes);
             }
 

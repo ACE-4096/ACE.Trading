@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ACE.Trading.OpenAi
 {
-    public static class Encoding
+    public static class SimpleEncoding
     {
         #region Constant Formatting Strings
         //public const string formatString = "The unix time this data was collected is {0}. {1} Trades were made, Which resulted in a price change of $ {2}";
@@ -134,7 +134,7 @@ namespace ACE.Trading.OpenAi
         public static bool ExtractPromptFromDataCache(string symbol, priceInterval interval, priceType type, int hours, out string output)
         {
 
-            output = Encoding.seperator;
+            output = SimpleEncoding.seperator;
             var sd = DataCache.GetSymbolData(symbol);
 
 
@@ -187,7 +187,7 @@ namespace ACE.Trading.OpenAi
                 }
 
                 priceAvg /= pricePoints.Length;
-                output += string.Format(Encoding.formatString, start.ToString(), priceAvg, Encoding.seperator);
+                output += string.Format(SimpleEncoding.formatString, start.ToString(), priceAvg, SimpleEncoding.seperator);
                 start = start.AddMinutes(intervalInMinutes);
             }
 

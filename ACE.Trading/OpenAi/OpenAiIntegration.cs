@@ -72,7 +72,7 @@ namespace ACE.Trading.OpenAi
             Random randy = new Random();
 
             string text = System.IO.File.ReadAllText(datasetFileName);
-            List<string> lines = new List<string>(text.Split(Encoding.seperator, StringSplitOptions.RemoveEmptyEntries));
+            List<string> lines = new List<string>(text.Split(SimpleEncoding.seperator, StringSplitOptions.RemoveEmptyEntries));
             int initialLineCount = lines.Count;
             List<string> valadationFileLines = new List<string>();
 
@@ -88,25 +88,18 @@ namespace ACE.Trading.OpenAi
 
             if (lines.Count + valadationFileLines.Count == initialLineCount && valadationFileLines.Count > 0)
             {
-                System.IO.File.WriteAllText(validationFileName, Encoding.formatDataSets(valadationFileLines.ToArray()));
-                System.IO.File.WriteAllText(trainingFile, Encoding.formatDataSets(lines.ToArray()));
+                System.IO.File.WriteAllText(validationFileName, SimpleEncoding.formatDataSets(valadationFileLines.ToArray()));
+                System.IO.File.WriteAllText(trainingFile, SimpleEncoding.formatDataSets(lines.ToArray()));
                 success = true;
             }
             return success;
         }
 
         #region FineTune Inegrations
-        public async Task<FineTuneResult> fineTune(string filename, string symbolName)
+        public async Task<FineTuneResult> fineTuneAndUpload(string filename, string symbolName)
         {
             // convert input to datafileFormat
 
-
-            /*if (!createFineTuneDataFiles(filename, "validationDataset.csv", "trainingDataset.csv"))
-            {
-                Debug.WriteLine("ProcessingEngine.fineTune: ExitCode=-1");
-                return null;
-            }*/
-            // Upload DataFiles 
 
             // upload trainig file
             var trainingFileUploadResult = await api.Files.UploadFileAsync(filename);
@@ -116,20 +109,38 @@ namespace ACE.Trading.OpenAi
                 return null;
             }
 
-           /* // upload validation file
-            var validationFileUploadResult = await api.Files.UploadFileAsync("validationDataset.csv");
-            if (validationFileUploadResult.Status != "uploaded")
-            {
-                Debug.WriteLine("ProcessingEngine.fineTune: ExitCode=-3");
-                return null;
-            }*/
-
+            return await fineTune(trainingFileUploadResult.Id, symbolName);
+        }
+        public async Task<FineTuneResult> fineTune(string trainingFileId, string symbolName)
+        {
 
             // request fine tune
             FineTuneRequest request = new FineTuneRequest();
-            request.TrainingFile = trainingFileUploadResult.Name;
+            request.TrainingFile = trainingFileId;
             request.NumberOfEpochs = 4;
             request.BatchSize = 4;
+            request.Model = Model.DavinciText;
+            request.Suffix = "ACE-4096-" + symbolName;
+
+            // Modelname would be text-davinci-003::ACE-4096-{symbolName}
+            var result = await api.FineTune.CreateFineTuneAsync(request);
+
+            // check validity of result
+            if (result == null) { Debug.WriteLine("ProcessingEngine.fineTune: ExitCode=-4"); return null; }
+
+            Debug.WriteLine("result Status: " + result.Status);
+            return result;
+        }
+        public async Task<FineTuneResult> fineTune(string trainingFileId, string symbolName, HyperParams hypers)
+        {
+
+            // request fine tune
+            FineTuneRequest request = new FineTuneRequest();
+            request.TrainingFile = trainingFileId;
+            request.NumberOfEpochs = hypers.NumberOfEpochs;
+            request.BatchSize = hypers.BatchSize;
+            request.PromptLossWeight = hypers.PromptLossWeight;
+            request.LearningRateMultiplier = hypers.LearningRateMultiplier;
             request.Model = Model.DavinciText;
             request.Suffix = "ACE-4096-" + symbolName;
 
@@ -156,6 +167,21 @@ namespace ACE.Trading.OpenAi
         public async Task<List<OpenAI_API.Files.File>> getFiles()
         {
             return await api.Files.GetFilesAsync();
+        }
+        public async Task<OpenAI_API.Files.File> uploadFile(string filename)
+        {
+            if (!System.IO.File.Exists(filename))
+            {
+                return null;
+            }
+            // upload trainig file
+            var trainingFileUploadResult = await api.Files.UploadFileAsync(filename);
+            if (trainingFileUploadResult.Status != "uploaded")
+            {
+                Debug.WriteLine("ProcessingEngine.fineTune: ExitCode=-2");
+                return null;
+            }
+            return trainingFileUploadResult;
         }
 
         #region Alpaca - Depreciated
