@@ -21,3 +21,10 @@ C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE.Trading\obj\Debug\net6.0\ACE.Trad
 C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE.Trading\obj\Debug\net6.0\ACE.Trading.dll
 C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE.Trading\obj\Debug\net6.0\refint\ACE.Trading.dll
 C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE.Trading\obj\Debug\net6.0\ACE.Trading.pdb
+C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE.Trading\bin\Debug\net6.0\ACE.Trading.deps.json
+C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE.Trading\bin\Debug\net6.0\ACE.Trading.dll
+C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE.Trading\bin\Debug\net6.0\ACE.Trading.pdb
+C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE.Trading\bin\Debug\net6.0\OpenAI_API.dll
+C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE.Trading\bin\Debug\net6.0\OpenAI_API.pdb
+C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE.Trading\obj\Debug\net6.0\ACE.Trading.csproj.CopyComplete
+C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE.Trading\obj\Debug\net6.0\ref\ACE.Trading.dll

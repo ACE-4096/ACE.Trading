@@ -118,17 +118,15 @@ namespace ACE.Trading.Data
             var data = cache.data.Find(sd => sd.getSymbol == symbol);
             if (data == null)
             {
-                data = new SymbolData();
-                data.getSymbol = symbol;
-                PricePoint p = new PricePoint { avgPrice = price, timeUtc = time };
-                data.getPriceHistory = new List<PricePoint>();
-                data.priceHistory.Add(p);
+                data = new SymbolData(symbol);
+                PricePoint p = new PricePoint { lastKnownPrice = price, timeUtc = time };
+                data.AddPricePoint(p);
                 cache.data.Add(data);
             }
             else
             {
-                Price p = new Price { averagePrice = price, timeUtc = time };
-                data.priceHistory.Add(p);
+                PricePoint p = new PricePoint { lastKnownPrice = price, timeUtc = time };
+                data.AddPricePoint(p);
             }
         }
 
@@ -137,7 +135,7 @@ namespace ACE.Trading.Data
             while (_blockChanges) ;
             if (GetSymbolData(symbol) == null)
             {
-                SymbolData sd = new SymbolData() { symbol = symbol, priceHistory = new List<PricePoint>() };
+                SymbolData sd = new SymbolData(symbol);
                 cache.data.Add(sd);
             }
         }
@@ -145,7 +143,7 @@ namespace ACE.Trading.Data
         public static List<PricePoint> findAllByTime(string symbol, DateTime time)
         {
             var sd = GetSymbolData(symbol);
-            return sd.priceHistory.FindAll(pd => DataHandling.findByTime(pd, time));
+            return sd.getPriceHistory.FindAll(pd => DataHandling.findByTime(pd, time));
 
         }
     }

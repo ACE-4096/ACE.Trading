@@ -32,7 +32,7 @@ namespace ACE.Trading.Data.Graphics
                 var sd = DataCache.GetSymbolData(str);
 
                 subNode.Nodes.Add($"Latest Price: ${sd.getLatestPrice}");
-                subNode.Nodes.Add($"Data Entries: {sd.priceHistory.Count}");
+                subNode.Nodes.Add($"Data Entries: {sd.getPriceHistory.Count}");
 
             }
             mainNode.ExpandAll();
@@ -54,9 +54,9 @@ namespace ACE.Trading.Data.Graphics
             List<double> prices = new List<double>();
             List<double> dateTimes = new List<double>();
             var x = 0;
-            foreach(var price in sd.priceHistory.ToArray())
+            foreach(var price in sd.getPriceHistory.ToArray())
             {
-                prices.Add((double)price.averagePrice);
+                prices.Add((double)price.avgPrice);
                 dateTimes.Add(x++);
             }
 

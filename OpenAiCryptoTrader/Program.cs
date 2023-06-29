@@ -92,7 +92,7 @@ void viewData()
     foreach (string symbol in symbols)
     {
         var sd = DataCache.GetSymbolData(symbol);
-        Console.WriteLine($"{symbol}: {sd.priceHistory.Count} | ${sd.getLatestPrice}");
+        Console.WriteLine($"{symbol}: {sd.getPriceHistory.Count} | ${sd.getLatestPrice}");
     }
     readValue();
 }
@@ -186,13 +186,13 @@ async void predict()
     if (symbol?.Length == 0)
         Console.WriteLine("Invalid Symbol");
 
-    List<Price> prices = await new Predictions().predict(symbol, modelID);
+    List<PricePoint> prices = await new Predictions().predict(symbol, modelID);
     Console.Clear();
     Console.WriteLine($"---  ACE Predictions  ---\nSymbol: {symbol}\nModel: {modelID}");
 
     foreach (var price in prices)
     {
-        Console.WriteLine(string.Format("Time UTC: {0} | Price: ${1}", price.timeUtc, price.getDeltaPrice));
+        Console.WriteLine(string.Format("Time UTC: {0} | Price: ${1}", price.timeUtc, price.deltaPrice));
     }
 }
 

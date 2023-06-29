@@ -46,7 +46,7 @@ namespace ACE.Trading
             foreach (PricePoint price in lastHour)
             {
                 //strings.Add(new string[] { price.timeUtc.ToString(), price.averagePrice.ToString() });    // --> Uses the average price
-                strings.Add(new string[] { price.timeUtc.ToString(), price.getDeltaPrice.ToString() });          // --> Uses the price change from the previous bar
+                strings.Add(new string[] { price.timeUtc.ToString(), price.deltaPrice.ToString() });          // --> Uses the price change from the previous bar
             }
 
 
@@ -121,7 +121,7 @@ namespace ACE.Trading
 
                 foreach (var pricePoint in pricePoints)
                 {
-                    priceAvg += type == OpenAi.Encoding.priceType.DeltaPrice ? pricePoint.geltaPrice : pricePoint.averagePrice;
+                    priceAvg += type == OpenAi.Encoding.priceType.DeltaPrice ? pricePoint.deltaPrice : pricePoint.avgPrice;
                 }
 
                 priceAvg /= pricePoints.Count;
