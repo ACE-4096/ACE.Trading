@@ -1,0 +1,2 @@
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\OpenAI_API.Fine-Tune\obj\Debug\OpenAI_API.FineTune.csproj.AssemblyReference.cache
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\OpenAI_API.Fine-Tune\obj\Debug\OpenAI_API.FineTune.csproj.CoreCompileInputs.cache

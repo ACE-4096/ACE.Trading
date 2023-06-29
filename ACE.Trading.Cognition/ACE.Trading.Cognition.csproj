@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Alpaca.Markets" Version="6.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenAI_API\OpenAI_API.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="OpenAI_API">
+      <HintPath>..\OpenAI_API\bin\Debug\net6.0\OpenAI_API.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

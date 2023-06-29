@@ -1,0 +1,15 @@
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading.Cognition\obj\Debug\net6.0\ACE.Trading.Cognition.csproj.AssemblyReference.cache
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading.Cognition\obj\Debug\net6.0\ACE.Trading.Cognition.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading.Cognition\obj\Debug\net6.0\ACE.Trading.Cognition.AssemblyInfoInputs.cache
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading.Cognition\obj\Debug\net6.0\ACE.Trading.Cognition.AssemblyInfo.cs
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading.Cognition\obj\Debug\net6.0\ACE.Trading.Cognition.csproj.CoreCompileInputs.cache
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading.Cognition\bin\Debug\net6.0\ACE.Trading.Cognition.deps.json
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading.Cognition\bin\Debug\net6.0\ACE.Trading.Cognition.dll
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading.Cognition\bin\Debug\net6.0\ACE.Trading.Cognition.pdb
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading.Cognition\bin\Debug\net6.0\OpenAI_API.dll
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading.Cognition\bin\Debug\net6.0\OpenAI_API.pdb
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading.Cognition\obj\Debug\net6.0\ACE.Trading.Cognition.csproj.CopyComplete
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading.Cognition\obj\Debug\net6.0\ACE.Trading.Cognition.dll
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading.Cognition\obj\Debug\net6.0\refint\ACE.Trading.Cognition.dll
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading.Cognition\obj\Debug\net6.0\ACE.Trading.Cognition.pdb
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading.Cognition\obj\Debug\net6.0\ref\ACE.Trading.Cognition.dll

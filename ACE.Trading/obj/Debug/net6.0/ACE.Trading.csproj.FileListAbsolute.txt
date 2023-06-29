@@ -1,0 +1,15 @@
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading\obj\Debug\net6.0\ACE.Trading.csproj.AssemblyReference.cache
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading\obj\Debug\net6.0\ACE.Trading.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading\obj\Debug\net6.0\ACE.Trading.AssemblyInfoInputs.cache
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading\obj\Debug\net6.0\ACE.Trading.AssemblyInfo.cs
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading\obj\Debug\net6.0\ACE.Trading.csproj.CoreCompileInputs.cache
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading\bin\Debug\net6.0\ACE.Trading.deps.json
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading\bin\Debug\net6.0\ACE.Trading.dll
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading\bin\Debug\net6.0\ACE.Trading.pdb
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading\bin\Debug\net6.0\OpenAI_API.dll
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading\bin\Debug\net6.0\OpenAI_API.pdb
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading\obj\Debug\net6.0\ACE.Trading.csproj.CopyComplete
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading\obj\Debug\net6.0\ACE.Trading.dll
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading\obj\Debug\net6.0\refint\ACE.Trading.dll
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading\obj\Debug\net6.0\ACE.Trading.pdb
+C:\Users\Toby\source\repos\OpenAiCryptoTrader\ACE.Trading\obj\Debug\net6.0\ref\ACE.Trading.dll
