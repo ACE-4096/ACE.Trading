@@ -51,7 +51,12 @@ namespace ACE.Trading.Analytics.Slopes
                     }
 
                 }
-                else if (currentSlope.getGradient > 0)
+                else if (currentSlope.getGradient == 0)
+                {
+                    //neutral
+                    currentSlope.AddPoint(pricePoints[i]);
+                }
+                else // decending 
                 {
                     if (pricePoints[i].avgPrice < currentSlope.getLatestPoint.avgPrice ||
                         pricePoints[i].lowPrice < currentSlope.getLatestPoint.lowPrice)
@@ -78,11 +83,6 @@ namespace ACE.Trading.Analytics.Slopes
                         break;
                     }
                 }
-                else
-                {
-                    //neutral
-                    currentSlope.AddPoint(pricePoints[i]);
-                }
             }
 
             return slopeList;
@@ -101,6 +101,22 @@ namespace ACE.Trading.Analytics.Slopes
             if (x.timeUtc > y.timeUtc)
                 return -1;
             if (x.timeUtc < y.timeUtc)
+                return +1;
+            return 0;
+        }
+        internal static int sortTime_oldestFirst(PricePointSlope x, PricePointSlope y)
+        {
+            if (x.getOpenTimeUtc > y.getOpenTimeUtc)
+                return -1;
+            if (x.getOpenTimeUtc < y.getOpenTimeUtc)
+                return +1;
+            return 0;
+        }
+        internal static int sortTime_latestFirst(PricePointSlope x, PricePointSlope y)
+        {
+            if (x.getOpenTimeUtc > y.getOpenTimeUtc)
+                return -1;
+            if (x.getOpenTimeUtc < y.getOpenTimeUtc)
                 return +1;
             return 0;
         }

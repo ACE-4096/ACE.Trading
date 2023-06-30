@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ACE.Trading.Analytics.Slopes;
+using Binance.Net.Objects.Models.Spot.SubAccountData;
 
 namespace ACE.Trading.Analytics
 {
@@ -15,37 +17,71 @@ namespace ACE.Trading.Analytics
         private static Cache cache = new Cache();
         private class Cache
         {
-            [JsonProperty("PredictionHistory")]
-            internal List<PredictedHistory> data = new List<PredictedHistory>();
+            [JsonProperty("PredictionSlopeHistory")]
+            internal List<PredictedSlopeHistory> slopeHistory = new List<PredictedSlopeHistory>();
+
+            [JsonProperty("PredictionPriceHistory")]
+            internal List<PredictedPriceHistory> priceHistory = new List<PredictedPriceHistory>();
 
             [JsonIgnore]
             internal const string DATACACHE_FILENAME = "C:\\Users\\Toby\\.ace\\ACE-PREDICTIONHISTORY.x3";
 
         }
-        public static void addPrediction(string symbol, Model model, List<PricePoint> Input, List<PricePoint> Output)
+        public static void addPricePrediction(string symbol, Model model, List<PricePoint> Input, List<PricePoint> Output)
         {
-            long id = cache.data.Count;
-            PredictedHistory ph = new PredictedHistory(id, symbol, model, Input, Output);
-            cache.data.Add(ph);
+            long id = cache.priceHistory.Count;
+            PredictedPriceHistory ph = new PredictedPriceHistory(id, symbol, model, Input, Output);
+            cache.priceHistory.Add(ph);
             Save();
         }
-        
-        public static PredictedHistory findPrediction(long id)
+        public static void addSlopePrediction(string symbol, Model model, List<PricePointSlope> Input, List<PricePointSlope> Output)
         {
-            return cache.data.Find(ph => ph.getId == id);
+            long id = cache.slopeHistory.Count;
+            PredictedSlopeHistory ph = new PredictedSlopeHistory(id, symbol, model, Input, Output);
+            cache.slopeHistory.Add(ph);
+            Save();
         }
 
-        public static bool findPredictions(string symbol, out List<PredictedHistory> histories)
+        public static PredictedPriceHistory findPricePrediction(long id)
         {
-            histories = cache.data.FindAll(ph => ph.getSymbol == symbol);
+            return cache.priceHistory.Find(ph => ph.getId == id);
+        }
+        public static PredictedSlopeHistory findSlopePrediction(long id)
+        {
+            return cache.slopeHistory.Find(ph => ph.getId == id);
+        }
+
+        public static bool findPredictions(string symbol, out List<PredictedPriceHistory> histories)
+        {
+            histories = cache.priceHistory.FindAll(ph => ph.getSymbol == symbol);
+            return histories != null && histories?.Count > 0;
+        }
+        public static bool findPredictions(string symbol, out List<PredictedSlopeHistory> histories)
+        {
+            histories = cache.slopeHistory.FindAll(ph => ph.getSymbol == symbol);
             return histories != null && histories?.Count > 0;
         }
 
-        public static decimal ComputeAverageAccuracy()
+        public static decimal ComputeAverageSlopeAccuracy()
         {
             int num = 0;
             decimal sum = 0.0m;
-            foreach (var item in cache.data)
+            foreach (var item in cache.slopeHistory)
+            {
+                if (!item.isComplete)
+                    continue;
+
+                num++;
+                sum += item.computeAccuracy();
+
+            }
+            return sum / num;
+        }
+        public static decimal ComputeAveragePriceAccuracy()
+        {
+            int num = 0;
+            decimal sum = 0.0m;
+            foreach (var item in cache.slopeHistory)
             {
                 if (!item.isComplete)
                     continue;
@@ -59,7 +95,7 @@ namespace ACE.Trading.Analytics
 
         public static void Load()
         {
-            if (File.Exists(Cache.DATACACHE_FILENAME) && cache.data.Count == 0)
+            if (File.Exists(Cache.DATACACHE_FILENAME) && cache.priceHistory.Count == 0 && cache.slopeHistory.Count == 0)
             {
                 // read
                 string json = File.ReadAllText(Cache.DATACACHE_FILENAME);
@@ -92,7 +128,7 @@ namespace ACE.Trading.Analytics
         }
     }
 
-    internal class PredictedHistory
+    internal class PredictedPriceHistory
     {
         #region Properties
         // internal prediction ID
@@ -134,7 +170,7 @@ namespace ACE.Trading.Analytics
         public string getSymbol { get { return Symbol; } }
         #endregion
 
-        public PredictedHistory(long id, string symbol, Model model, List<PricePoint> input, List<PricePoint> output)
+        public PredictedPriceHistory(long id, string symbol, Model model, List<PricePoint> input, List<PricePoint> output)
         {
             this.Id = id;
             this.Symbol = symbol;
@@ -188,6 +224,134 @@ namespace ACE.Trading.Analytics
                 for (int i = 0; i < PredictionOutput?.Count; i++)
                 {
                     decimal x = (100.00m / RealResult[i].deltaPrice) * PredictionOutput[i].deltaPrice;
+                    accuracyPerPrice.Add(x);
+                }
+            }
+            return accuracy;
+        }
+    }
+    internal class PredictedSlopeHistory
+    {
+        #region Properties
+        // internal prediction ID
+        [JsonProperty("Id")]
+        long Id { get; set; }
+
+        [JsonProperty("Symbol")]
+        string Symbol { get; set; }
+
+        [JsonProperty("Model")]
+        string Model { get; set; }
+
+        // Input to base the prediction from
+        [JsonProperty("PredictedInput")]
+        List<PricePointSlope>? PredictionInput { get; set; }
+
+        // predicted outcome
+        [JsonProperty("PredictionOutput")]
+        List<PricePointSlope>? PredictionOutput { get; set; }
+
+        // Real outcome
+        [JsonProperty("RealResult")]
+        List<PricePointSlope>? RealResult { get; set; }
+
+        // bool represents if all the required data is present to do calcs
+        [JsonProperty("Complete")]
+        bool Complete { get; set; }
+
+        [JsonIgnore]
+        public bool isComplete
+        {
+            get { return Complete; }
+        }
+
+        [JsonIgnore]
+        public long getId { get { return Id; } }
+
+        [JsonIgnore]
+        public string getSymbol { get { return Symbol; } }
+        #endregion
+
+        public PredictedSlopeHistory(long id, string symbol, Model model, List<PricePointSlope> input, List<PricePointSlope> output)
+        {
+            this.Id = id;
+            this.Symbol = symbol;
+            this.Model = model;
+            if (input.Count > 0 && output.Count > 0)
+            {
+                this.PredictionInput = input;
+                this.PredictionOutput = output;
+
+                List<PricePoint> points = DataCache.getAllPointsBetween(symbol, output.First().getOpenTimeUtc, output.Last().getCloseTimeUtc);
+                
+                // split points into minutebased points
+                DateTime startTime = output.First().getOpenTimeUtc;
+                DateTime nextTime = startTime.AddMinutes(1);
+                List<PricePoint> outp = new List<PricePoint>();
+                while(startTime < output.Last().getCloseTimeUtc)
+                {
+                    List<PricePoint> p1 = points.FindAll(p => DataHandling.AllBetween(p, startTime, nextTime));
+                    PricePoint p = new PricePoint();
+
+                    // Gets high price and low price
+                    p.highPrice = p.lowPrice = 0.0m;
+                    foreach(var p2 in p1)
+                    {
+                        if (p2.highPrice != 0.0m)
+                        {
+                            if (p2.highPrice > p.highPrice) p.highPrice = p2.highPrice;
+                        }
+                        else if (p2.lastKnownPrice != 0.0m)
+                        {
+                            if (p2.lastKnownPrice > p.highPrice) p.highPrice = p2.lastKnownPrice;
+                        }
+                        if (p2.lowPrice != 0.0m)
+                        {
+                            if (p2.lowPrice < p.lowPrice) p.lowPrice = p2.lowPrice;
+                        }
+                        else if (p2.lastKnownPrice != 0.0m)
+                        {
+                            if (p2.lastKnownPrice < p.lowPrice) p.lowPrice = p2.lastKnownPrice;
+                        }
+                    }
+
+                    
+                    p1.Sort(DataHandling.sortTime_latestFirst);
+                    p.closePrice = p1.First().closePrice;
+                    p.openPrice = p1.Last().openPrice;
+                    outp.Add(p);
+                    startTime = startTime.AddMinutes(1);
+                    nextTime = startTime.AddMinutes(1);
+                }
+                RealResult = Convertions.FindAll(outp.ToArray());
+
+            }
+            else
+            {
+                this.PredictionInput = null;
+                this.PredictionOutput = null;
+                Complete = false;
+            }
+        }
+
+
+        /// <summary>
+        /// Calculates the accuracy of the predicted result
+        /// </summary>
+        /// <returns>A percentage representing how accurate the predicted result is compared to the real result</returns>
+        public decimal computeAccuracy()
+        {
+            decimal accuracy = 0.0m; // %
+            if (PredictionInput?.Count > 0 && PredictionOutput?.Count > 0 && PredictionOutput?.Count == RealResult?.Count)
+            {
+                // sort to same order
+                PredictionOutput?.Sort(Convertions.sortTime_oldestFirst);
+                RealResult?.Sort(Convertions.sortTime_oldestFirst);
+
+                List<decimal> accuracyPerPrice = new List<decimal>();
+                for (int i = 0; i < PredictionOutput?.Count; i++)
+                {
+                    decimal x = (100.00m / RealResult[i].getDeltaPrice) * PredictionOutput[i].getDeltaPrice;
                     accuracyPerPrice.Add(x);
                 }
             }

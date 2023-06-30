@@ -146,5 +146,11 @@ namespace ACE.Trading.Data
             return sd.getPriceHistory.FindAll(pd => DataHandling.findByTime(pd, time));
 
         }
+        public static List<PricePoint> getAllPointsBetween(string symbol, DateTime openTime, DateTime closeTime)
+        {
+            var sd = GetSymbolData(symbol);
+            return sd.getPriceHistory.FindAll(pd => DataHandling.AllBetween(pd, openTime, closeTime));
+
+        }
     }
 }

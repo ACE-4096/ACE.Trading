@@ -163,7 +163,7 @@ namespace ACE.Trading.OpenAi
         }
         #endregion
 
-
+        #region Files
         public async Task<List<OpenAI_API.Files.File>> getFiles()
         {
             return await api.Files.GetFilesAsync();
@@ -174,7 +174,7 @@ namespace ACE.Trading.OpenAi
             {
                 return null;
             }
-            // upload trainig file
+            // upload training file
             var trainingFileUploadResult = await api.Files.UploadFileAsync(filename);
             if (trainingFileUploadResult.Status != "uploaded")
             {
@@ -183,6 +183,19 @@ namespace ACE.Trading.OpenAi
             }
             return trainingFileUploadResult;
         }
+
+        public async Task<OpenAI_API.Files.File> deleteFile(string fileId)
+        {
+            // delete training file
+            var trainingFileDeletionResult = await api.Files.DeleteFileAsync(fileId);
+            if (trainingFileDeletionResult.Status != "uploaded")
+            {
+                Debug.WriteLine("ProcessingEngine.fineTune: ExitCode=-2");
+                return null;
+            }
+            return trainingFileDeletionResult;
+        }
+        #endregion
 
         #region Alpaca - Depreciated
         /* Depreciated

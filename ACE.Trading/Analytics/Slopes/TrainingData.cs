@@ -19,7 +19,7 @@ namespace ACE.Trading.Analytics.Slopes
             Add(new TrainingDataLine(prompt, completion));
         }
 
-        public string ToString()
+        public override string ToString()
         {
             string output = "";
             foreach (TrainingDataLine line in Lines.ToArray())
@@ -45,9 +45,9 @@ namespace ACE.Trading.Analytics.Slopes
             _completion = completion;
         }
 
-        public string ToString()
+        public override string ToString()
         {
-            return string.Format("{\"prompt\": \"{0}\", \"completion\": \"{1}\"}\n", _prompt, _completion);
+            return $"{{\"prompt\": \"{_prompt}\", \"completion\": \"{_completion}\"}}\n";
         }
     }
 }

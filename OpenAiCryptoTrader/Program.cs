@@ -9,6 +9,8 @@ using ACE.Trading.OpenAi;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using ACE.Trading.Analytics.Slopes;
+using System;
+using OpenAI_API;
 
 //Console.WriteLine("Welcome to the ACE-4096 predictive trading.");
 
@@ -32,7 +34,7 @@ while (true)
         "[T] - Train a new model.\n" +
         "[P] - Attempt to Predict next Price.\n" +
         "[S] - Start the autoTrader\n" +
-        "[F] - View uploaded files \n" +
+        "[F] - Files \n" +
         "[V] - View Collected Data\n" +
         "[U] - Upload a TrainingFile\n" +
         "[J] - Fine tune a new model ;)");
@@ -61,11 +63,7 @@ while (true)
             break;
         case 'F':
         case 'f':
-            viewFiles();
-            break;
-        case 'U':
-        case 'u':
-            uploadFile();
+            fileHandling();
             break;
         case 'J':
         case 'j':
@@ -113,27 +111,68 @@ HyperParams readHypers()
 }
 
 
-void uploadFile()
+#region Files
+void fileHandling()
+{
+    char input; bool proceed = false;
+    do
+    {
+        printHeading();
+        input = readChar(
+            "[V] - View Files\n" +
+            "[D] - Delete File\n" +
+            "[U] - Upload File"
+            );
+        
+        switch (input)
+        {
+            case 'V':
+            case 'v':
+            case 'D':
+            case 'd':
+            case 'U':
+            case 'u':
+                proceed = true;
+                break;
+        }
+    } while (!proceed);
+    switch (input)
+    {
+        case 'V':
+        case 'v':
+            viewFiles();
+            break;
+        case 'D':
+        case 'd':
+            deleteFile();
+            break;
+        case 'U':
+        case 'u':
+            uploadFile();
+            break;
+    }
+}
+async void uploadFile()
 {
     printHeading();
 
-    bool input = readYesNo("Would you like to generate a new a training file?");
+    bool input = readYesNo("Would you like to generate a new a training file?", false);
     if (input)
     {
-        input = readYesNo("Are you using binance data?");
+        input = readYesNo("Are you using binance data?", false);
         if (input)
         {
-            
+            string inputFilename = readFilename("What is the filename of the binance data to use?", false);
+            string saveName = readString("What name do you want the output file to have: ", false);
+            string outputFilename = Path.GetTempPath() + saveName + ".jsonl";
+            int promptsPer = readInt("How may prompts in the prompt/completion ratio: ", false);
+            int completionsPer = readInt("How may completions in the prompt/completion ratio: ", false);
 
-
-            string inputFilename = readFilename("What is the filename of the binance data to use?");
-            string outputFilename = Path.GetTempPath() + Path.GetFileNameWithoutExtension(inputFilename) + ".jsonl";
-            int promptsPer = readInt("How may prompts in the prompt/completion ratio: ");
-            int completionsPer = readInt("How may prompts in the prompt/completion ratio: ");
-
-            bool useSlope = readYesNo("Would you like to use slopeData or standard?");
+            bool useSlope = readYesNo("Would you like to use slopeData or standard?", false); 
+            Console.WriteLine("Converting...");
             if (!useSlope)
             {
+                
                 Convertions.convertFromBinanceData(inputFilename, outputFilename, promptsPer, completionsPer);
             }
             else
@@ -142,10 +181,23 @@ void uploadFile()
                 File.WriteAllText(outputFilename, td.ToString());
             
             }
-
-            var y = pe.uploadFile(outputFilename);
-            Console.WriteLine("\nFile id | File name | File Size");
-            Console.WriteLine($"{y.Result.Id} | {y.Result.Name} | {y.Result.Bytes}B");
+            Console.WriteLine("Converting Complete.");
+            Console.Write("Uploading");
+            Task<OpenAI_API.Files.File> y = pe.uploadFile(outputFilename);
+            while (!y.IsCompleted) { Thread.Sleep(1000); Console.Write('.'); }
+            if (y.IsCanceled)
+            {
+                Console.WriteLine("Timeout occured.");
+            }
+            else if (y.IsCompletedSuccessfully)
+            {
+                Console.WriteLine("Uploading Complete.");
+                Console.WriteLine("\nFile id | File name | File Size");
+                Console.WriteLine($"{y.Result.Id} | {y.Result.Name} | {y.Result.Bytes}B");
+            }
+            Console.WriteLine("\n\n Press any key to continue.");
+            FlushKeyboard();
+            Console.ReadKey();
         }
         else
         {
@@ -164,22 +216,60 @@ void uploadFile()
 }
 async void viewFiles()
 {
-    printHeading();
-    Console.WriteLine("\nFile id | File name | File Size\n");
+    Task<List<OpenAI_API.Files.File>> response = pe.getFiles();
+    while (!response.IsCompleted) { Thread.Sleep(1000); Console.Write('.'); }
+    if (response.IsCanceled)
+    {
+        Console.WriteLine("Timeout occured.");
+    }
+    else if (response.IsCompletedSuccessfully)
+    {
+        printHeading();
+        Console.WriteLine("\nFile id | File name | File Size\n");
+        foreach (var file in response.Result)
+        {
+            Console.WriteLine($"{file.Id} | {file.Name} | {file.Bytes}B");
+        }
+    }
+    Console.WriteLine("\n\n Press any key to continue.");
+    FlushKeyboard();
+    Console.ReadKey();
+
+}
+async void deleteFile()
+{
+
 
     var response = await pe.getFiles();
-
     if (response == null || response.Count == 0)
     {
         Console.WriteLine("No files found");
         return;
     }
-    foreach (var file in response)
+    printHeading();
+    Console.WriteLine("\nFile Index | File id | File name | File Size\n");
+    for (int i = 0; i < response.Count; i++)
     {
-        Console.WriteLine($"{file.Id} | {file.Name} | {file.Bytes}B");
+        Console.WriteLine($"{i} | {response[i].Id} | {response[i].Name} | {response[i].Bytes}B");
     }
-
+    int input = -1;
+    do {
+        input = readInt("Which File would you like to delete?: ", false);
+    } while (input < 0 || input >= response.Count);
+    var deletedFile = await pe.deleteFile(response[input].Id);
+    if (deleteFile == null)
+    {
+        Console.WriteLine("Error");
+        return;
+    }
+    else
+    {
+        string deletedText = deletedFile.Deleted ? "Deleted" : "Not-Deleted";
+        Console.WriteLine($"File: {deletedFile.Id} / {deletedFile.Name} | {deletedText}");
+    }
 }
+
+#endregion
 void viewData()
 {
     Console.Clear();
@@ -403,30 +493,34 @@ void trainModel()
         Console.WriteLine($"Fine tune status: {result.Result.Status}, Model Name: {result.Result.FineTunedModel}");
     }
 }
+
 void printHeading()
 {
     Console.Clear();
     Console.WriteLine("----------------------------------------------------------");
     Console.WriteLine("-----ACE-4096 Predictive Trading - DataCache Training-----");
 }
+
+#region reading data from user
 int readValue()
 {
-    //Console.In.ReadLine();
+    FlushKeyboard();
     int? val;
     do { val = Console.Read(); } while (val == null || val == -1);
     return val.Value;
 }
-bool readYesNo(string prompt)
+bool readYesNo(string prompt, bool clear = true)
 {
+    FlushKeyboard();
     bool output = false, proceed = false;
     do
     {
-        var input = readChar(prompt + " [Y]es | [N]o");
+        var input = readChar(prompt + " [Y]es | [N]o", clear);
         switch (input)
         {
             case 'Y':
             case 'y':
-                output = proceed = false;
+                output = proceed = true;
                 break;
             case 'N':
             case 'n':
@@ -437,17 +531,19 @@ bool readYesNo(string prompt)
     } while (!proceed);
     return output;
 }
-char readChar(string messagePrompt)
+char readChar(string messagePrompt, bool clear = true)
 {
-    Console.Clear();
+    FlushKeyboard();
+    if (clear) Console.Clear();
     Console.WriteLine(messagePrompt);
     int? val;
     do { val = Console.Read(); } while (val == null || val == -1);
     return (char)val.Value;
 }
-string readString(string messagePrompt)
+string readString(string messagePrompt, bool clear = true)
 {
-    Console.Clear();
+    FlushKeyboard();
+    if (clear) Console.Clear();
     Console.WriteLine(messagePrompt);
     string output;
     do
@@ -456,37 +552,41 @@ string readString(string messagePrompt)
     } while (output == null || output == "");
     return output;
 }
-string readFilename(string messagePrompt)
+string readFilename(string messagePrompt, bool clear = true)
 {
     string output;
     do
     {
-        output = readString(messagePrompt);
-    } while (File.Exists(output));
+        output = readString(messagePrompt, clear);
+    } while (!File.Exists(output));
     return output;
 }
-int readInt(string messagePrompt)
+int readInt(string messagePrompt, bool clear = true)
 {
-    Console.Clear();
-    Console.WriteLine(messagePrompt);
+    FlushKeyboard();
     string output; int number;
     do
     {
-        output = Console.ReadLine();
+        output = readString(messagePrompt, clear);
     } while (output == null || output == "" || !int.TryParse(output, out number));
 
     return number;
 }
 
-double readDouble(string messagePrompt)
+double readDouble(string messagePrompt, bool clear = true)
 {
-    Console.Clear();
-    Console.WriteLine(messagePrompt);
+    FlushKeyboard();
     string output; double number;
     do
     {
-        output = Console.ReadLine();
+        output = readString(messagePrompt, clear);
     } while (output == null || output == "" || !double.TryParse(output, out number));
 
     return number;
 }
+void FlushKeyboard()
+{
+    while (Console.In.Peek() != -1)
+        Console.In.Read();
+}
+#endregion

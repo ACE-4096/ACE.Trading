@@ -78,7 +78,7 @@ namespace ACE.Trading
             }
 
             // Log prediction data
-            Analytics.Predictions.addPrediction(symbol, model, lastHour, PredictedPrices);
+            Analytics.Predictions.addPricePrediction(symbol, model, lastHour, PredictedPrices);
 
             return PredictedPrices;
         }

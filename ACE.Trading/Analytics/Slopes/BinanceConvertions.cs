@@ -10,12 +10,9 @@ namespace ACE.Trading.Analytics.Slopes
 {
     public class BinanceConvertions
     {
-        private static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        private static DateTime UnixTimeStampToDateTime(long unixTimeStamp)
         {
-            // Unix timestamp is seconds past epoch
-            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dateTime;
+            return DateTimeOffset.FromUnixTimeMilliseconds(unixTimeStamp).DateTime; ;
         }
 
         public static bool readToPricePointArray(string filename, out PricePoint[] points)
@@ -33,7 +30,7 @@ namespace ACE.Trading.Analytics.Slopes
                     continue;
                 PricePoint p = new PricePoint()
                 {
-                    timeUtc = UnixTimeStampToDateTime(double.Parse(inputs[0])),
+                    timeUtc = UnixTimeStampToDateTime(long.Parse(inputs[0])),
                     openPrice = decimal.Parse(inputs[1]),
                     highPrice = decimal.Parse(inputs[2]),
                     lowPrice = decimal.Parse(inputs[3]),

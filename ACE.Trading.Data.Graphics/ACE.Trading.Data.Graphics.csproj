@@ -16,4 +16,13 @@
     <ProjectReference Include="..\ACE.Trading\ACE.Trading.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="TraderView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="PredictionView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

@@ -84,7 +84,7 @@ namespace ACE.Trading.Traders
 
 
                 // assess weather current predictions are accurate
-                decimal avgAccuracy = Analytics.Predictions.ComputeAverageAccuracy();
+                decimal avgAccuracy = Analytics.Predictions.ComputeAveragePriceAccuracy();
                 decimal spend = _restrictedSpend;
                 if (avgAccuracy > 75)
                 {
