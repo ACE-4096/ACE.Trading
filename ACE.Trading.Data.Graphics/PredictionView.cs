@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ACE.Trading.Analytics;
+using ACE.Trading.Analytics.Slopes;
 
 namespace ACE.Trading.Data.Graphics
 {
@@ -19,23 +21,56 @@ namespace ACE.Trading.Data.Graphics
 
         string[] symbols;
 
+        List<List<PredictedPriceHistory>> priceHistories = new List<List<PredictedPriceHistory>>();
+        List<List<PredictedSlopeHistory>> slopeHistories = new List<List<PredictedSlopeHistory>>();
         private void PredictionView_Load(object sender, EventArgs e)
         {
             DataCache.Load();
             symbols = DataCache.getAllSymbols();
+            Analytics.Predictions.Load();
 
-            var mainNode = treeView.Nodes.Add("Symbol List");
             foreach (string str in symbols)
             {
-                var subNode = mainNode.Nodes.Add(str);
-
-                var sd = DataCache.GetSymbolData(str);
-
-                subNode.Nodes.Add($"Latest Price: ${sd.getLatestPrice}");
-                subNode.Nodes.Add($"Data Entries: {sd.getPriceHistory.Count}");
-
+                List<PredictedPriceHistory> priceHistory;
+                if (Analytics.Predictions.findPricePredictions(str, out priceHistory))
+                {
+                    priceHistories.Add(priceHistory);
+                }
+                List<PredictedSlopeHistory> slopeHistory;
+                if(Analytics.Predictions.findSlopePredictions(str, out slopeHistory))
+                {
+                    slopeHistories.Add(slopeHistory);
+                }
             }
-            mainNode.ExpandAll();
+
+            var MainSlopeNode = treeView.Nodes.Add("Slope Predictions");
+            foreach (string str in symbols)
+            {
+                var subNode = MainSlopeNode.Nodes.Add(str);
+                var symbolSlopes = slopeHistories.Find(lst => lst.First().getSymbol == str);
+                if (symbolSlopes == null || symbolSlopes.Count == 0)
+                    continue;
+                foreach(var slope in symbolSlopes)
+                {
+                    var slopeNode = subNode.Nodes.Add(slope.getId.ToString());
+                    slopeNode.Nodes.Add($"Accuracy: {slope.computeAccuracy()}");
+                }
+            }
+            var MainPriceNode = treeView.Nodes.Add("Price Predictions");
+            foreach (string str in symbols)
+            {
+                var subNode = MainPriceNode.Nodes.Add(str);
+                var symbolprices = slopeHistories.Find(lst => lst.First().getSymbol == str);
+                if (symbolprices == null || symbolprices.Count == 0)
+                    continue;
+                foreach (var price in symbolprices)
+                {
+                    var priceNode = subNode.Nodes.Add(price.getId.ToString());
+                    priceNode.Nodes.Add($"Accuracy: {price.computeAccuracy()}");
+                }
+            }
+            MainSlopeNode.ExpandAll();
+            MainPriceNode.ExpandAll();
 
         }
 

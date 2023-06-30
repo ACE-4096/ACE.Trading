@@ -12,7 +12,7 @@ using Binance.Net.Objects.Models.Spot.SubAccountData;
 
 namespace ACE.Trading.Analytics
 {
-    internal class Predictions
+    public static class Predictions
     {
         private static Cache cache = new Cache();
         private class Cache
@@ -51,12 +51,12 @@ namespace ACE.Trading.Analytics
             return cache.slopeHistory.Find(ph => ph.getId == id);
         }
 
-        public static bool findPredictions(string symbol, out List<PredictedPriceHistory> histories)
+        public static bool findPricePredictions(string symbol, out List<PredictedPriceHistory> histories)
         {
             histories = cache.priceHistory.FindAll(ph => ph.getSymbol == symbol);
             return histories != null && histories?.Count > 0;
         }
-        public static bool findPredictions(string symbol, out List<PredictedSlopeHistory> histories)
+        public static bool findSlopePredictions(string symbol, out List<PredictedSlopeHistory> histories)
         {
             histories = cache.slopeHistory.FindAll(ph => ph.getSymbol == symbol);
             return histories != null && histories?.Count > 0;
@@ -128,7 +128,7 @@ namespace ACE.Trading.Analytics
         }
     }
 
-    internal class PredictedPriceHistory
+    public class PredictedPriceHistory
     {
         #region Properties
         // internal prediction ID
@@ -230,7 +230,7 @@ namespace ACE.Trading.Analytics
             return accuracy;
         }
     }
-    internal class PredictedSlopeHistory
+    public class PredictedSlopeHistory
     {
         #region Properties
         // internal prediction ID
