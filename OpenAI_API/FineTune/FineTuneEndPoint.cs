@@ -16,7 +16,7 @@ namespace OpenAI_API.FineTune
         /// <summary>
         /// This allows you to set default parameters for every request, for example to set a default temperature or max tokens.  For every request, if you do not have a parameter set on the request but do have it set here as a default, the request will automatically pick up the default value.
         /// </summary>
-        public FineTuneRequest DefaultFineTuneRequestArgs { get; set; } = new FineTuneRequest() { Model = Models.Model.DavinciText };
+        public FineTuneRequest DefaultFineTuneRequestArgs { get; set; } = new FineTuneRequest() { ModelId = Models.Model.DavinciText.ModelID };
 
         /// <summary>
         /// The name of the endpoint, which is the final path segment in the API URL.  For example, "completions".
@@ -52,6 +52,7 @@ namespace OpenAI_API.FineTune
         {
             return await HttpGet<FineTuneResultList>();
         }
+
         public async Task<FineTuneResult> CancelFineTune(string Id)
         {
             return await HttpPost<FineTuneResult>(url: formatPathParams(Id, "cancel"));

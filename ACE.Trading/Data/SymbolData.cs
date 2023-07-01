@@ -46,10 +46,11 @@ namespace ACE.Trading.Data
         }
 
         // Price Point History
-        private List<PricePointSlope> slopeHistory;
+        [JsonProperty("SlopeHistory")]
+        private List<PricePointSlope> slopeHistory = new List<PricePointSlope>();
         public PricePointSlope[] getSlopeHistory
         {
-            get { return slopeHistory.ToArray(); }
+            get { return slopeHistory == null ? null : slopeHistory.ToArray(); }
         }
 
         // Funcs
@@ -61,14 +62,19 @@ namespace ACE.Trading.Data
         public void AddPricePoint(PricePoint p)
         {
             //priceHistory.Sort(sortTime_earliestFirst);
-            var p2 = pricePoints.First();
-
-            if (p2 != null)
+            if (pricePoints.Count == 0)
             {
-                p.deltaPrice = p.avgPrice - p2.avgPrice;
+                p.deltaPrice = 0;
+            }
+            else
+            {
+                var p2 = pricePoints.First();
+                if (p2 != null)
+                {
+                    p.deltaPrice = p.avgPrice - p2.avgPrice;
+                }
             }
             pricePoints.Add(p);
-
         }
         public void calcSlopes()
         {
@@ -92,7 +98,34 @@ namespace ACE.Trading.Data
         // time of price point
         public DateTime timeUtc;
 
-        public decimal lastKnownPrice;
+        private decimal _lastKnownPrice;
+        public decimal lastKnownPrice
+        {
+            set
+            {
+                if (openPrice == 0)
+                    openPrice = value;
+                if (lowPrice == 0)
+                {
+                    lowPrice = value;
+                }
+                else { lowPrice = lowPrice > value ? value : lowPrice; }
+                if (highPrice == 0)
+                {
+                    highPrice = value;
+                }
+                else
+                {
+                    highPrice = highPrice < value ? value : highPrice;
+                }
+                closePrice = value;
+                _lastKnownPrice = value;
+            }
+            get
+            {
+                return _lastKnownPrice;
+            }
+        }
 
         // average price for the price point
         public decimal avgPrice

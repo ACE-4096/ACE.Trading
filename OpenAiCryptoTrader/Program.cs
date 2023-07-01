@@ -2,7 +2,7 @@
 using CryptoExchange.Net.CommonObjects;
 using ACE.Trading.Data;
 using ACE.Trading.Data.Collection;
-using ACE.Trading.OpenAi.TrainingData;
+using ACE.Trading.OpenAi;
 using ACE.Trading;
 using System.Transactions;
 using ACE.Trading.OpenAi;
@@ -11,6 +11,9 @@ using Newtonsoft.Json;
 using ACE.Trading.Analytics.Slopes;
 using System;
 using OpenAI_API;
+using CryptoExchange.Net.Interfaces;
+using OpenAI_API.Files;
+using System.Collections.Generic;
 
 //Console.WriteLine("Welcome to the ACE-4096 predictive trading.");
 
@@ -21,37 +24,39 @@ OpenAiIntegration pe = new OpenAiIntegration();
 //b.ViewData(new string[] { "BTCUSDT" });
 
 DataCache.Load();
-DataCache.AutoSaveDelay = 5 * 60; // in seconds
+DataCache.AutoSaveDelay = 60; // in seconds
 
 PriceHistoryLogging priceHistoryLogging = new PriceHistoryLogging();
 
 priceHistoryLogging.startLogging();
-Console.Read();
+FlushKeyboard();
 while (true)
 {
     Console.WriteLine("Which task Would you like to undertake: ");
     int val = readChar(
-        "[T] - Train a new model.\n" +
-        "[P] - Attempt to Predict next Price.\n" +
+        //"[T] - Train a new model.\n" +
+        //"[P] - Attempt to Predict next Price.\n" +
         "[S] - Start the autoTrader\n" +
         "[F] - Files \n" +
         "[V] - View Collected Data\n" +
         "[U] - Upload a TrainingFile\n" +
-        "[J] - Fine tune a new model ;)");
+        "[J] - Fine tuning menu ;)\n\n"+
+
+        "[E] - Exit");
 
     switch (val)
     {
-        case 'T':
+        /* case 'T':
         case 't':
             trainModel();
-            break;
-        case 'C':
-        case 'c':
-            collectData();
             break;
         case 'P':
         case 'p':
             predict();
+            break;*/
+        case 'C':
+        case 'c':
+            collectData();
             break;
         case 'S':
         case 's':
@@ -67,29 +72,174 @@ while (true)
             break;
         case 'J':
         case 'j':
-            startFineTune();
+            fineTuningMenu();
             break;
+        case 'E':
+        case 'e':
+            priceHistoryLogging.stopLogging();
+            DataCache.Save();
+            Console.WriteLine("Data Saved. Exiting...");
+            Console.WriteLine("\n\n Press any key to continue.");
+            FlushKeyboard();
+            Console.ReadKey();
+            return;
         default:
+            Console.WriteLine("Invalid reponse received, try again.");
             break;
     }
-    Console.WriteLine("Invalid reponse received, try again.");
+   
+
+    Console.WriteLine("\n\n Press any key to continue.");
+    FlushKeyboard();
+    Console.ReadKey();
 }
 
-async void startFineTune()
+#region Fine Tunes
+void fineTuningMenu()
 {
-    string fileId, symbol;
+    char input; bool proceed = false;
+    do
+    {
+        printHeading();
+        input = readChar(
+            "[V] - View Fine Tunes\n" +
+            "[D] - Delete Fine Tune\n" +
+            "[C] - Create new Fine Tune"
+            );
+
+        switch (input)
+        {
+            case 'V':
+            case 'v':
+            case 'D':
+            case 'd':
+            case 'C':
+            case 'c':
+                proceed = true;
+                break;
+        }
+    } while (!proceed);
+    switch (input)
+    {
+        case 'V':
+        case 'v':
+            viewFineTunes();
+            break;
+        case 'D':
+        case 'd':
+            //deleteFineTune();
+            break;
+        case 'C':
+        case 'c':
+            startFineTune();
+            break;
+    }
+}
+
+void viewFineTunes()
+{
+    printHeading();
+    Task<FineTuneResultList> task = pe.getFineTuneList();
+    while (!task.IsCompleted) { Thread.Sleep(1000); Console.WriteLine("Loading..."); }
+    if (task.IsCanceled)
+    {
+        Console.WriteLine("Timeout occured.");
+    }
+    else if (task.IsCompletedSuccessfully)
+    {
+        printHeading();
+        foreach (FineTuneResult result in task.Result.data)
+        {
+            displayFineTuneResult(result);
+        }
+    }
+    else
+    {
+        Console.WriteLine(task.Exception);
+    }
+    Console.WriteLine("\n\n Press any key to continue.");
+    FlushKeyboard();
+    Console.ReadKey();
+}
+
+void startFineTune()
+{
+    Task<List<OpenAI_API.Files.File>> task = pe.getFiles();
+    while (!task.IsCompleted) { Thread.Sleep(1000); Console.WriteLine("Loading..."); }
+    var response = task.Result;
+    if (response == null || response.Count == 0)
+    {
+        Console.WriteLine("No files found");
+        return;
+    }
+    printHeading();
+    Console.WriteLine("\nFile Index | File id | File name | File Size\n");
+    for (int i = 0; i < response.Count; i++)
+    {
+        Console.WriteLine($"{i} | {response[i].Id} | {response[i].Name} | {response[i].Bytes}B");
+    }
+    int input = -1;
+    FlushKeyboard();
+    do
+    {
+        input = readInt("Which File would you like to use for training?: ", false);
+    } while (input < 0 || input >= response.Count);
+    string fileId = response[input].Id, symbol;
+
+    FlushKeyboard();
     do {
-        fileId = readString("What is the id of the Training File to use?");
-        symbol = readString("What is the symbol for the Training File?");
+        symbol = readString("What is the symbol are you training for?", false);
         Console.WriteLine($"File Id: {fileId} | Symbol: {symbol}");
-    } while(readYesNo("Are the details correct?"));
+    } while(!readYesNo("Are the details correct?", false));
 
     HyperParams parameters = readHypers();
 
-    FineTuneResult result = await pe.fineTune(fileId, symbol, parameters);
+    Task<FineTuneResult> result = pe.fineTune(fileId, symbol, parameters);
+    while (!result.IsCompleted) { Thread.Sleep(1000); Console.WriteLine("Loading..."); }
+    if (result.IsCompletedSuccessfully)
+    {
+        printHeading();
+        displayFineTuneResult(result.Result);
+    }else if (result.IsCanceled)
+    {
+        Console.WriteLine("Task has been cancelled.");
+    }else
+    {
+        Console.WriteLine(result.Exception);
+    }
 
-    //result.HyperParameters
+    Console.WriteLine("\n\n Press any key to continue.");
+    FlushKeyboard();
+    Console.ReadKey();
+}
 
+void displayFineTuneResult(FineTuneResult result)
+{
+    Console.WriteLine();
+    Console.WriteLine($"Fine tune created - {result.FineTunedModel}");
+    Console.WriteLine();
+    Console.WriteLine($"Id: {result.Id}");
+    Console.WriteLine($"Model Name: {result.FineTunedModel}");
+    Console.WriteLine($"Base Model: {result.Model}");
+    Console.WriteLine($"Status: {result.Status}");
+    Console.WriteLine("\nHyper Params: ");
+    Console.WriteLine($" - Batch Size: \t{result.HyperParameters.BatchSize}");
+    Console.WriteLine($" - Number Of Epochs: \t{result.HyperParameters.NumberOfEpochs}");
+    Console.WriteLine($" - Prompt Weight Loss: \t{result.HyperParameters.PromptLossWeight}");
+    Console.WriteLine($" - Learning Rate Multiplier: \t{result.HyperParameters.LearningRateMultiplier}");
+    if (result.Events != null && result.Events.Count > 0)
+    {
+        Console.WriteLine($"Events: {result.Events.Count}");
+        foreach (var fineTuneEvent in result.Events)
+        {
+
+            Console.WriteLine($" - Total Token Usage: {fineTuneEvent.TotalTokens}");
+            Console.WriteLine($" - Event Message: {fineTuneEvent.Message}");
+            Console.WriteLine($" - Prompt Tokens: {fineTuneEvent.PromptTokens}");
+            Console.WriteLine($" - Level: {fineTuneEvent.level}");
+        }
+    }
+    Console.Read();
 }
 
 HyperParams readHypers()
@@ -109,8 +259,7 @@ HyperParams readHypers()
 
     return hypers;
 }
-
-
+#endregion
 #region Files
 void fileHandling()
 {
@@ -168,19 +317,19 @@ async void uploadFile()
             int promptsPer = readInt("How may prompts in the prompt/completion ratio: ", false);
             int completionsPer = readInt("How may completions in the prompt/completion ratio: ", false);
 
-            bool useSlope = readYesNo("Would you like to use slopeData or standard?", false); 
+            bool useAdvanced = readYesNo("Would you like to use Advanced Slopes or Standard?", false); 
             Console.WriteLine("Converting...");
-            if (!useSlope)
+            if (useAdvanced)
             {
                 
-                Convertions.convertFromBinanceData(inputFilename, outputFilename, promptsPer, completionsPer);
+                //Convertions.convertFromBinanceData(inputFilename, outputFilename, promptsPer, completionsPer);
             }
             else
             {
                 TrainingData td = BinanceToTraining.convertSlopes(inputFilename, promptsPer, completionsPer);
-                File.WriteAllText(outputFilename, td.ToString());
-            
+                System.IO.File.WriteAllText(outputFilename, td.ToString());
             }
+            Thread.Sleep(1000);
             Console.WriteLine("Converting Complete.");
             Console.Write("Uploading");
             Task<OpenAI_API.Files.File> y = pe.uploadFile(outputFilename);
@@ -195,6 +344,10 @@ async void uploadFile()
                 Console.WriteLine("\nFile id | File name | File Size");
                 Console.WriteLine($"{y.Result.Id} | {y.Result.Name} | {y.Result.Bytes}B");
             }
+            else
+            {
+                Console.WriteLine(y.Exception);
+            }
             Console.WriteLine("\n\n Press any key to continue.");
             FlushKeyboard();
             Console.ReadKey();
@@ -207,9 +360,25 @@ async void uploadFile()
     else if (!input)
     {
         string filename = readFilename("What is the filename of the trainingfile: ");
-        var y = pe.uploadFile(filename);
-        Console.WriteLine("\nFile id | File name | File Size");
-        Console.WriteLine($"{y.Result.Id} | {y.Result.Name} | {y.Result.Bytes}B");
+        Task<OpenAI_API.Files.File> y = pe.uploadFile(filename);
+        while (!y.IsCompleted) { Thread.Sleep(1000); Console.Write('.'); }
+        if (y.IsCanceled)
+        {
+            Console.WriteLine("Timeout occured.");
+        }
+        else if (y.IsCompletedSuccessfully)
+        {
+            Console.WriteLine("Uploading Complete.");
+            Console.WriteLine("\nFile id | File name | File Size");
+            Console.WriteLine($"{y.Result.Id} | {y.Result.Name} | {y.Result.Bytes}B");
+        }
+        else
+        {
+            Console.WriteLine(y.Exception);
+        }
+        Console.WriteLine("\n\n Press any key to continue.");
+        FlushKeyboard();
+        Console.ReadKey();
     }
 
 
@@ -231,9 +400,6 @@ async void viewFiles()
             Console.WriteLine($"{file.Id} | {file.Name} | {file.Bytes}B");
         }
     }
-    Console.WriteLine("\n\n Press any key to continue.");
-    FlushKeyboard();
-    Console.ReadKey();
 
 }
 async void deleteFile()
@@ -270,6 +436,7 @@ async void deleteFile()
 }
 
 #endregion
+#region Data collection
 void viewData()
 {
     Console.Clear();
@@ -295,7 +462,7 @@ void collectData()
 
 
     var x = 0.0m;
-    while (true)
+    while (! Console.KeyAvailable)
     {
         Thread.Sleep(1000);
         var sd = DataCache.GetSymbolData(symbol);
@@ -319,189 +486,23 @@ void collectData()
         x = price;
     }
 }
+#endregion
+#region Traders
 void startAutoTrader()
 {
 
     Console.WriteLine("Not Yet Implemented");
 }
-async void predict()
-{
-    Console.WriteLine("Retrieving Current proccessing models...");
-    
-    var list = pe.getFineTuneList();
-
-    Console.WriteLine("What symbol would you like to train for?: ");
-    Console.WriteLine("Selection Id | Model Name | Base Model Used | Symbol");
-    int tmpNum = 0;
-    if (list.Result == null)
-    {
-        Console.WriteLine("No fine tunes to use. please train a model first.");
-        return;
-    }
-    foreach (FineTuneResult res in list.Result.data)
-    {
-        string resSymbol = "Undefined";
-        if (res.FineTunedModel == null)
-            continue;
-        if (res.FineTunedModel.Contains('-'))
-        {
-            resSymbol = res.FineTunedModel.Substring(res.FineTunedModel.LastIndexOf('-') + 1);
-        }
-        Console.WriteLine(tmpNum++ + " | " + res.FineTunedModel + " | " + res.Model + " | " + resSymbol);
-    }
-    // reading input 
-    int selection = -1;
-    string tmpRead = "";
-    do
-    {
-        Console.WriteLine("Model to use (By Id): ");
-        do
-        {
-            tmpRead = Console.ReadLine();
-        } while (tmpRead == null || tmpRead?.Length == 0);
-    } while (!Int32.TryParse(tmpRead, out selection) && (selection < 0 && selection >= list.Result.data.Count));
-
-    // create model
-    var modelID = list.Result.data[selection].Id;
-
-    // fetches Symbol data
-    var symbol = list.Result.data[selection].FineTunedModel?.Substring(list.Result.data[selection].FineTunedModel.LastIndexOf('-') + 1);
-    if (symbol?.Length == 0)
-        Console.WriteLine("Invalid Symbol");
-
-    List<PricePoint> prices = await new Predictions().predict(symbol, modelID);
-    Console.Clear();
-    Console.WriteLine($"---  ACE Predictions  ---\nSymbol: {symbol}\nModel: {modelID}");
-
-    foreach (var price in prices)
-    {
-        Console.WriteLine(string.Format("Time UTC: {0} | Price: ${1}", price.timeUtc, price.deltaPrice));
-    }
-}
-void trainModel()
-{
-    
-
-    string symbol = readString("What symbol would you like to train for?");
-    if (symbol.Length < 6)
-    {
-        Console.WriteLine("Invalid Symbol");
-        return;
-    }
-
-    bool useCache = true;
-    bool loop = true;
-    while(loop)
-    {
-        Console.Write("Would you like to compile a training set based on the DataCache? [Y]es | [N]o :");
-        int input = Console.Read();
-        switch (input)
-        {
-            case 'Y':
-            case 'y':
-                loop = false;
-                break;
-            case 'N':
-            case 'n':
-                loop = useCache = false;
-                break;
-        }
-    
-    }
-
-    if (!useCache)
-    {
-        //
-        Console.WriteLine("Trining with Binance data. ");
-
-        Console.WriteLine("What is the location of the candlestick data to use? ");
-        string? fileName;
-        do
-        {
-            fileName = Console.ReadLine();
-        } while (fileName == null || !File.Exists(fileName) || fileName == "");
-
-        int promptNum = readInt("How many price points per prompt? : ");
-
-        int completionNum = readInt("How many price points per completion? : ");
-        Console.WriteLine("Converting...");
-        DataFile df = Convertions.convertFromBinanceDataFile(fileName, promptNum, completionNum);//(fileName, outputFileName);
-        string tmpFilename = Path.GetTempFileName()+ ".JSONL";
-        File.WriteAllText(tmpFilename, df.ToString());
-        Console.WriteLine("Convertions Complete");
-
-        Console.WriteLine("Creating Fine-Fune on OpenAi network...");
-        var result = pe.fineTune(tmpFilename, symbol);
-        Console.WriteLine("Creation complete.");
-
-        foreach (var _event in result.Result.Events)
-        {
-            Console.WriteLine(_event.CreatedAt + ": " + _event.Message);
-        }
-    }
-    else
-    {
-        printHeading();
-        Console.WriteLine("\nSymbol: " + symbol);
-        Console.WriteLine("");
-        
-        // Get price intervals
-        var input = -1;
-
-        Console.WriteLine("What interval apart sholuld the prices be?: [0] 1 Minute, [1] 5 Minute, [2] 15 Minute, [3] 1 Hour");
-        do
-        {
-            input = Console.Read();
-        } while (input < '0' || input > '3');
-
-        int chosenInterval = input;
-        input = -1;
-
-        // get price type - avgPrice / deltaPrice
-        Console.WriteLine("Would you like the training data to be prepared using the [0] Delta price (Change in price since last interval)\nOr the [1] Average price (Average price during the interval): ");
-        do
-        {
-            input = Console.Read();
-        } while (input < '0' || input > '1');
-        int chosenPriceType = input;
-
-        input = -1;
-
-        // get duration
-        Console.WriteLine("How much data would you like to use? What duration of time should be used for the data set? ");
-        do
-        {
-            input = Console.Read();
-        } while (input < '0');
-        int duration = input-48;
-
-        string output;
-        if (!SimpleEncoding.ExtractPromptFromDataCache(symbol, (SimpleEncoding.priceInterval)(chosenInterval - 48), (SimpleEncoding.priceType)(chosenPriceType - 48), duration, out output))
-        {
-            Console.WriteLine("Compilation failed.");
-            return;
-        }
-
-        string tmp = Path.Combine(Path.GetTempPath(), "tmpTrainingDataSet.txt");
-        File.WriteAllText(tmp, output);
-        Console.WriteLine(string.Format("The Training data has been compiled to : \"{0}\"", tmp));
-
-        OpenAiIntegration openAi = new OpenAiIntegration();
-        
-        var result = openAi.fineTune(tmp, symbol);
-
-        Console.WriteLine($"Fine tune status: {result.Result.Status}, Model Name: {result.Result.FineTunedModel}");
-    }
-}
+#endregion
+#region Console helpers
 
 void printHeading()
 {
     Console.Clear();
     Console.WriteLine("----------------------------------------------------------");
-    Console.WriteLine("-----ACE-4096 Predictive Trading - DataCache Training-----");
+    Console.WriteLine("----- ACE-4096 Predictive Trading - Open Ai Enhanced -----");
+    Console.WriteLine("----------------------------------------------------------");
 }
-
-#region reading data from user
 int readValue()
 {
     FlushKeyboard();
@@ -558,7 +559,7 @@ string readFilename(string messagePrompt, bool clear = true)
     do
     {
         output = readString(messagePrompt, clear);
-    } while (!File.Exists(output));
+    } while (!System.IO.File.Exists(output));
     return output;
 }
 int readInt(string messagePrompt, bool clear = true)
@@ -589,4 +590,150 @@ void FlushKeyboard()
     while (Console.In.Peek() != -1)
         Console.In.Read();
 }
+#endregion
+#region OLD
+
+async void predict()
+{
+    Console.WriteLine("Retrieving Current proccessing models...");
+
+    var list = pe.getFineTuneList();
+
+    Console.WriteLine("What symbol would you like to train for?: ");
+    Console.WriteLine("Selection Id | Model Name | Base Model Used | Symbol");
+    int tmpNum = 0;
+    if (list.Result == null)
+    {
+        Console.WriteLine("No fine tunes to use. please train a model first.");
+        return;
+    }
+    foreach (FineTuneResult res in list.Result.data)
+    {
+        string resSymbol = "Undefined";
+        if (res.FineTunedModel == null)
+            continue;
+        if (res.FineTunedModel.Contains('-'))
+        {
+            resSymbol = res.FineTunedModel.Substring(res.FineTunedModel.LastIndexOf('-') + 1);
+        }
+        Console.WriteLine(tmpNum++ + " | " + res.FineTunedModel + " | " + res.Model + " | " + resSymbol);
+    }
+    // reading input 
+    int selection = -1;
+    string tmpRead = "";
+    do
+    {
+        Console.WriteLine("Model to use (By Id): ");
+        do
+        {
+            tmpRead = Console.ReadLine();
+        } while (tmpRead == null || tmpRead?.Length == 0);
+    } while (!Int32.TryParse(tmpRead, out selection) && (selection < 0 && selection >= list.Result.data.Count));
+
+    // create model
+    var modelID = list.Result.data[selection].Id;
+
+    // fetches Symbol data
+    var symbol = list.Result.data[selection].FineTunedModel?.Substring(list.Result.data[selection].FineTunedModel.LastIndexOf('-') + 1);
+    if (symbol?.Length == 0)
+        Console.WriteLine("Invalid Symbol");
+
+    List<PricePoint> prices = await new Predictions().predict(symbol, modelID);
+    Console.Clear();
+    Console.WriteLine($"---  ACE Predictions  ---\nSymbol: {symbol}\nModel: {modelID}");
+
+    foreach (var price in prices)
+    {
+        Console.WriteLine(string.Format("Time UTC: {0} | Price: ${1}", price.timeUtc, price.deltaPrice));
+    }
+}
+/*
+void trainModel()
+{
+
+
+    string symbol = readString("What symbol would you like to train for?", false);
+    if (symbol.Length < 6)
+    {
+        Console.WriteLine("Invalid Symbol");
+        return;
+    }
+    bool useCache = readYesNo("Generate a data set using the datacache?", false);
+
+    if (!useCache)
+    {
+        Console.WriteLine("Training with Binance data. ");
+        string filename = readFilename("What is the location of the candlestick data to use? ", false);
+        int promptNum = readInt("How many price points per prompt? : ");
+
+        int completionNum = readInt("How many price points per completion? : ");
+        Console.WriteLine("Converting...");
+        //DataFile df = Convertions.convertFromBinanceDataFile(filename, promptNum, completionNum);//(fileName, outputFileName);
+        string tmpFilename = Path.GetTempFileName() + ".JSONL";
+        System.IO.File.WriteAllText(tmpFilename, df.ToString());
+        Console.WriteLine("Convertions Complete");
+
+        Console.WriteLine("Creating Fine-Fune on OpenAi network...");
+        var result = pe.fineTune(tmpFilename, symbol);
+        Console.WriteLine("Creation complete.");
+
+        foreach (var _event in result.Result.Events)
+        {
+            Console.WriteLine(_event.CreatedAt + ": " + _event.Message);
+        }
+    }
+    else
+    {
+        printHeading();
+        Console.WriteLine("\nSymbol: " + symbol);
+        Console.WriteLine("");
+
+        // Get price intervals
+        var input = -1;
+
+        Console.WriteLine("What interval apart sholuld the prices be?: [0] 1 Minute, [1] 5 Minute, [2] 15 Minute, [3] 1 Hour");
+        do
+        {
+            input = Console.Read();
+        } while (input < '0' || input > '3');
+
+        int chosenInterval = input;
+        input = -1;
+
+        // get price type - avgPrice / deltaPrice
+        Console.WriteLine("Would you like the training data to be prepared using the [0] Delta price (Change in price since last interval)\nOr the [1] Average price (Average price during the interval): ");
+        do
+        {
+            input = Console.Read();
+        } while (input < '0' || input > '1');
+        int chosenPriceType = input;
+
+        input = -1;
+
+        // get duration
+        Console.WriteLine("How much data would you like to use? What duration of time should be used for the data set? ");
+        do
+        {
+            input = Console.Read();
+        } while (input < '0');
+        int duration = input - 48;
+
+        string output;
+        if (!SimpleEncoding.ExtractPromptFromDataCache(symbol, (SimpleEncoding.priceInterval)(chosenInterval - 48), (SimpleEncoding.priceType)(chosenPriceType - 48), duration, out output))
+        {
+            Console.WriteLine("Compilation failed.");
+            return;
+        }
+
+        string tmp = Path.Combine(Path.GetTempPath(), "tmpTrainingDataSet.txt");
+        System.IO.File.WriteAllText(tmp, output);
+        Console.WriteLine(string.Format("The Training data has been compiled to : \"{0}\"", tmp));
+
+        OpenAiIntegration openAi = new OpenAiIntegration();
+
+        var result = openAi.fineTune(tmp, symbol);
+
+        Console.WriteLine($"Fine tune status: {result.Result.Status}, Model Name: {result.Result.FineTunedModel}");
+    }
+}*/
 #endregion

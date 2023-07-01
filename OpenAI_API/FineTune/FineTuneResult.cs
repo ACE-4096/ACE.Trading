@@ -92,7 +92,7 @@ namespace OpenAI_API.FineTune
         /// Model used for a base during fine training
         /// </summary>
         [JsonProperty("model")]
-        public Models.Model model { get; set; }
+        public string model { get; set; }
 
         /// <summary>
         /// Time request was processed in unix time

@@ -119,7 +119,7 @@ namespace ACE.Trading.OpenAi
             request.TrainingFile = trainingFileId;
             request.NumberOfEpochs = 4;
             request.BatchSize = 4;
-            request.Model = Model.DavinciText;
+            request.ModelId = "ada";
             request.Suffix = "ACE-4096-" + symbolName;
 
             // Modelname would be text-davinci-003::ACE-4096-{symbolName}
@@ -141,7 +141,7 @@ namespace ACE.Trading.OpenAi
             request.BatchSize = hypers.BatchSize;
             request.PromptLossWeight = hypers.PromptLossWeight;
             request.LearningRateMultiplier = hypers.LearningRateMultiplier;
-            request.Model = Model.DavinciText;
+            request.ModelId = "ada";
             request.Suffix = "ACE-4096-" + symbolName;
 
             // Modelname would be text-davinci-003::ACE-4096-{symbolName}

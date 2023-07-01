@@ -16,10 +16,8 @@ namespace ACE.Trading.Data
     public static class DataCache
     {
         private static Cache cache = new Cache();
-        private static bool _blockChanges = false;
-
-        public static int AutoSaveDelay = 5 * 60;
-
+        private static bool _blockChanges = false, _midChange = false;
+        public static int AutoSaveDelay = 60;
         private class Cache
         {
             [JsonProperty("DataCache")]
@@ -29,10 +27,9 @@ namespace ACE.Trading.Data
             internal const string DATACACHE_FILENAME = "C:\\Users\\Toby\\.ace\\ACE-DATACACHE.x3";
 
         }
-
         public static void Load()
         {
-            if (File.Exists(Cache.DATACACHE_FILENAME) && cache.data.Count == 0)
+            if (File.Exists(Cache.DATACACHE_FILENAME) && cache?.data?.Count == 0)
             {
                 // read
                 string json = File.ReadAllText(Cache.DATACACHE_FILENAME);
@@ -41,7 +38,8 @@ namespace ACE.Trading.Data
 
 
                 // deserialize
-                cache = JsonConvert.DeserializeObject<Cache>(json);
+                cache.data = new List<SymbolData>();
+                cache.data.AddRange(JsonConvert.DeserializeObject<SymbolData[]>(json));
             }
             else
             {
@@ -54,22 +52,21 @@ namespace ACE.Trading.Data
             // Start auto saver
             //new Thread(delayedSave).Start();
         }
-
         public static void Save()
         {
+            while (_midChange) Thread.Sleep(50);
             // serialize
             _blockChanges = true;
+            //Cache tmpCache = new() { data =  };
+            string jsonString = JsonConvert.SerializeObject(cache.data.ToArray());
             Thread.Sleep(50);
-            Cache tmpCache = new() { data = cache.data.ToArray().ToList() };
-            string jsonString = JsonConvert.SerializeObject(tmpCache);
+            // write
+            File.WriteAllText(Cache.DATACACHE_FILENAME, jsonString);
             _blockChanges = false;
             // encrypt - Not Yet Implemented
 
 
-            // write
-            File.WriteAllText(Cache.DATACACHE_FILENAME, jsonString);
         }
-
         private static void delayedSave()
         {
             while (true)
@@ -92,7 +89,6 @@ namespace ACE.Trading.Data
             }
             return symbolList.ToArray();
         }
-
         /// <summary>
         /// Gets the all price data associated with that symbol
         /// </summary>
@@ -105,7 +101,6 @@ namespace ACE.Trading.Data
             if (sd1 != null) sd1.getPriceHistory.Sort(DataHandling.sortTime_earliestFirst); 
             return sd1;
         }
-
         /// <summary>
         /// Updates price data in the dataCache
         /// </summary>
@@ -114,7 +109,8 @@ namespace ACE.Trading.Data
         /// <param name="time">Time of symbol price</param>
         public static void update(string symbol, decimal price, DateTime time)
         {
-            while (_blockChanges) ;
+            while (_blockChanges) Thread.Sleep(50);
+            _midChange = true;
             var data = cache.data.Find(sd => sd.getSymbol == symbol);
             if (data == null)
             {
@@ -128,8 +124,9 @@ namespace ACE.Trading.Data
                 PricePoint p = new PricePoint { lastKnownPrice = price, timeUtc = time };
                 data.AddPricePoint(p);
             }
+            Thread.Sleep(50);
+            _midChange = false;
         }
-
         public static void add(string symbol)
         {
             while (_blockChanges) ;
@@ -139,7 +136,6 @@ namespace ACE.Trading.Data
                 cache.data.Add(sd);
             }
         }
-
         public static List<PricePoint> findAllByTime(string symbol, DateTime time)
         {
             var sd = GetSymbolData(symbol);

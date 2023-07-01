@@ -11,7 +11,7 @@ namespace ACE.Trading.Data.Collection
         // List of threads that the class is currently using to collect data.
         private List<logLoop> loggers = new List<logLoop>();
 
-        internal void stopLogging(string symbol = "")
+        public void stopLogging(string symbol = "")
         {
             if (symbol == "")
             {
@@ -36,6 +36,7 @@ namespace ACE.Trading.Data.Collection
         /// <param name="symbol">Symbol to log, Leave empty to log all symbols stored in the DataCache</param>
         public void startLogging(string symbol = "")
         {
+            DataCache.Load();
             if (symbol == "")
             {
                 foreach (var str in DataCache.getAllSymbols())

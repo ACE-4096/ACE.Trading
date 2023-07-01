@@ -1,6 +1,6 @@
 ﻿namespace ACE.Trading.Data.Graphics
 {
-    partial class DataView
+    partial class DataViewView
     {
         /// <summary>
         /// Required designer variable.

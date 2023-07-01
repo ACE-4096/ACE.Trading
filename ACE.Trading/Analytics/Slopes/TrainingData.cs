@@ -47,7 +47,8 @@ namespace ACE.Trading.Analytics.Slopes
 
         public override string ToString()
         {
-            return $"{{\"prompt\": \"{_prompt}\", \"completion\": \"{_completion}\"}}\n";
+            return $"{{\"prompt\": \"{getPrompt}\", \"completion\": \"{getCompletion}\"}}\n";
         }
+
     }
 }

@@ -36,7 +36,7 @@ namespace OpenAI_API.FineTune
         /// If you are requesting more than one prompt, specify them as an array of strings.
         /// </summary>
         [JsonProperty("model")]
-        public Models.Model Model { get; set; } = Models.Model.DavinciText;
+        public string ModelId { get; set; } = Models.Model.DavinciText.ModelID;
 
         /// <summary>
         /// For convenience, if you are only requesting a single prompt, set it here
@@ -97,7 +97,7 @@ namespace OpenAI_API.FineTune
         /// </summary>
         public FineTuneRequest()
         {
-            this.Model = OpenAI_API.Models.Model.DefaultModel;
+            this.ModelId = OpenAI_API.Models.Model.DefaultModel.ModelID;
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace OpenAI_API.FineTune
         {
             this.TrainingFile = basedOn.TrainingFile;
             this.ValidationFile = basedOn.ValidationFile;
-            this.Model = basedOn.Model;
+            this.ModelId = basedOn.ModelId;
             this.NumberOfEpochs = basedOn.NumberOfEpochs;
             this.BatchSize = basedOn.BatchSize;
             this.LearningRateMultiplier = basedOn.LearningRateMultiplier;
@@ -160,7 +160,7 @@ namespace OpenAI_API.FineTune
         {
             this.TrainingFile = TrainingFile;
             this.ValidationFile = ValidationFile;
-            this.Model = model;
+            this.ModelId = model.ModelID;
             this.NumberOfEpochs = NumberOfEpochs;
             this.BatchSize = BatchSize;
             this.LearningRateMultiplier = LearningRateMultiplier;

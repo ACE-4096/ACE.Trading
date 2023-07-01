@@ -40,6 +40,13 @@ namespace ACE.Trading.Analytics.Slopes
         // x is the index of the pricepoint
 
         private List<PricePoint> slopePricePoints;
+        public List<PricePoint> getSlopePoints
+        {
+            get
+            {
+                return slopePricePoints;
+            }
+        }
 
         public int numOfPricePoints
         {

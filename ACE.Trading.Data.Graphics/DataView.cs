@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace ACE.Trading.Data.Graphics
 {
-    public partial class DataView : Form
+    public partial class DataViewView : Form
     {
-        public DataView()
+        public DataViewView()
         {
             InitializeComponent();
         }

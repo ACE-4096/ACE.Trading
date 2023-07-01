@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenAiCryptoTrader", "OpenA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenAI_API", "OpenAI_API\OpenAI_API.csproj", "{98FA6BA1-35D3-48EB-AE92-16AF36FE8622}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACE.Trading", "ACE.Trading\ACE.Trading.csproj", "{C160D514-34F7-4C5E-A60D-4F9312B5187E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACE.Trading", "ACE.Trading\ACE.Trading.csproj", "{C160D514-34F7-4C5E-A60D-4F9312B5187E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACE.Trading.Data.Graphics", "ACE.Trading.Data.Graphics\ACE.Trading.Data.Graphics.csproj", "{22C0EED8-203D-4DFA-9639-1F89CFAA4D84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACE.Trading.Graphics", "ACE.Trading.Data.Graphics\ACE.Trading.Graphics.csproj", "{22C0EED8-203D-4DFA-9639-1F89CFAA4D84}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -7,16 +7,11 @@ using System.IO;
 //using ACE.Sandbox.BinanceConvertions;
 using ACE.Trading.Analytics.Slopes;
 using ACE.Trading.Data;
+using ACE.Trading.OpenAi.Formatting;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace ACE.Trading.Analytics.Slopes
 {
-    
-
-    public class Encoding{
-        public static string formatString = "Open Time (Unix): {0}, Open Price: {1}, Close Time (Unix): {2}, Close Price: {3}{4}";
-        public static string formatSlopeString = "Open Time (Unix): {0}, Open Price: {1}, Slope Gradient: {2}, Duration: {3}, Price Change: {4}, Close Time (Unix): {5}, Close Price: {6}{7}";
-        public static string lineSeperator = " ||| ";
-    }
 
     public static class BinanceToTraining
     {
@@ -30,11 +25,11 @@ namespace ACE.Trading.Analytics.Slopes
                 string prompt = "", completion = "";
                 for (int j = 0; j < promptInputs; j++)
                 {
-                    prompt += Encoding.lineSeperator + formatBinanceLine(inLines[i + j]);
+                    prompt += FluidLanguage.lineSeperator + FluidLanguage.formatBinanceLine(inLines[i + j]);
                 }
                 for (int k = 0; k < completionOutputs; k++)
                 {
-                    completion += formatBinanceLine(inLines[i + promptInputs + k]);
+                    completion += FluidLanguage.formatBinanceLine(inLines[i + promptInputs + k]);
                 }
                 td.Add(prompt, completion);
             }
@@ -52,19 +47,23 @@ namespace ACE.Trading.Analytics.Slopes
             if (slopes == null || slopes.Count == 0)
                 return null;
 
+            return slopesToTrainginData(slopes, numOfSlopesPerPrompt, numOfSlopesPerCompletion);
+        }
+        public static TrainingData slopesToTrainginData(List<PricePointSlope> slopes, int numOfSlopesPerPrompt, int numOfSlopesPerCompletion)
+        {
             TrainingData td = new TrainingData();
 
 
             for (int i = 0; i < (slopes.Count - (numOfSlopesPerPrompt + numOfSlopesPerCompletion)); i += numOfSlopesPerPrompt + numOfSlopesPerCompletion)
             {
-                string prompt = Encoding.lineSeperator, completion = "";
+                string prompt = FluidLanguage.lineSeperator, completion = "";
                 for (int j = 0; j < numOfSlopesPerPrompt; j++)
                 {
-                    prompt += formatBinanceLine(slopes[i + j]);
+                    prompt += FluidLanguage.formatBinanceLine(slopes[i + j]);
                 }
                 for (int k = 0; k < numOfSlopesPerCompletion; k++)
                 {
-                    completion += formatBinanceLine(slopes[i + numOfSlopesPerPrompt + k]);
+                    completion += FluidLanguage.formatBinanceLine(slopes[i + numOfSlopesPerPrompt + k]);
                 }
                 td.Add(prompt, completion);
             }
@@ -79,15 +78,6 @@ namespace ACE.Trading.Analytics.Slopes
         public static string convertToString(string filename, int promptInputs, int completionOutputs)
         {
             return convert(filename, promptInputs, completionOutputs).ToString();
-        }
-
-        private static string formatBinanceLine(string input){
-            string[] inputs = input.Split(',');
-            return string.Format(Encoding.formatString, inputs[0], inputs[1], inputs[4], inputs[5], Encoding.lineSeperator);
-        }
-
-        private static string formatBinanceLine(PricePointSlope input){
-            return string.Format(Encoding.formatSlopeString, input.getOpenTimeUtc.ToUnixTime(), input.getOpenPrice, input.getGradient, input.numOfPricePoints, input.getDeltaPrice,input.getCloseTimeUtc.ToUnixTime(), input.getClosePrice, Encoding.lineSeperator);
         }
     }
 }

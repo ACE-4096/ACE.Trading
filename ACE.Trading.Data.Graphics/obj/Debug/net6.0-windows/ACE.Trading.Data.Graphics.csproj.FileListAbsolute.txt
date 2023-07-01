@@ -108,3 +108,5 @@ C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE.Trading.Data.Graphics\obj\Deb
 C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE.Trading.Data.Graphics\obj\Debug\net6.0-windows\ref\ACE.Trading.Data.Graphics.dll
 C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE.Trading.Data.Graphics\obj\Debug\net6.0-windows\ACE.Trading.Data.Graphics.PredictionView.resources
 C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE.Trading.Data.Graphics\obj\Debug\net6.0-windows\ACE.Trading.Data.Graphics.TraderView.resources
+C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE.Trading.Data.Graphics\obj\Debug\net6.0-windows\ACE.Trading.Data.Graphics.PredictionView.resources
+C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE.Trading.Data.Graphics\obj\Debug\net6.0-windows\ACE.Trading.Data.Graphics.TraderView.resources

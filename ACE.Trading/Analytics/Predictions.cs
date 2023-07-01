@@ -27,6 +27,7 @@ namespace ACE.Trading.Analytics
             internal const string DATACACHE_FILENAME = "C:\\Users\\Toby\\.ace\\ACE-PREDICTIONHISTORY.x3";
 
         }
+
         public static void addPricePrediction(string symbol, Model model, List<PricePoint> Input, List<PricePoint> Output)
         {
             long id = cache.priceHistory.Count;
@@ -34,12 +35,13 @@ namespace ACE.Trading.Analytics
             cache.priceHistory.Add(ph);
             Save();
         }
-        public static void addSlopePrediction(string symbol, Model model, List<PricePointSlope> Input, List<PricePointSlope> Output)
+        public static long addSlopePrediction(string symbol, Model model, List<PricePointSlope> Input, List<PricePointSlope> Output)
         {
             long id = cache.slopeHistory.Count;
             PredictedSlopeHistory ph = new PredictedSlopeHistory(id, symbol, model, Input, Output);
             cache.slopeHistory.Add(ph);
             Save();
+            return id;
         }
 
         public static PredictedPriceHistory findPricePrediction(long id)
@@ -114,7 +116,6 @@ namespace ACE.Trading.Analytics
                 }
             }
         }
-
         public static void Save()
         {
             // serialize
@@ -246,14 +247,35 @@ namespace ACE.Trading.Analytics
         // Input to base the prediction from
         [JsonProperty("PredictedInput")]
         List<PricePointSlope>? PredictionInput { get; set; }
+        public List<PricePointSlope>? getPredictionInput
+        {
+            get
+            {
+                return PredictionInput;
+            }
+        }
 
         // predicted outcome
         [JsonProperty("PredictionOutput")]
         List<PricePointSlope>? PredictionOutput { get; set; }
+        public List<PricePointSlope>? getPredictionOutput
+        {
+            get
+            {
+                return PredictionOutput;
+            }
+        }
 
         // Real outcome
         [JsonProperty("RealResult")]
         List<PricePointSlope>? RealResult { get; set; }
+        public List<PricePointSlope>? getRealResult
+        {
+            get
+            {
+                return RealResult;
+            }
+        }
 
         // bool represents if all the required data is present to do calcs
         [JsonProperty("Complete")]
@@ -277,7 +299,7 @@ namespace ACE.Trading.Analytics
             this.Id = id;
             this.Symbol = symbol;
             this.Model = model;
-            if (input.Count > 0 && output.Count > 0)
+            if (input?.Count > 0 && output?.Count > 0)
             {
                 this.PredictionInput = input;
                 this.PredictionOutput = output;
