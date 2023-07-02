@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ACE.Trading.Analytics.Slopes;
 using Binance.Net.Objects.Models.Spot.SubAccountData;
+using System.Data;
+using CryptoExchange.Net.CommonObjects;
 
 namespace ACE.Trading.Analytics
 {
@@ -25,7 +27,6 @@ namespace ACE.Trading.Analytics
 
             [JsonIgnore]
             internal const string DATACACHE_FILENAME = "C:\\Users\\Toby\\.ace\\ACE-PREDICTIONHISTORY.x3";
-
         }
 
         public static void addPricePrediction(string symbol, Model model, List<PricePoint> Input, List<PricePoint> Output)
@@ -93,6 +94,28 @@ namespace ACE.Trading.Analytics
 
             }
             return sum / num;
+        }
+
+        public static void UpdatePredictions()
+        {
+            foreach(PredictedSlopeHistory p in cache.slopeHistory.ToArray())
+            {
+                if (!p.isComplete)
+                {
+                    cache.slopeHistory.Remove(p);
+                    p.update();
+                    cache.slopeHistory.Add(p);
+                }
+            }
+            foreach (PredictedPriceHistory p in cache.priceHistory.ToArray())
+            {
+                if (!p.isComplete)
+                {
+                    cache.priceHistory.Remove(p);
+                    p.update();
+                    cache.priceHistory.Add(p);
+                }
+            }
         }
 
         public static void Load()
@@ -171,6 +194,32 @@ namespace ACE.Trading.Analytics
         public string getSymbol { get { return Symbol; } }
         #endregion
 
+        internal void update()
+        {
+            RealResult = new List<PricePoint>();
+            // Find bars from datacache that match predicted output timestamps
+            foreach (var item in PredictionOutput)
+            {
+                List<PricePoint> p = DataCache.findAllByTime(Symbol, item.timeUtc);
+                if (p != null && p?.Count > 0)
+                {
+                    decimal avg = 0.0m;
+                    foreach (PricePoint price in p)
+                    {
+                        avg += price.deltaPrice;
+                    }
+                    avg /= p.Count;
+                    PricePoint price1 = new PricePoint { deltaPrice = avg, timeUtc = item.timeUtc };
+                    RealResult.Add(price1);
+                }
+            }
+            TimeSpan x = PredictionOutput.First().timeUtc.Subtract(PredictionOutput.Last().timeUtc);
+            if (x.TotalMinutes == 0)
+            {
+                Complete = true;
+            }
+        }
+
         public PredictedPriceHistory(long id, string symbol, Model model, List<PricePoint> input, List<PricePoint> output)
         {
             this.Id = id;
@@ -181,23 +230,7 @@ namespace ACE.Trading.Analytics
                 this.PredictionInput = input;
                 this.PredictionOutput = output; 
                 
-                RealResult = new List<PricePoint>();
-                // Find bars from datacache that match predicted output timestamps
-                foreach (var item in output)
-                {
-                    List<PricePoint> p = DataCache.findAllByTime(symbol, item.timeUtc);
-                    if (p != null && p?.Count > 0)
-                    {
-                        decimal avg = 0.0m;
-                        foreach(PricePoint price in p)
-                        {
-                            avg += price.deltaPrice;
-                        }
-                        avg /= p.Count;
-                        PricePoint price1 = new PricePoint { deltaPrice = avg, timeUtc = item.timeUtc };
-                        RealResult.Add(price1);
-                    }
-                }
+                update();
             }
             else
             {
@@ -293,6 +326,58 @@ namespace ACE.Trading.Analytics
         [JsonIgnore]
         public string getSymbol { get { return Symbol; } }
         #endregion
+        internal void update()
+        {
+            if (PredictionOutput == null || PredictionInput == null)
+                return;
+            List<PricePoint> points = DataCache.getAllPointsBetween(Symbol, PredictionOutput.First().openTimeUtc, PredictionOutput.Last().closeTimeUtc);
+
+            // split points into minutebased points
+            DateTime startTime = PredictionOutput.First().openTimeUtc;
+            DateTime nextTime = startTime.AddMinutes(1);
+            List<PricePoint> outp = new List<PricePoint>();
+            while (startTime < PredictionOutput.Last().closeTimeUtc)
+            {
+                List<PricePoint> p1 = points.FindAll(p => DataHandling.AllBetween(p, startTime, nextTime));
+                PricePoint p = new PricePoint();
+
+                // Gets high price and low price
+                p.highPrice = p.lowPrice = 0.0m;
+                foreach (var p2 in p1)
+                {
+                    if (p2.highPrice != 0.0m)
+                    {
+                        if (p2.highPrice > p.highPrice) p.highPrice = p2.highPrice;
+                    }
+                    else if (p2.lastKnownPrice != 0.0m)
+                    {
+                        if (p2.lastKnownPrice > p.highPrice) p.highPrice = p2.lastKnownPrice;
+                    }
+                    if (p2.lowPrice != 0.0m)
+                    {
+                        if (p2.lowPrice < p.lowPrice) p.lowPrice = p2.lowPrice;
+                    }
+                    else if (p2.lastKnownPrice != 0.0m)
+                    {
+                        if (p2.lastKnownPrice < p.lowPrice) p.lowPrice = p2.lastKnownPrice;
+                    }
+                }
+
+
+                p1.Sort(DataHandling.sortTime_latestFirst);
+                p.closePrice = p1.First().closePrice;
+                p.openPrice = p1.Last().openPrice;
+                outp.Add(p);
+                startTime = startTime.AddMinutes(1);
+                nextTime = startTime.AddMinutes(1);
+            }
+            RealResult = Convertions.FindAll(outp.ToArray());
+            TimeSpan x = PredictionOutput.First().openTimeUtc.Subtract(PredictionOutput.Last().closeTimeUtc);
+            if (x.TotalMinutes == 0)
+            {
+                Complete = true;
+            }
+        }
 
         public PredictedSlopeHistory(long id, string symbol, Model model, List<PricePointSlope> input, List<PricePointSlope> output)
         {
@@ -304,49 +389,7 @@ namespace ACE.Trading.Analytics
                 this.PredictionInput = input;
                 this.PredictionOutput = output;
 
-                List<PricePoint> points = DataCache.getAllPointsBetween(symbol, output.First().getOpenTimeUtc, output.Last().getCloseTimeUtc);
-                
-                // split points into minutebased points
-                DateTime startTime = output.First().getOpenTimeUtc;
-                DateTime nextTime = startTime.AddMinutes(1);
-                List<PricePoint> outp = new List<PricePoint>();
-                while(startTime < output.Last().getCloseTimeUtc)
-                {
-                    List<PricePoint> p1 = points.FindAll(p => DataHandling.AllBetween(p, startTime, nextTime));
-                    PricePoint p = new PricePoint();
-
-                    // Gets high price and low price
-                    p.highPrice = p.lowPrice = 0.0m;
-                    foreach(var p2 in p1)
-                    {
-                        if (p2.highPrice != 0.0m)
-                        {
-                            if (p2.highPrice > p.highPrice) p.highPrice = p2.highPrice;
-                        }
-                        else if (p2.lastKnownPrice != 0.0m)
-                        {
-                            if (p2.lastKnownPrice > p.highPrice) p.highPrice = p2.lastKnownPrice;
-                        }
-                        if (p2.lowPrice != 0.0m)
-                        {
-                            if (p2.lowPrice < p.lowPrice) p.lowPrice = p2.lowPrice;
-                        }
-                        else if (p2.lastKnownPrice != 0.0m)
-                        {
-                            if (p2.lastKnownPrice < p.lowPrice) p.lowPrice = p2.lastKnownPrice;
-                        }
-                    }
-
-                    
-                    p1.Sort(DataHandling.sortTime_latestFirst);
-                    p.closePrice = p1.First().closePrice;
-                    p.openPrice = p1.Last().openPrice;
-                    outp.Add(p);
-                    startTime = startTime.AddMinutes(1);
-                    nextTime = startTime.AddMinutes(1);
-                }
-                RealResult = Convertions.FindAll(outp.ToArray());
-
+                update();
             }
             else
             {

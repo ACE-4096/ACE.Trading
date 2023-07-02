@@ -106,17 +106,17 @@ namespace ACE.Trading.Analytics.Slopes
         }
         internal static int sortTime_oldestFirst(PricePointSlope x, PricePointSlope y)
         {
-            if (x.getOpenTimeUtc > y.getOpenTimeUtc)
+            if (x.openTimeUtc > y.openTimeUtc)
                 return -1;
-            if (x.getOpenTimeUtc < y.getOpenTimeUtc)
+            if (x.openTimeUtc < y.openTimeUtc)
                 return +1;
             return 0;
         }
         internal static int sortTime_latestFirst(PricePointSlope x, PricePointSlope y)
         {
-            if (x.getOpenTimeUtc > y.getOpenTimeUtc)
+            if (x.openTimeUtc > y.openTimeUtc)
                 return -1;
-            if (x.getOpenTimeUtc < y.getOpenTimeUtc)
+            if (x.openTimeUtc < y.openTimeUtc)
                 return +1;
             return 0;
         }

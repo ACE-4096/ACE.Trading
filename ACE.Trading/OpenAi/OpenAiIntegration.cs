@@ -53,17 +53,18 @@ namespace ACE.Trading.OpenAi
             completionRequest.TopP = 1;
             completionRequest.Temperature = 0;
             completionRequest.BestOf = 1;
+            completionRequest.MaxTokens = 500;
             var result = await api.Completions.CreateCompletionAsync(completionRequest);
 
             // A List of completion results;
             // result.Result.Completions;
-            string output = "";
+            string output = "Too many results.";
             if (result.Completions.Count == 1)
             {
                 output = result.Completions[0].Text;
             }
-            output = "Too many results.";
             //onReply?.Invoke(output);
+            
             return output;
         }
         public bool createFineTuneDataFiles(string datasetFileName, string validationFileName, string trainingFile, double ratio = 0.8)

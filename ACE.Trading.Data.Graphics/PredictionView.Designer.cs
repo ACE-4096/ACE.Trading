@@ -38,23 +38,31 @@
             symbolLabel = new Label();
             promptNumLabel = new Label();
             promptNum = new NumericUpDown();
+            menuStrip2 = new MenuStrip();
+            refreshDataBtn = new ToolStripMenuItem();
+            clearGraphBtn = new ToolStripMenuItem();
+            collectedDataToolStripMenuItem = new ToolStripMenuItem();
+            saveToolStripMenuItem = new ToolStripMenuItem();
+            viewToolStripMenuItem = new ToolStripMenuItem();
+            addToSymbolListToolStripMenuItem = new ToolStripMenuItem();
             createNew.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)promptNum).BeginInit();
+            menuStrip2.SuspendLayout();
             SuspendLayout();
             // 
             // formsPlot1
             // 
-            formsPlot1.Location = new Point(262, 12);
+            formsPlot1.Location = new Point(262, 34);
             formsPlot1.Margin = new Padding(4, 3, 4, 3);
             formsPlot1.Name = "formsPlot1";
-            formsPlot1.Size = new Size(525, 523);
+            formsPlot1.Size = new Size(525, 501);
             formsPlot1.TabIndex = 0;
             // 
             // treeView
             // 
-            treeView.Location = new Point(12, 12);
+            treeView.Location = new Point(12, 34);
             treeView.Name = "treeView";
-            treeView.Size = new Size(243, 380);
+            treeView.Size = new Size(243, 358);
             treeView.TabIndex = 1;
             treeView.NodeMouseClick += treeView_NodeMouseClick;
             // 
@@ -135,6 +143,55 @@
             promptNum.TabIndex = 6;
             promptNum.Value = new decimal(new int[] { 12, 0, 0, 0 });
             // 
+            // menuStrip2
+            // 
+            menuStrip2.Items.AddRange(new ToolStripItem[] { refreshDataBtn, clearGraphBtn, collectedDataToolStripMenuItem });
+            menuStrip2.Location = new Point(0, 0);
+            menuStrip2.Name = "menuStrip2";
+            menuStrip2.Size = new Size(800, 24);
+            menuStrip2.TabIndex = 7;
+            menuStrip2.Text = "menuStrip2";
+            // 
+            // refreshDataBtn
+            // 
+            refreshDataBtn.Name = "refreshDataBtn";
+            refreshDataBtn.Size = new Size(58, 20);
+            refreshDataBtn.Text = "Refresh";
+            refreshDataBtn.Click += refreshDataBtn_Click;
+            // 
+            // clearGraphBtn
+            // 
+            clearGraphBtn.Name = "clearGraphBtn";
+            clearGraphBtn.Size = new Size(81, 20);
+            clearGraphBtn.Text = "Clear Graph";
+            clearGraphBtn.Click += clearGraphBtn_Click;
+            // 
+            // collectedDataToolStripMenuItem
+            // 
+            collectedDataToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, viewToolStripMenuItem, addToSymbolListToolStripMenuItem });
+            collectedDataToolStripMenuItem.Name = "collectedDataToolStripMenuItem";
+            collectedDataToolStripMenuItem.Size = new Size(96, 20);
+            collectedDataToolStripMenuItem.Text = "Collected Data";
+            // 
+            // saveToolStripMenuItem
+            // 
+            saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            saveToolStripMenuItem.Size = new Size(180, 22);
+            saveToolStripMenuItem.Text = "Save";
+            saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
+            // 
+            // viewToolStripMenuItem
+            // 
+            viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            viewToolStripMenuItem.Size = new Size(180, 22);
+            viewToolStripMenuItem.Text = "View";
+            // 
+            // addToSymbolListToolStripMenuItem
+            // 
+            addToSymbolListToolStripMenuItem.Name = "addToSymbolListToolStripMenuItem";
+            addToSymbolListToolStripMenuItem.Size = new Size(180, 22);
+            addToSymbolListToolStripMenuItem.Text = "Add To Symbol List";
+            // 
             // PredictionView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -143,6 +200,8 @@
             Controls.Add(createNew);
             Controls.Add(treeView);
             Controls.Add(formsPlot1);
+            Controls.Add(menuStrip2);
+            MainMenuStrip = menuStrip2;
             Name = "PredictionView";
             Text = "PredictionView";
             FormClosing += PredictionView_FormClosing;
@@ -150,7 +209,10 @@
             createNew.ResumeLayout(false);
             createNew.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)promptNum).EndInit();
+            menuStrip2.ResumeLayout(false);
+            menuStrip2.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -177,5 +239,13 @@
         private Label symbolLabel;
         private Label promptNumLabel;
         private NumericUpDown promptNum;
+        private MenuStrip menuStrip2;
+        private ToolStripMenuItem toolStripMenuItem2;
+        private ToolStripMenuItem refreshDataBtn;
+        private ToolStripMenuItem clearGraphBtn;
+        private ToolStripMenuItem collectedDataToolStripMenuItem;
+        private ToolStripMenuItem saveToolStripMenuItem;
+        private ToolStripMenuItem viewToolStripMenuItem;
+        private ToolStripMenuItem addToSymbolListToolStripMenuItem;
     }
 }

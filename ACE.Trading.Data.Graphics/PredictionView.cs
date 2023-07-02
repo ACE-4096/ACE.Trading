@@ -13,6 +13,8 @@ using ACE.Trading.Analytics.Slopes;
 using ACE.Trading.Data.Collection;
 using ACE.Trading.OpenAi;
 using OpenAI_API.FineTune;
+using ScottPlot;
+using static ScottPlot.Generate;
 
 namespace ACE.Trading.Data.Graphics
 {
@@ -31,16 +33,53 @@ namespace ACE.Trading.Data.Graphics
         List<List<PredictedPriceHistory>> priceHistories = new List<List<PredictedPriceHistory>>();
         List<List<PredictedSlopeHistory>> slopeHistories = new List<List<PredictedSlopeHistory>>();
         PriceHistoryLogging logger = new PriceHistoryLogging();
+        System.Windows.Forms.Timer collectedDataPollingTimer;
+        TreeNode PredictionsNode, DataNode;
+
         private void PredictionView_Load(object sender, EventArgs e)
         {
             DataCache.Load();
             logger.startLogging();
+
+
+            refreshGui();
+
+            collectedDataPollingTimer = new System.Windows.Forms.Timer();
+            collectedDataPollingTimer.Interval = 1000;
+            collectedDataPollingTimer.Tick += CollectedDataPollingTimer_Tick;
+            collectedDataPollingTimer.Enabled = true;
+
+
+
+        }
+        private void refreshGui()
+        {
+            treeView.Nodes.Clear();
             symbols = DataCache.getAllSymbols();
             symbolCombo.Items.Clear();
             symbolCombo.Items.AddRange(symbols);
-
             Analytics.Predictions.Load();
 
+            DataNode = treeView.Nodes.Add("Collected Data");
+            PredictionsNode = treeView.Nodes.Add("Predictions");
+
+
+            // Collected Data
+            foreach (string str in symbols)
+            {
+                var subNode = DataNode.Nodes.Add(str);
+
+                var sd = DataCache.GetSymbolData(str);
+
+                subNode.Nodes.Add($"Latest Price: ${sd.getLatestPrice}");
+                subNode.Nodes.Add($"Data Entries: {sd.getPriceHistory.Count}");
+
+            }
+
+            DataNode.ExpandAll();
+            
+            // Predicted Data
+            
             // get slopes/prices filtered into lists per symbol
             foreach (string str in symbols)
             {
@@ -57,7 +96,7 @@ namespace ACE.Trading.Data.Graphics
             }
 
             // Draw Slope Prediction Nodes
-            var MainSlopeNode = treeView.Nodes.Add("Slope Predictions");
+            var MainSlopeNode = PredictionsNode.Nodes.Add("Slopes");
             foreach (string str in symbols)
             {
                 var subNode = MainSlopeNode.Nodes.Add(str);
@@ -72,7 +111,7 @@ namespace ACE.Trading.Data.Graphics
             }
 
             // Draw Price Prediction Nodes
-            var MainPriceNode = treeView.Nodes.Add("Price Predictions");
+            var MainPriceNode = PredictionsNode.Nodes.Add("PricePoints");
             foreach (string str in symbols)
             {
                 var subNode = MainPriceNode.Nodes.Add(str);
@@ -85,12 +124,22 @@ namespace ACE.Trading.Data.Graphics
                     priceNode.Nodes.Add($"Accuracy: {price.computeAccuracy()}");
                 }
             }
-            MainSlopeNode.ExpandAll();
-            MainPriceNode.ExpandAll();
+            PredictionsNode.ExpandAll();
 
             modelIdCombo.Items.Clear();
             new Thread(loadFineTunedModels).Start();
 
+        }
+
+        private void CollectedDataPollingTimer_Tick(object? sender, EventArgs e)
+        {
+            long dataCount = 0;
+            foreach (var symbol in symbols)
+            {
+                var sd = DataCache.GetSymbolData(symbol);
+                dataCount += sd.getPriceHistory.Count;
+            }
+            this.Text = $"Prediction View | Collected Data: {dataCount}";
         }
 
         private async void loadFineTunedModels()
@@ -103,6 +152,7 @@ namespace ACE.Trading.Data.Graphics
             {
                 BeginInvoke((MethodInvoker)delegate
                 {
+                    modelIdCombo.Items.Clear();
                     foreach (var model in results.Result.data)
                     {
                         if (model.FineTunedModel != null)
@@ -125,11 +175,14 @@ namespace ACE.Trading.Data.Graphics
 
         private void treeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (symbols.Contains(e.Node.Text))
+            if (DataNode.Nodes.Contains(e.Node))
             {
                 var sd = DataCache.GetSymbolData(e.Node.Text);
 
                 genGraphFromSymbolData(sd);
+            }else if (PredictionsNode.Nodes.Contains(e.Node))
+            {
+
             }
         }
 
@@ -144,6 +197,8 @@ namespace ACE.Trading.Data.Graphics
                 prices.Add((double)price.avgPrice);
                 dateTimes.Add(x++);
             }
+            prices.Reverse();
+            dateTimes.Reverse();
 
             formsPlot1.Plot.AddScatter(dateTimes.ToArray(), prices.ToArray());
             formsPlot1.Refresh();
@@ -168,7 +223,7 @@ namespace ACE.Trading.Data.Graphics
                 foreach (PricePoint p in slope.getSlopePoints)
                 {
                     realPrices.Add((double)p.avgPrice);
-                    realDateTimes.Add(p.timeUtc.ToUnixTime());
+                    realDateTimes.Add(((DateTimeOffset)p.timeUtc).ToUnixTimeSeconds());
                 }
             }
             // Real Result
@@ -177,7 +232,7 @@ namespace ACE.Trading.Data.Graphics
                 foreach (PricePoint p in slope.getSlopePoints)
                 {
                     realPrices.Add((double)p.avgPrice);
-                    realDateTimes.Add(p.timeUtc.ToUnixTime());
+                    realDateTimes.Add(((DateTimeOffset)p.timeUtc).ToUnixTimeSeconds());
                 }
             }
 
@@ -187,12 +242,15 @@ namespace ACE.Trading.Data.Graphics
                 foreach (PricePoint p in slope.getSlopePoints)
                 {
                     predictedPrices.Add((double)p.avgPrice);
-                    predictedDateTimes.Add(p.timeUtc.ToUnixTime());
+                    predictedDateTimes.Add(((DateTimeOffset)p.timeUtc).ToUnixTimeSeconds());
                 }
             }
 
+            realPrices.Reverse();
+            realDateTimes.Reverse();
+            predictedPrices.Reverse();
+            predictedDateTimes.Reverse();
             formsPlot1.Plot.AddScatter(realDateTimes.ToArray(), realPrices.ToArray());
-
             formsPlot1.Plot.AddScatter(predictedDateTimes.ToArray(), predictedPrices.ToArray());
             formsPlot1.Refresh();
         }
@@ -256,6 +314,7 @@ namespace ACE.Trading.Data.Graphics
             OpenAi.Predictions p = new OpenAi.Predictions();
             Task<long> predicitonTask = p.predictSlopes(predictionParams.symbol, new OpenAI_API.Models.Model(predictionParams.modelId), predictionParams.promptNum);
             while (!predicitonTask.IsCompleted) Thread.Sleep(100);
+
             if (predicitonTask.IsCompletedSuccessfully)
             {
                 if (predicitonTask.Result < 0)
@@ -263,10 +322,11 @@ namespace ACE.Trading.Data.Graphics
                     MessageBox.Show($"Invalid prediction id: {predicitonTask.Result}");
                     return;
                 }
-                PredictedSlopeHistory hist = Analytics.Predictions.findSlopePrediction(predicitonTask.Result);
+                PredictedSlopeHistory hist = Analytics.Predictions.findSlopePrediction(predicitonTask.Result); 
                 BeginInvoke((MethodInvoker)delegate
                 {
                     genGraphFromPrediction(hist);
+                    refreshGui();
                 });
             }
             else
@@ -285,6 +345,25 @@ namespace ACE.Trading.Data.Graphics
         {
             logger.stopLogging();
             DataCache.Save();
+        }
+
+        private void clearGraphBtn_Click(object sender, EventArgs e)
+        {
+            formsPlot1.Plot.Clear(); 
+            formsPlot1.Reset(); 
+            formsPlot1.Refresh();
+        }
+
+        private void refreshDataBtn_Click(object sender, EventArgs e)
+        {
+            refreshGui();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            logger.stopLogging();
+            DataCache.Save();
+            logger.startLogging();
         }
     }
 }

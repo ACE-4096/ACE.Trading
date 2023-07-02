@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\ACE.Trading.Data.Graphics"
+    "\\ACE.Trading",
+    "\\ACE.Trading.Data.Graphics",
+    "\\ACE.Trading\\Analytics"
   ],
-  "SelectedNode": "\\ACE.Trading.Data.Graphics\\PredictionView.cs",
+  "SelectedNode": "\\ACE.Trading\\Analytics\\Predictions.cs",
   "PreviewInSolutionExplorer": false
 }

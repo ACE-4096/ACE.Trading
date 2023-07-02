@@ -16,7 +16,6 @@ namespace ACE.Trading.Data
     public static class DataCache
     {
         private static Cache cache = new Cache();
-        private static bool _blockChanges = false, _midChange = false;
         public static int AutoSaveDelay = 60;
         private class Cache
         {
@@ -54,15 +53,11 @@ namespace ACE.Trading.Data
         }
         public static void Save()
         {
-            while (_midChange) Thread.Sleep(50);
-            // serialize
-            _blockChanges = true;
             //Cache tmpCache = new() { data =  };
             string jsonString = JsonConvert.SerializeObject(cache.data.ToArray());
             Thread.Sleep(50);
             // write
             File.WriteAllText(Cache.DATACACHE_FILENAME, jsonString);
-            _blockChanges = false;
             // encrypt - Not Yet Implemented
 
 
@@ -109,8 +104,6 @@ namespace ACE.Trading.Data
         /// <param name="time">Time of symbol price</param>
         public static void update(string symbol, decimal price, DateTime time)
         {
-            while (_blockChanges) Thread.Sleep(50);
-            _midChange = true;
             var data = cache.data.Find(sd => sd.getSymbol == symbol);
             if (data == null)
             {
@@ -121,15 +114,26 @@ namespace ACE.Trading.Data
             }
             else
             {
-                PricePoint p = new PricePoint { lastKnownPrice = price, timeUtc = time };
-                data.AddPricePoint(p);
+                var x = data.getPriceHistory.Find(point => compareTimeToMin(point.timeUtc, time));
+                if (x != null)
+                {
+                    x.lastKnownPrice = price;
+                }
+                else
+                {
+                    PricePoint p = new PricePoint { lastKnownPrice = price, timeUtc = time };
+                    data.AddPricePoint(p);
+                }
             }
             Thread.Sleep(50);
-            _midChange = false;
+            Analytics.Predictions.UpdatePredictions();
+        }
+        public static bool compareTimeToMin(DateTime time1, DateTime time2)
+        {
+            return (time1.Minute == time2.Minute && time1.Hour == time2.Hour && time1.Date == time2.Date);
         }
         public static void add(string symbol)
         {
-            while (_blockChanges) ;
             if (GetSymbolData(symbol) == null)
             {
                 SymbolData sd = new SymbolData(symbol);

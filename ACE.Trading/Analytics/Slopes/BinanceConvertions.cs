@@ -10,9 +10,10 @@ namespace ACE.Trading.Analytics.Slopes
 {
     public class BinanceConvertions
     {
-        private static DateTime UnixTimeStampToDateTime(long unixTimeStamp)
+
+        private static DateTime fromUnixTime(long unixTimeStamp)
         {
-            return DateTimeOffset.FromUnixTimeMilliseconds(unixTimeStamp).DateTime; ;
+            return DateTimeOffset.FromUnixTimeMilliseconds(unixTimeStamp).DateTime;
         }
 
         public static bool readToPricePointArray(string filename, out PricePoint[] points)
@@ -30,7 +31,7 @@ namespace ACE.Trading.Analytics.Slopes
                     continue;
                 PricePoint p = new PricePoint()
                 {
-                    timeUtc = UnixTimeStampToDateTime(long.Parse(inputs[0])),
+                    timeUtc = fromUnixTime(long.Parse(inputs[0])),
                     openPrice = decimal.Parse(inputs[1]),
                     highPrice = decimal.Parse(inputs[2]),
                     lowPrice = decimal.Parse(inputs[3]),
@@ -44,15 +45,5 @@ namespace ACE.Trading.Analytics.Slopes
             return output.Count > 0;
         }
 
-    }
-
-    public static class DateTimeExtensions
-    {
-        // Convert datetime to UNIX time
-        public static long ToUnixTime(this DateTime dateTime)
-        {
-            var timeSpan = (dateTime - new DateTime(1970, 1, 1, 0, 0, 0));
-            return (long)timeSpan.TotalSeconds;
-        }
     }
 }

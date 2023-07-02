@@ -163,12 +163,23 @@ namespace ACE.Trading.OpenAi
             }
             inputSlopes.Sort(Analytics.Slopes.Convertions.sortTime_latestFirst);
 
+            if (inputSlopes.Count == 0)
+            {
+                Debug.WriteLine("Input Slopes List is empty. No Data");
+                return -3;
+            }else if (inputSlopes.Count - numOfPromptSlopes < 0)
+            {
+                Debug.WriteLine("Not enough slopes to create the prompt");
+                return -4;
+            }
+
             string prompt = FluidLanguage.lineSeperator;
             for (int j = inputSlopes.Count-numOfPromptSlopes; j < inputSlopes.Count; j++)
             {
                 prompt += FluidLanguage.formatBinanceLine(inputSlopes[j]);
             }
             string prediction = await new OpenAiIntegration().PredictFromFineTune(prompt, model.ModelID);
+
             List<PricePointSlope> outputSlopes = OpenAi.Formatting.FluidLanguage.Decode(prediction);
 
             // Log prediction data

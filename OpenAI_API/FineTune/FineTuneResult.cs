@@ -128,7 +128,7 @@ namespace OpenAI_API.FineTune
         /// result files of the fine tuning
         /// </summary>
         [JsonProperty("result_files")]
-        public IReadOnlyList<OpenAI_API.Files.File> ResultFiles { get; set; }
+        public List<OpenAI_API.Files.File> ResultFiles { get; set; }
 
         /// <summary>
         /// status of the tine tuning
@@ -140,13 +140,13 @@ namespace OpenAI_API.FineTune
         /// List of validation files
         /// </summary>
         [JsonProperty("validation_files")]
-        public IReadOnlyList<Files.File> ValidationFiles { get; set; }
+        public List<Files.File> ValidationFiles { get; set; }
 
         /// <summary>
         /// List of training files used
         /// </summary>
         [JsonProperty("training_files")]
-        public IReadOnlyList<Files.File> TrainingFiles { get; set; }
+        public List<Files.File> TrainingFiles { get; set; }
 
         /// <summary>
         /// Time the fine tune data was updated in unix time

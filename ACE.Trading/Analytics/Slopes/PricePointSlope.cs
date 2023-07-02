@@ -11,6 +11,7 @@ namespace ACE.Trading.Analytics.Slopes
     {
         // average price for the slope
         private decimal _avgPrice;
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public decimal getAvgPrice
         {
             get { return _avgPrice; }
@@ -18,6 +19,7 @@ namespace ACE.Trading.Analytics.Slopes
 
         // Price change since last 
         private decimal _deltaPrice;
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public decimal getDeltaPrice
         {
             get { return _deltaPrice; }
@@ -26,12 +28,14 @@ namespace ACE.Trading.Analytics.Slopes
         // Linear slope variables: y = mx + c
         // gradient - ( (slope close price - slope open price ) / (number of price points in slope) )
         private decimal _slopeGradient; // m
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public decimal getGradient
         {
             get { return _slopeGradient; }
         }
 
         // open price for the first element in the slope
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public decimal getConstant // c
         {
             get { return _openPrice; }
@@ -40,6 +44,7 @@ namespace ACE.Trading.Analytics.Slopes
         // x is the index of the pricepoint
 
         private List<PricePoint> slopePricePoints;
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public List<PricePoint> getSlopePoints
         {
             get
@@ -48,6 +53,7 @@ namespace ACE.Trading.Analytics.Slopes
             }
         }
 
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public int numOfPricePoints
         {
             get { return slopePricePoints.Count; }
@@ -55,46 +61,49 @@ namespace ACE.Trading.Analytics.Slopes
 
         // extra data
         private decimal _openPrice;
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public decimal getOpenPrice
         {
             get { return _openPrice; }
         }
+        [Newtonsoft.Json.JsonIgnoreAttribute]
 
         private decimal _closePrice;
         public decimal getClosePrice
         {
             get { return _closePrice; }
         }
+        [Newtonsoft.Json.JsonIgnoreAttribute]
 
         private decimal _highPrice;
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public decimal getHighPrice
         {
             get { return _highPrice; }
         }
 
         private decimal _lowPrice;
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public decimal getLowPrice
         {
             get { return _lowPrice; }
         }
 
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public PricePoint getLatestPoint
         {
             get { return slopePricePoints.Last(); }
         }
 
         // time of price point
-        private DateTime _openTimeUtc;
-        public DateTime getOpenTimeUtc
-        {
-            get { return _openTimeUtc; }
-        }
+        private long _openTimeUtc;
+        [Newtonsoft.Json.JsonIgnoreAttribute]
+        public DateTime openTimeUtc { get { return DateTimeOffset.FromUnixTimeMilliseconds(_openTimeUtc).DateTime; } set { _openTimeUtc = ((DateTimeOffset)value).ToUnixTimeMilliseconds(); } }
 
-        private DateTime _closeTimeUtc;
-        public DateTime getCloseTimeUtc
-        {
-            get { return _closeTimeUtc; }
-        }
+        private long _closeTimeUtc;
+        [Newtonsoft.Json.JsonIgnoreAttribute]
+        public DateTime closeTimeUtc
+        { get { return DateTimeOffset.FromUnixTimeMilliseconds(_closeTimeUtc).DateTime; } set { _closeTimeUtc = ((DateTimeOffset)value).ToUnixTimeMilliseconds(); } }
 
         public PricePointSlope(List<PricePoint> slopePricePoints)
         {
@@ -111,11 +120,11 @@ namespace ACE.Trading.Analytics.Slopes
             //setting up vars
             var first = slopePricePoints.First();
             _openPrice = first.openPrice;
-            _openTimeUtc = first.timeUtc;
+            openTimeUtc = first.timeUtc;
 
             var last = slopePricePoints.Last();
             _closePrice = last.closePrice;
-            _closeTimeUtc = last.timeUtc;
+            closeTimeUtc = last.timeUtc;
 
             // linear equation vars
             _deltaPrice = _openPrice - _closePrice;

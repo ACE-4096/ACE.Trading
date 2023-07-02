@@ -26,86 +26,122 @@ namespace ACE.Trading.OpenAi.Formatting
 
         public static string formatBinanceLine(PricePointSlope input)
         {
-            return string.Format(formatSlopeString, input.getOpenTimeUtc.ToUnixTime(), input.getOpenPrice, input.getGradient, input.numOfPricePoints, input.getDeltaPrice, input.getCloseTimeUtc.ToUnixTime(), input.getClosePrice, lineSeperator);
+            long openTime = ((DateTimeOffset)input.openTimeUtc).ToUnixTimeMilliseconds();
+            long closeTime = ((DateTimeOffset)input.openTimeUtc).ToUnixTimeMilliseconds();
+            return string.Format(formatSlopeString, openTime, input.getOpenPrice, input.getGradient, input.numOfPricePoints, input.getDeltaPrice, closeTime, input.getClosePrice, lineSeperator);
         }
 
         public static List<PricePointSlope> Decode(string input)
         {
+
             List<PricePointSlope> output = new List<PricePointSlope>();
-            if (!input.Contains(lineSeperator))
+            try
             {
-                Debug.WriteLine("Invalid INPUT");
-                return output;
-            }
-            string[] completionSlopes = input.Split(lineSeperator);
-            foreach (string s in completionSlopes)
-            {
-                //OpenTime
-                int firstIndex = formatSlopeString.IndexOf("{0}");
-                int secondIndex = s.IndexOf("Unix Time")-1;
-                if (s.Length <= firstIndex) continue;
-                long openTime = long.Parse(s.Substring(firstIndex, firstIndex-secondIndex));
-
-                // openPrice
-                firstIndex = formatSlopeString.IndexOf('$');
-                secondIndex = s.IndexOf(". T") - 1;
-                decimal openPrice = long.Parse(s.Substring(firstIndex, firstIndex-secondIndex));
-
-                // gradient
-                // ". The gradient of the slope was " = 32 chars
-                string newString = s.Substring(secondIndex+31);
-                int thirdIndex = newString.IndexOf('$')-1;
-                if (thirdIndex == -1) continue;
-                decimal gradient = long.Parse(newString.Substring(0,thirdIndex));
-
-                // duration
-                // ", The duration of the slope was " - 32
-                int fourthIndex = newString.IndexOf(',');
-                if (fourthIndex == -1) continue;
-                newString = newString.Substring(fourthIndex+32);
-                int fifthIndex = newString.IndexOf('m')-1;
-                if (fifthIndex == -1) continue;
-                int duration = int.Parse(newString.Substring(0, fifthIndex));
-
-                // delta price
-                newString.Substring(fifthIndex);
-                int sixthIndex = newString.IndexOf('$');
-                if (sixthIndex == -1) continue;
-                newString = newString.Substring(sixthIndex);
-                int seventhIndex = newString.IndexOf(". T")-1;
-                if (seventhIndex == -1) continue;
-                decimal deltaPrice = decimal.Parse(newString.Substring(0, seventhIndex));
-
-                //close time
-                newString = newString.Substring(seventhIndex + 36);
-                int eighthIndex = newString.IndexOf(" Unix time");
-                if (eighthIndex == -1) continue;
-                long closeTime = long.Parse(newString.Substring(0, eighthIndex));
-
-                //close price
-                newString = newString.Substring(eighthIndex + 36);
-                int ninethIndex = newString.IndexOf('$');
-                if (ninethIndex == -1) continue;
-                decimal closePrice = decimal.Parse(newString.Substring(ninethIndex));
-
-
-                //Convert to price points
-                List<PricePoint> points = new List<PricePoint>();
-                DateTime startTime = DateTime.UnixEpoch.AddMilliseconds(openTime);
-                for (int k = 0; k < duration; k++)
+                if (!input.Contains(lineSeperator))
                 {
-                    decimal pointOpenPrice = openPrice + (gradient * k);
-                    decimal pointClosePrice = pointOpenPrice + (gradient * k + 1);
-                    decimal high = gradient > 0 ? pointClosePrice : pointOpenPrice ;
-                    decimal low = gradient < 0 ? pointClosePrice : pointOpenPrice ;
-                    points.Add(new PricePoint() { openPrice = pointOpenPrice, closePrice = pointClosePrice,
-                        deltaPrice = gradient, highPrice = high, lowPrice = low, timeUtc = startTime.AddMinutes(k) });
+                    Debug.WriteLine("Invalid INPUT");
+                    return output;
                 }
-                output.Add(new PricePointSlope(points));
+                string[] completionSlopes = input.Split(lineSeperator);
+                foreach (string s in completionSlopes)
+                {
+                    //OpenTime
+                    int firstIndex = formatSlopeString.IndexOf("{0}");
+                    int secondIndex = s.IndexOf("Unix Time") - 1;
+                    if (s.Length <= secondIndex)
+                        continue;
+                    long openTime;
+                    if (!long.TryParse(s.Substring(firstIndex, secondIndex - firstIndex), out openTime))
+                    {
+                        continue;
+                    }
+
+                    // openPrice
+                    firstIndex = s.IndexOf('$') + 1;
+                    secondIndex = s.IndexOf(". T") - 1;
+                    if (s.Length <= firstIndex || s.Length <= secondIndex)
+                        continue;
+                    string tmp = s.Substring(firstIndex, secondIndex - firstIndex);
+                    decimal openPrice;
+                    if (!decimal.TryParse(tmp, out openPrice)) continue;
 
 
+                    // gradient
+                    // ". The gradient of the slope was " = 32 chars
+                    string newString = s.Substring(secondIndex + 32);
+                    int thirdIndex = newString.IndexOf('$') - 1;
+                    if (thirdIndex == -1 || newString.Length <= thirdIndex)
+                        continue;
+                    decimal gradient;
+                    if (!decimal.TryParse(newString.Substring(0, thirdIndex), out gradient)) continue;
+
+                    // duration
+                    // ", The duration of the slope was " - 32
+                    int fourthIndex = newString.IndexOf(',');
+                    if (fourthIndex == -1)
+                        continue;
+                    newString = newString.Substring(fourthIndex + 32);
+                    int fifthIndex = newString.IndexOf('m') - 1;
+                    if (fifthIndex == -1 || newString.Length <= fifthIndex)
+                        continue;
+                    int duration;
+                    if (!int.TryParse(newString.Substring(0, fifthIndex), out duration)) continue;
+
+                    // delta price
+                    newString.Substring(fifthIndex);
+                    int sixthIndex = newString.IndexOf('$') + 1;
+                    if (sixthIndex == -1 || newString.Length <= sixthIndex)
+                        continue;
+                    newString = newString.Substring(sixthIndex);
+                    int seventhIndex = newString.IndexOf(". T") - 1;
+                    if (seventhIndex == -1 || newString.Length <= seventhIndex + 36)
+                        continue;
+                    decimal deltaPrice;
+                    if (!decimal.TryParse(newString.Substring(0, seventhIndex), out deltaPrice)) continue;
+
+                    //close time
+                    newString = newString.Substring(seventhIndex + 36);
+                    int eighthIndex = newString.IndexOf(" Unix time");
+                    if (eighthIndex == -1 || newString.Length <= eighthIndex)
+                        continue;
+                    long closeTime;
+                    if(!long.TryParse(newString.Substring(0, eighthIndex), out closeTime)) continue;
+
+                    //close price
+                    int ninethIndex = newString.IndexOf('$') + 1;
+                    if (ninethIndex == -1 || newString.Length <= ninethIndex)
+                        continue;
+                    decimal closePrice;
+                    if (!decimal.TryParse(newString.Substring(ninethIndex), out closePrice)) continue;
+
+
+                    //Convert to price points
+                    List<PricePoint> points = new List<PricePoint>();
+                    DateTime startTime = DateTimeOffset.FromUnixTimeSeconds(openTime).DateTime;
+                    for (int k = 0; k < duration; k++)
+                    {
+                        decimal pointOpenPrice = openPrice + (gradient * k);
+                        decimal pointClosePrice = pointOpenPrice + (gradient * k + 1);
+                        decimal high = gradient > 0 ? pointClosePrice : pointOpenPrice;
+                        decimal low = gradient < 0 ? pointClosePrice : pointOpenPrice;
+                        points.Add(new PricePoint()
+                        {
+                            openPrice = pointOpenPrice,
+                            closePrice = pointClosePrice,
+                            deltaPrice = gradient,
+                            highPrice = high,
+                            lowPrice = low,
+                            timeUtc = startTime.AddMinutes(k)
+                        });
+                    }
+                    output.Add(new PricePointSlope(points));
+
+
+                }
+            }catch(Exception e)
+            {
+                Debug.Write(e.Message + " ||| " +e.StackTrace);
             }
-
 
             return output;
         }

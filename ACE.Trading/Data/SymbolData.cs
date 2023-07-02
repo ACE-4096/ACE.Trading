@@ -14,6 +14,8 @@ namespace ACE.Trading.Data
         // Symbol 
         [JsonProperty("Symbol")]
         private string _symbol;
+
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public string getSymbol
         {
             get { return _symbol; }
@@ -27,6 +29,7 @@ namespace ACE.Trading.Data
         /// <summary>
         /// Gets the latest price
         /// </summary>
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public decimal getLatestPrice
         {
             get
@@ -40,6 +43,8 @@ namespace ACE.Trading.Data
             }
         }
 
+
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public List<PricePoint> getPriceHistory
         {
             get { return pricePoints; }
@@ -48,6 +53,9 @@ namespace ACE.Trading.Data
         // Price Point History
         [JsonProperty("SlopeHistory")]
         private List<PricePointSlope> slopeHistory = new List<PricePointSlope>();
+
+
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public PricePointSlope[] getSlopeHistory
         {
             get { return slopeHistory == null ? null : slopeHistory.ToArray(); }
@@ -96,9 +104,13 @@ namespace ACE.Trading.Data
         public decimal lowPrice;
 
         // time of price point
-        public DateTime timeUtc;
+        [Newtonsoft.Json.JsonIgnore]
+        public DateTime timeUtc { get { return DateTimeOffset.FromUnixTimeMilliseconds(unixTimeUtc).DateTime;  } set { unixTimeUtc = ((DateTimeOffset)value).ToUnixTimeMilliseconds(); } }
+        public long unixTimeUtc;
 
         private decimal _lastKnownPrice;
+
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public decimal lastKnownPrice
         {
             set
@@ -128,6 +140,7 @@ namespace ACE.Trading.Data
         }
 
         // average price for the price point
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public decimal avgPrice
         {
             get { return ((highPrice + lowPrice + openPrice + closePrice) / 4.0m); }
