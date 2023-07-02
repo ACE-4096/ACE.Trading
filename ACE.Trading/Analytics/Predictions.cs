@@ -365,9 +365,15 @@ namespace ACE.Trading.Analytics
 
 
                 p1.Sort(DataHandling.sortTime_latestFirst);
+                if (p1.Count == 0) {
+                    startTime = startTime.AddMinutes(1);
+                    nextTime = startTime.AddMinutes(1);
+                    continue;
+                }
                 p.closePrice = p1.First().closePrice;
                 p.openPrice = p1.Last().openPrice;
                 outp.Add(p);
+
                 startTime = startTime.AddMinutes(1);
                 nextTime = startTime.AddMinutes(1);
             }

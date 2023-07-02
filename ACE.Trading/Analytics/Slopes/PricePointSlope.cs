@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using ACE.Trading.Data;
@@ -115,7 +116,7 @@ namespace ACE.Trading.Analytics.Slopes
 
 
             //slopePricePoints.Sort(sortTime_oldestFirst);
-
+            if (slopePricePoints == null) return;
 
             //setting up vars
             var first = slopePricePoints.First();

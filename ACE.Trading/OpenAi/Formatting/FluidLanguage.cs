@@ -48,7 +48,7 @@ namespace ACE.Trading.OpenAi.Formatting
                     //OpenTime
                     int firstIndex = formatSlopeString.IndexOf("{0}");
                     int secondIndex = s.IndexOf("Unix Time") - 1;
-                    if (s.Length <= secondIndex)
+                    if (s.Length <= secondIndex || secondIndex==firstIndex)
                         continue;
                     long openTime;
                     if (!long.TryParse(s.Substring(firstIndex, secondIndex - firstIndex), out openTime))
@@ -59,7 +59,7 @@ namespace ACE.Trading.OpenAi.Formatting
                     // openPrice
                     firstIndex = s.IndexOf('$') + 1;
                     secondIndex = s.IndexOf(". T") - 1;
-                    if (s.Length <= firstIndex || s.Length <= secondIndex)
+                    if (s.Length <= firstIndex || s.Length <= secondIndex || firstIndex < 5)
                         continue;
                     string tmp = s.Substring(firstIndex, secondIndex - firstIndex);
                     decimal openPrice;
@@ -78,7 +78,7 @@ namespace ACE.Trading.OpenAi.Formatting
                     // duration
                     // ", The duration of the slope was " - 32
                     int fourthIndex = newString.IndexOf(',');
-                    if (fourthIndex == -1)
+                    if (fourthIndex == -1 || newString.Length <= fourthIndex+32)
                         continue;
                     newString = newString.Substring(fourthIndex + 32);
                     int fifthIndex = newString.IndexOf('m') - 1;

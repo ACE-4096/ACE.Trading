@@ -193,7 +193,7 @@ namespace OpenAI_API
 			try
 			{
 				res.Organization = response.Headers.GetValues("Openai-Organization").FirstOrDefault();
-				res.RequestId = response.Headers.GetValues("X-Request-ID").FirstOrDefault();
+				//res.RequestId = response.Headers.GetValues("X-Request-ID").FirstOrDefault();
 				res.ProcessingTime = TimeSpan.FromMilliseconds(int.Parse(response.Headers.GetValues("Openai-Processing-Ms").First()));
 				res.OpenaiVersion = response.Headers.GetValues("Openai-Version").FirstOrDefault();
 				if (string.IsNullOrEmpty(res.Model))

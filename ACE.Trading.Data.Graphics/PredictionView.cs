@@ -205,7 +205,7 @@ namespace ACE.Trading.Data.Graphics
         }
         private void genGraphFromPrediction(PredictedSlopeHistory sd)
         {
-            if (sd.getRealResult == null || sd.getPredictionOutput == null || sd.getPredictionInput == null)
+            if (sd.getPredictionOutput == null || sd.getPredictionInput == null)
             {
                 MessageBox.Show("Predisction history data is invalid");
                 return;
@@ -223,26 +223,28 @@ namespace ACE.Trading.Data.Graphics
                 foreach (PricePoint p in slope.getSlopePoints)
                 {
                     realPrices.Add((double)p.avgPrice);
-                    realDateTimes.Add(((DateTimeOffset)p.timeUtc).ToUnixTimeSeconds());
+                    realDateTimes.Add(((DateTimeOffset)p.timeUtc).ToUnixTimeMilliseconds());
                 }
             }
             // Real Result
-            foreach (PricePointSlope slope in sd.getRealResult)
+            if (sd.getRealResult != null)
             {
-                foreach (PricePoint p in slope.getSlopePoints)
+                foreach (PricePointSlope slope in sd.getRealResult)
                 {
-                    realPrices.Add((double)p.avgPrice);
-                    realDateTimes.Add(((DateTimeOffset)p.timeUtc).ToUnixTimeSeconds());
+                    foreach (PricePoint p in slope.getSlopePoints)
+                    {
+                        realPrices.Add((double)p.avgPrice);
+                        realDateTimes.Add(((DateTimeOffset)p.timeUtc).ToUnixTimeMilliseconds());
+                    }
                 }
             }
-
             // Fake Result
             foreach (PricePointSlope slope in sd.getPredictionOutput)
             {
                 foreach (PricePoint p in slope.getSlopePoints)
                 {
                     predictedPrices.Add((double)p.avgPrice);
-                    predictedDateTimes.Add(((DateTimeOffset)p.timeUtc).ToUnixTimeSeconds());
+                    predictedDateTimes.Add(((DateTimeOffset)p.timeUtc).ToUnixTimeMilliseconds());
                 }
             }
 

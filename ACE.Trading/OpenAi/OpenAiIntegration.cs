@@ -53,7 +53,7 @@ namespace ACE.Trading.OpenAi
             completionRequest.TopP = 1;
             completionRequest.Temperature = 0;
             completionRequest.BestOf = 1;
-            completionRequest.MaxTokens = 500;
+            completionRequest.MaxTokens = 1000;
             var result = await api.Completions.CreateCompletionAsync(completionRequest);
 
             // A List of completion results;
