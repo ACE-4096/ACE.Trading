@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Binance.Net.Clients;
 using Binance.Net.Clients.SpotApi;
 using Binance.Net.Enums;
+using Binance.Net.Interfaces;
 using Binance.Net.Interfaces.Clients;
 using Binance.Net.Objects;
 using Binance.Net.Objects.Models;
@@ -19,15 +20,15 @@ using Microsoft.Extensions.Logging;
 
 namespace ACE.Trading.Data.Collection
 {
-    internal class BinanceHandler
+    public class BinanceHandler
     {
         BinanceClient client;
 
-        internal BinanceHandler()
+        public BinanceHandler()
         {
             client = new BinanceClient(new BinanceClientOptions()
             {
-                ApiCredentials = new BinanceApiCredentials("APIKEY", "APISECRET"),
+                ApiCredentials = new BinanceApiCredentials("ZQ5tmZimJlRCc3AVybXEUT8oHZy6QNJdNeU0ILkjotAJypMGTrWgQVDoTvEwouSe", "nmkc0aL7rnjkTnAOtmefOk6YNrHxUow2MgZCtxhC6FgNMAAnsK95BH0Cwk6CESmZ"),
                 LogLevel = LogLevel.Debug
             });
         }
@@ -60,7 +61,14 @@ namespace ACE.Trading.Data.Collection
             return response.Data.OriginalClientOrderId;
         }
 
-
+        public async Task<WebCallResult<IEnumerable<IBinanceKline>>> getLastHour(string symbol)
+        {
+            return await client.SpotApi.ExchangeData.GetKlinesAsync(symbol, KlineInterval.OneMinute, DateTime.UtcNow.AddHours(-1), DateTime.UtcNow); 
+        }
+        public async Task<WebCallResult<IEnumerable<IBinanceKline>>> getMarketData(string symbol,KlineInterval interval, DateTime Start, DateTime End)
+        {
+            return await client.SpotApi.ExchangeData.GetKlinesAsync(symbol, interval, Start, End);
+        }
 
         // Fetch Data
 

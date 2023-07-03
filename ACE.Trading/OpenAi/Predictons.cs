@@ -13,6 +13,7 @@ using ACE.Trading.Analytics.Slopes;
 using ACE.Trading.OpenAi.Formatting;
 using ACE.Trading.OpenAi;
 using Newtonsoft.Json;
+using ACE.Trading.Data.Collection;
 
 namespace ACE.Trading.OpenAi
 {
@@ -103,55 +104,63 @@ namespace ACE.Trading.OpenAi
                 return -2;
             }
 
-            // retrieves logged price history
-            List<PricePoint> points = sd.getPriceHistory.FindAll(ph => ph.timeUtc >= DateTime.UtcNow.AddHours(-1));
 
-            // split points into minutebased points
-            DateTime startTime = DateTime.UtcNow.AddHours(-1);
-            DateTime nextTime = startTime.AddMinutes(1);
-            List<PricePoint> outp = new List<PricePoint>();
-            while (startTime < DateTime.UtcNow)
-            {
-                List<PricePoint> p1 = points.FindAll(p => DataHandling.AllBetween(p, startTime, nextTime));
-                PricePoint p = new PricePoint();
+            // OLD
+            /* // retrieves logged price history
+             List<PricePoint> points = sd.getPriceHistory.FindAll(ph => ph.timeUtc >= DateTime.UtcNow.AddHours(-1));
+                        // split points into minutebased points
+                        DateTime startTime = DateTime.UtcNow.AddHours(-1);
+                        DateTime nextTime = startTime.AddMinutes(1);
+                        List<PricePoint> outp = new List<PricePoint>();
+                        while (startTime < DateTime.UtcNow)
+                        {
+                            List<PricePoint> p1 = points.FindAll(p => DataHandling.AllBetween(p, startTime, nextTime));
+                            PricePoint p = new PricePoint();
 
-                // Gets high price and low price
-                p.highPrice = p.lowPrice = 0.0m;
-                if (p1 == null || p1.Count == 0) 
-                {
-                    startTime = startTime.AddMinutes(1);
-                    nextTime = startTime.AddMinutes(1);
-                    continue;
-                }
-                foreach (var p2 in p1)
-                {
-                    if (p2.highPrice != 0.0m)
-                    {
-                        if (p2.highPrice > p.highPrice) p.highPrice = p2.highPrice;
-                    }
-                    else if (p2.lastKnownPrice != 0.0m)
-                    {
-                        if (p2.lastKnownPrice > p.highPrice) p.highPrice = p2.lastKnownPrice;
-                    }
-                    if (p2.lowPrice != 0.0m)
-                    {
-                        if (p2.lowPrice < p.lowPrice) p.lowPrice = p2.lowPrice;
-                    }
-                    else if (p2.lastKnownPrice != 0.0m)
-                    {
-                        if (p2.lastKnownPrice < p.lowPrice) p.lowPrice = p2.lastKnownPrice;
-                    }
-                }
-                p.timeUtc = startTime;
+                            // Gets high price and low price
+                            p.highPrice = p.lowPrice = 0.0m;
+                            if (p1 == null || p1.Count == 0) 
+                            {
+                                startTime = startTime.AddMinutes(1);
+                                nextTime = startTime.AddMinutes(1);
+                                continue;
+                            }
+                            foreach (var p2 in p1)
+                            {
+                                if (p2.highPrice != 0.0m)
+                                {
+                                    if (p2.highPrice > p.highPrice) p.highPrice = p2.highPrice;
+                                }
+                                else if (p2.lastKnownPrice != 0.0m)
+                                {
+                                    if (p2.lastKnownPrice > p.highPrice) p.highPrice = p2.lastKnownPrice;
+                                }
+                                if (p2.lowPrice != 0.0m)
+                                {
+                                    if (p2.lowPrice < p.lowPrice) p.lowPrice = p2.lowPrice;
+                                }
+                                else if (p2.lastKnownPrice != 0.0m)
+                                {
+                                    if (p2.lastKnownPrice < p.lowPrice) p.lowPrice = p2.lastKnownPrice;
+                                }
+                            }
+                            p.timeUtc = startTime;
 
-                p1.Sort(DataHandling.sortTime_latestFirst);
-                p.closePrice = p1.First().closePrice;
-                p.openPrice = p1.Last().openPrice;
-                outp.Add(p);
-                startTime = startTime.AddMinutes(1);
-                nextTime = startTime.AddMinutes(1);
-            }
-            List < PricePointSlope > inputSlopes = Convertions.FindAll(outp.ToArray());
+                            p1.Sort(DataHandling.sortTime_latestFirst);
+                            p.closePrice = p1.First().closePrice;
+                            p.openPrice = p1.Last().openPrice;
+                            outp.Add(p);
+                            startTime = startTime.AddMinutes(1);
+                            nextTime = startTime.AddMinutes(1);
+                        }
+            List<PricePointSlope> inputSlopes = Convertions.FindAll(outp.ToArray());
+            */
+
+            BinanceHandler bh = new BinanceHandler();
+            List<PricePoint> points =  PricePoint.FromBinanceKline(bh.getLastHour(symbol).Result.Data);
+            List<PricePointSlope> inputSlopes = Convertions.FindAll(points.ToArray());
+
+
 
 
 
@@ -161,7 +170,7 @@ namespace ACE.Trading.OpenAi
                 Debug.WriteLine("ACE.Trading.Predictions.predictSlopes: (inputSlopes == null && inputSlopes?.Count == 0)");
                 return -1;
             }
-            inputSlopes.Sort(Analytics.Slopes.Convertions.sortTime_latestFirst);
+            inputSlopes.Sort(Analytics.Slopes.Convertions.sortTime_oldestFirst);
 
             if (inputSlopes.Count == 0)
             {

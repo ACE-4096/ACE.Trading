@@ -12,16 +12,17 @@ using ACE.Trading.Analytics;
 using ACE.Trading.Analytics.Slopes;
 using ACE.Trading.Data.Collection;
 using ACE.Trading.OpenAi;
+using Binance.Net.Enums;
+using Binance.Net.Interfaces;
 using OpenAI_API.FineTune;
 using ScottPlot;
+using static System.Formats.Asn1.AsnWriter;
 using static ScottPlot.Generate;
 
 namespace ACE.Trading.Data.Graphics
 {
     public partial class PredictionView : Form
     {
-
-
         public PredictionView()
         {
             InitializeComponent();
@@ -81,9 +82,29 @@ namespace ACE.Trading.Data.Graphics
         {
             treeView.Nodes.Clear();
             symbols = DataCache.getAllSymbols();
+            Analytics.Predictions.Load();
+
+            // show time intervals
+            timeIntervalCombo.Items.Clear();
+            timeIntervalCombo.Items.Add(KlineInterval.ThreeDay);
+            timeIntervalCombo.Items.Add(KlineInterval.OneDay);
+            timeIntervalCombo.Items.Add(KlineInterval.TwelveHour);
+            timeIntervalCombo.Items.Add(KlineInterval.EightHour);
+            timeIntervalCombo.Items.Add(KlineInterval.OneHour);
+            timeIntervalCombo.Items.Add(KlineInterval.ThirtyMinutes);
+            timeIntervalCombo.Items.Add(KlineInterval.FifteenMinutes);
+            timeIntervalCombo.Items.Add(KlineInterval.OneMinute);
+
+            // show time durations
+            durationCombo.Items.Add(KlineInterval.OneMonth);
+            durationCombo.Items.Add(KlineInterval.OneWeek);
+            durationCombo.Items.Add(KlineInterval.OneDay);
+            durationCombo.Items.Add(KlineInterval.OneHour);
+            durationCombo.SelectedIndexChanged += DurationCombo_SelectedIndexChanged;
+
+            // Show symbols
             symbolCombo.Items.Clear();
             symbolCombo.Items.AddRange(symbols);
-            Analytics.Predictions.Load();
 
             DataNode = treeView.Nodes.Add("Collected Data");
             PredictionsNode = treeView.Nodes.Add("Predictions");
@@ -108,11 +129,12 @@ namespace ACE.Trading.Data.Graphics
             // get slopes/prices filtered into lists per symbol
             foreach (string str in symbols)
             {
-                List<PredictedPriceHistory> priceHistory;
+                /*List<PredictedPriceHistory> priceHistory;
                 if (Analytics.Predictions.findPricePredictions(str, out priceHistory))
                 {
                     priceHistories.Add(priceHistory);
-                }
+                }*/
+
                 List<PredictedSlopeHistory> slopeHistory;
                 if (Analytics.Predictions.findSlopePredictions(str, out slopeHistory))
                 {
@@ -155,6 +177,72 @@ namespace ACE.Trading.Data.Graphics
             new Thread(loadFineTunedModels).Start();
 
         }
+
+        private async void DurationCombo_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            // get duration
+            System.DateTime startTime = System.DateTime.Now, endTime = System.DateTime.Now;
+            switch (durationCombo.Text)
+            {
+                case "OneMonth":
+                    startTime=startTime.AddMonths(-1);
+                    break;
+                case "OneWeek":
+                    startTime=startTime.AddDays(-7);
+                    break;
+                case "OneDay":
+                    startTime=startTime.AddDays(-1);
+                    break;
+                case "OneHour":
+                    startTime=startTime.AddHours(-1);
+                    break;
+            }
+
+
+            // get time interval
+            KlineInterval timeInterval = KlineInterval.OneMinute;
+            switch (timeIntervalCombo.Text)
+            {
+                case "OneDay":
+                    timeInterval = KlineInterval.OneDay;
+                    break;
+                case "TwelveHour":
+                    timeInterval = KlineInterval.TwelveHour;
+                    break;
+                case "EightHour":
+                    timeInterval = KlineInterval.EightHour;
+                    break;
+                case "OneHour":
+                    timeInterval = KlineInterval.OneHour;
+                    break;
+                case "ThirtyMinutes":
+                    timeInterval = KlineInterval.ThirtyMinutes;
+                    break;
+                case "FifteenMinutes":
+                    timeInterval = KlineInterval.FifteenMinutes;
+                    break;
+                case "OneMinute":
+                    timeInterval = KlineInterval.OneMinute;
+                    break;
+            }
+            
+            if (symbols.Contains(symbolCombo.Text) && startTime != endTime)
+            {
+                var result = new BinanceHandler().getMarketData(symbolCombo.Text, timeInterval, startTime, endTime);
+                while (!result.IsCompleted)Thread.Sleep(50) ;
+                if (result.IsCompletedSuccessfully)
+                {
+                    genMarketData(result.Result.Data);
+                }
+
+            }
+        }
+        private void genMarketData(IEnumerable<IBinanceKline> klines)
+        {
+            formsPlot1.Plot.AddCandlesticks(PricePoint.FromBinanceKline(klines).ToArray());
+
+        }
+
         private void PredictionView_FormClosing(object sender, FormClosingEventArgs e)
         {
             logger.stopLogging();
@@ -198,50 +286,29 @@ namespace ACE.Trading.Data.Graphics
                 MessageBox.Show("Predisction history data is invalid");
                 return;
             }
-
-            List<double> realPrices = new List<double>();
-            List<double> realDateTimes = new List<double>();
-
-            List<double> predictedPrices = new List<double>();
-            List<double> predictedDateTimes = new List<double>();
-            var x = 0;
+            List<PricePoint> points = new List<PricePoint>();
             // Input
             foreach (PricePointSlope slope in sd.getPredictionInput)
             {
-                foreach (PricePoint p in slope.getSlopePoints)
-                {
-                    realPrices.Add((double)p.avgPrice);
-                    realDateTimes.Add(((DateTimeOffset)p.timeUtc).ToUnixTimeMilliseconds());
-                }
+                points.AddRange(slope.getSlopePoints);
             }
+
             // Real Result
-            if (sd.getRealResult != null)
+            /*if (sd.getRealResult != null)
             {
                 foreach (PricePointSlope slope in sd.getRealResult)
                 {
-                    foreach (PricePoint p in slope.getSlopePoints)
-                    {
-                        realPrices.Add((double)p.avgPrice);
-                        realDateTimes.Add(((DateTimeOffset)p.timeUtc).ToUnixTimeMilliseconds());
-                    }
+                    realPrices.Add((double)slope.getOpenPrice);
+                    realDateTimes.Add(slope.OpenTimeUnix);
                 }
-            }
+            }*/
+
             // Fake Result
             foreach (PricePointSlope slope in sd.getPredictionOutput)
             {
-                foreach (PricePoint p in slope.getSlopePoints)
-                {
-                    predictedPrices.Add((double)p.avgPrice);
-                    predictedDateTimes.Add(((DateTimeOffset)p.timeUtc).ToUnixTimeMilliseconds());
-                }
+                points.AddRange(slope.getSlopePoints);
             }
-
-            realPrices.Reverse();
-            realDateTimes.Reverse();
-            predictedPrices.Reverse();
-            predictedDateTimes.Reverse();
-            formsPlot1.Plot.AddScatter(realDateTimes.ToArray(), realPrices.ToArray());
-            formsPlot1.Plot.AddScatter(predictedDateTimes.ToArray(), predictedPrices.ToArray());
+            formsPlot1.Plot.AddCandlesticks(points.ToArray());
             formsPlot1.Refresh();
         }
         #endregion
@@ -286,7 +353,7 @@ namespace ACE.Trading.Data.Graphics
                     MessageBox.Show($"Invalid prediction id: {predicitonTask.Result}");
                     return;
                 }
-                PredictedSlopeHistory hist = Analytics.Predictions.findSlopePrediction(predicitonTask.Result); 
+                PredictedSlopeHistory hist = Analytics.Predictions.findSlopePrediction(predicitonTask.Result);
                 BeginInvoke((MethodInvoker)delegate
                 {
                     genGraphFromPrediction(hist);
@@ -338,8 +405,8 @@ namespace ACE.Trading.Data.Graphics
         }
         private void clearGraphBtn_Click(object sender, EventArgs e)
         {
-            formsPlot1.Plot.Clear(); 
-            formsPlot1.Reset(); 
+            formsPlot1.Plot.Clear();
+            formsPlot1.Reset();
             formsPlot1.Refresh();
         }
         private void refreshDataBtn_Click(object sender, EventArgs e)

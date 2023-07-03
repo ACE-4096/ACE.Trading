@@ -34,13 +34,15 @@
             modelIdCombo = new ComboBox();
             modelIdLabel = new Label();
             createNew = new GroupBox();
-            symbolCombo = new ComboBox();
-            symbolLabel = new Label();
             promptNumLabel = new Label();
             promptNum = new NumericUpDown();
             menuStrip2 = new MenuStrip();
             refreshDataBtn = new ToolStripMenuItem();
             clearGraphBtn = new ToolStripMenuItem();
+            symbolsListToolStripMenuItem = new ToolStripMenuItem();
+            symbolCombo = new ToolStripComboBox();
+            timeIntervalCombo = new ToolStripComboBox();
+            durationCombo = new ToolStripComboBox();
             collectedDataToolStripMenuItem = new ToolStripMenuItem();
             saveToolStripMenuItem = new ToolStripMenuItem();
             viewToolStripMenuItem = new ToolStripMenuItem();
@@ -62,13 +64,13 @@
             // 
             treeView.Location = new Point(12, 34);
             treeView.Name = "treeView";
-            treeView.Size = new Size(243, 358);
+            treeView.Size = new Size(243, 406);
             treeView.TabIndex = 1;
             treeView.NodeMouseClick += treeView_NodeMouseClick;
             // 
             // predictBtn
             // 
-            predictBtn.Location = new Point(162, 108);
+            predictBtn.Location = new Point(162, 66);
             predictBtn.Name = "predictBtn";
             predictBtn.Size = new Size(75, 23);
             predictBtn.TabIndex = 3;
@@ -79,7 +81,7 @@
             // modelIdCombo
             // 
             modelIdCombo.FormattingEnabled = true;
-            modelIdCombo.Location = new Point(6, 77);
+            modelIdCombo.Location = new Point(6, 35);
             modelIdCombo.Name = "modelIdCombo";
             modelIdCombo.Size = new Size(231, 23);
             modelIdCombo.TabIndex = 4;
@@ -87,7 +89,7 @@
             // modelIdLabel
             // 
             modelIdLabel.AutoSize = true;
-            modelIdLabel.Location = new Point(6, 59);
+            modelIdLabel.Location = new Point(6, 17);
             modelIdLabel.Name = "modelIdLabel";
             modelIdLabel.Size = new Size(57, 15);
             modelIdLabel.TabIndex = 5;
@@ -95,41 +97,22 @@
             // 
             // createNew
             // 
-            createNew.Controls.Add(symbolCombo);
-            createNew.Controls.Add(symbolLabel);
             createNew.Controls.Add(promptNumLabel);
             createNew.Controls.Add(promptNum);
             createNew.Controls.Add(modelIdCombo);
             createNew.Controls.Add(predictBtn);
             createNew.Controls.Add(modelIdLabel);
-            createNew.Location = new Point(12, 398);
+            createNew.Location = new Point(12, 446);
             createNew.Name = "createNew";
-            createNew.Size = new Size(243, 137);
+            createNew.Size = new Size(243, 89);
             createNew.TabIndex = 6;
             createNew.TabStop = false;
             createNew.Text = "Predict Next Slopes";
             // 
-            // symbolCombo
-            // 
-            symbolCombo.FormattingEnabled = true;
-            symbolCombo.Location = new Point(54, 24);
-            symbolCombo.Name = "symbolCombo";
-            symbolCombo.Size = new Size(92, 23);
-            symbolCombo.TabIndex = 9;
-            // 
-            // symbolLabel
-            // 
-            symbolLabel.AutoSize = true;
-            symbolLabel.Location = new Point(10, 27);
-            symbolLabel.Name = "symbolLabel";
-            symbolLabel.Size = new Size(47, 15);
-            symbolLabel.TabIndex = 8;
-            symbolLabel.Text = "Symbol";
-            // 
             // promptNumLabel
             // 
             promptNumLabel.AutoSize = true;
-            promptNumLabel.Location = new Point(10, 108);
+            promptNumLabel.Location = new Point(10, 66);
             promptNumLabel.Name = "promptNumLabel";
             promptNumLabel.Size = new Size(77, 15);
             promptNumLabel.TabIndex = 7;
@@ -137,7 +120,7 @@
             // 
             // promptNum
             // 
-            promptNum.Location = new Point(93, 106);
+            promptNum.Location = new Point(93, 64);
             promptNum.Name = "promptNum";
             promptNum.Size = new Size(53, 23);
             promptNum.TabIndex = 6;
@@ -145,7 +128,7 @@
             // 
             // menuStrip2
             // 
-            menuStrip2.Items.AddRange(new ToolStripItem[] { refreshDataBtn, clearGraphBtn, collectedDataToolStripMenuItem });
+            menuStrip2.Items.AddRange(new ToolStripItem[] { refreshDataBtn, clearGraphBtn, symbolsListToolStripMenuItem, collectedDataToolStripMenuItem });
             menuStrip2.Location = new Point(0, 0);
             menuStrip2.Name = "menuStrip2";
             menuStrip2.Size = new Size(800, 24);
@@ -166,30 +149,57 @@
             clearGraphBtn.Text = "Clear Graph";
             clearGraphBtn.Click += clearGraphBtn_Click;
             // 
+            // symbolsListToolStripMenuItem
+            // 
+            symbolsListToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { symbolCombo, timeIntervalCombo, durationCombo });
+            symbolsListToolStripMenuItem.Name = "symbolsListToolStripMenuItem";
+            symbolsListToolStripMenuItem.Size = new Size(97, 20);
+            symbolsListToolStripMenuItem.Text = "Market History";
+            // 
+            // symbolCombo
+            // 
+            symbolCombo.Name = "symbolCombo";
+            symbolCombo.Size = new Size(121, 23);
+            symbolCombo.Text = "Symbol";
+            // 
+            // timeIntervalCombo
+            // 
+            timeIntervalCombo.Name = "timeIntervalCombo";
+            timeIntervalCombo.Size = new Size(121, 23);
+            timeIntervalCombo.Text = "Time Interval";
+            // 
+            // durationCombo
+            // 
+            durationCombo.Name = "durationCombo";
+            durationCombo.Size = new Size(121, 23);
+            durationCombo.Text = "Duration";
+            // 
             // collectedDataToolStripMenuItem
             // 
             collectedDataToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, viewToolStripMenuItem, addToSymbolListToolStripMenuItem });
+            collectedDataToolStripMenuItem.Enabled = false;
             collectedDataToolStripMenuItem.Name = "collectedDataToolStripMenuItem";
             collectedDataToolStripMenuItem.Size = new Size(96, 20);
             collectedDataToolStripMenuItem.Text = "Collected Data";
+            collectedDataToolStripMenuItem.Visible = false;
             // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(180, 22);
+            saveToolStripMenuItem.Size = new Size(175, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // viewToolStripMenuItem
             // 
             viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            viewToolStripMenuItem.Size = new Size(180, 22);
+            viewToolStripMenuItem.Size = new Size(175, 22);
             viewToolStripMenuItem.Text = "View";
             // 
             // addToSymbolListToolStripMenuItem
             // 
             addToSymbolListToolStripMenuItem.Name = "addToSymbolListToolStripMenuItem";
-            addToSymbolListToolStripMenuItem.Size = new Size(180, 22);
+            addToSymbolListToolStripMenuItem.Size = new Size(175, 22);
             addToSymbolListToolStripMenuItem.Text = "Add To Symbol List";
             // 
             // PredictionView
@@ -235,8 +245,6 @@
         private ComboBox comboBox2;
         private Label label2;
         private ComboBox modelIdCombo;
-        private ComboBox symbolCombo;
-        private Label symbolLabel;
         private Label promptNumLabel;
         private NumericUpDown promptNum;
         private MenuStrip menuStrip2;
@@ -247,5 +255,9 @@
         private ToolStripMenuItem saveToolStripMenuItem;
         private ToolStripMenuItem viewToolStripMenuItem;
         private ToolStripMenuItem addToSymbolListToolStripMenuItem;
+        private ToolStripMenuItem symbolsListToolStripMenuItem;
+        private ToolStripComboBox symbolCombo;
+        private ToolStripComboBox timeIntervalCombo;
+        private ToolStripComboBox durationCombo;
     }
 }

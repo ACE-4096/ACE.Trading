@@ -149,9 +149,9 @@ namespace ACE.Trading.Analytics
             // serialize
             string jsonString = JsonConvert.SerializeObject(cache);
             Thread.Sleep(50);
-            if (Directory.Exists(Cache.DATACACHE_FILENAME))
+            if (Directory.Exists(Path.GetDirectoryName(Cache.DATACACHE_FILENAME)))
             {
-                File.WriteAllText(Path.GetDirectoryName(Cache.DATACACHE_FILENAME), jsonString);
+                File.WriteAllText(Cache.DATACACHE_FILENAME, jsonString);
             }
             else
             {

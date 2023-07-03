@@ -103,12 +103,14 @@ namespace ACE.Trading.Analytics.Slopes
         private long _openTimeUtc;
         [Newtonsoft.Json.JsonIgnoreAttribute]
         public DateTime openTimeUtc { get { return DateTimeOffset.FromUnixTimeMilliseconds(_openTimeUtc).DateTime; } set { _openTimeUtc = ((DateTimeOffset)value).ToUnixTimeMilliseconds(); } }
-
+        [Newtonsoft.Json.JsonIgnoreAttribute]
+        public long OpenTimeUnix { get { return _openTimeUtc; } }
         private long _closeTimeUtc;
         [Newtonsoft.Json.JsonIgnoreAttribute]
         public DateTime closeTimeUtc
         { get { return DateTimeOffset.FromUnixTimeMilliseconds(_closeTimeUtc).DateTime; } set { _closeTimeUtc = ((DateTimeOffset)value).ToUnixTimeMilliseconds(); } }
-
+        [Newtonsoft.Json.JsonIgnoreAttribute]
+        public long CloseTimeUnix { get { return _closeTimeUtc; } }
         public PricePointSlope(List<PricePoint> slopePricePoints)
         {
             this.slopePricePoints = slopePricePoints;

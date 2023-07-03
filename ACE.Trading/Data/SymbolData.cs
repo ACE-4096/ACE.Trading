@@ -2,6 +2,10 @@
 using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 using ACE.Trading.Analytics.Slopes;
+using Binance.Net.Objects.Models;
+using Binance.Net.Interfaces;
+using ScottPlot;
+using System.Reflection.Metadata.Ecma335;
 
 namespace ACE.Trading.Data
 {
@@ -91,12 +95,11 @@ namespace ACE.Trading.Data
 
 
     }
-    public class PricePoint
+    public class PricePoint : ScottPlot.IOHLC
     {
 
         // Price change since last 
         public decimal deltaPrice;
-
         // extra data
         public decimal openPrice;
         public decimal closePrice;
@@ -145,6 +148,30 @@ namespace ACE.Trading.Data
         {
             get { return ((highPrice + lowPrice + openPrice + closePrice) / 4.0m); }
         }
+
+        double IOHLC.Open { get => (double)openPrice; set => _ = value; }
+        double IOHLC.High { get => (double)highPrice; set => _ = value; }
+        double IOHLC.Low { get => (double)lowPrice; set => _ = value; }
+        double IOHLC.Close { get => (double)closePrice; set => _ = value; }
+        public TimeSpan TimeSpan { get => TimeSpan.FromMinutes(1); set => _ = value; }
+        public DateTime DateTime { get=>timeUtc; set => _ = value; }
+
+        public static List<PricePoint> FromBinanceKline(IEnumerable<IBinanceKline> data) 
+        {
+            List<PricePoint> pricePoints = new List<PricePoint>();
+            foreach(var x in data)
+            {
+                PricePoint pricePoint = new PricePoint();
+                pricePoint.timeUtc = x.OpenTime;
+                pricePoint.lowPrice = x.LowPrice;
+                pricePoint.highPrice = x.HighPrice;
+                pricePoint.closePrice = x.ClosePrice;
+                pricePoint.openPrice = x.OpenPrice;
+                pricePoints.Add(pricePoint);
+            }
+            return pricePoints;
+        }
+
     }
 
 

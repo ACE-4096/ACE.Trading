@@ -63,9 +63,9 @@ namespace ACE.Trading.Data
             string jsonString = JsonConvert.SerializeObject(cache.data.ToArray());
             Thread.Sleep(50);
             // write
-            if (Directory.Exists(Cache.DATACACHE_FILENAME))
+            if (Directory.Exists(Path.GetDirectoryName(Cache.DATACACHE_FILENAME)))
             {
-                File.WriteAllText(Path.GetDirectoryName(Cache.DATACACHE_FILENAME), jsonString);
+                File.WriteAllText(Cache.DATACACHE_FILENAME, jsonString);
             }
             else
             {
@@ -86,7 +86,7 @@ namespace ACE.Trading.Data
         /// <summary>
         /// Fetches a list of all the different symbols with data stored in the dataCache
         /// </summary>
-        /// <returns>List of synbols</returns>
+        /// <returns>List of symbols</returns>
         public static string[] getAllSymbols()
         {
             if (cache == null) return new string[] { };

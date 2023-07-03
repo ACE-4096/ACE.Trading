@@ -580,6 +580,7 @@
         "dependencies": {
           "Binance.Net": "8.6.2",
           "OpenAI_API": "1.0.0",
+          "ScottPlot": "4.1.64",
           "System.Net.Http": "4.3.4"
         },
         "runtime": {
