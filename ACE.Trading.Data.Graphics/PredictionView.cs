@@ -183,7 +183,7 @@ namespace ACE.Trading.Data.Graphics
             foreach (var price in sd.getPriceHistory.ToArray())
             {
                 prices.Add((double)price.avgPrice);
-                dateTimes.Add(x++);
+                dateTimes.Add(price.unixTimeUtc);
             }
             prices.Reverse();
             dateTimes.Reverse();
