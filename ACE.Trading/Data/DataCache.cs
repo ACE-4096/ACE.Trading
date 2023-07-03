@@ -40,6 +40,12 @@ namespace ACE.Trading.Data
                 cache.data = new List<SymbolData>();
                 cache.data.AddRange(JsonConvert.DeserializeObject<SymbolData[]>(json));
             }
+            else if (File.Exists("C:\\Users\\bellramt\\ace\\ACE-DATACACHE.x3"))
+            {
+                string json = File.ReadAllText("C:\\Users\\bellramt\\ace\\ACE-DATACACHE.x3");
+                cache.data = new List<SymbolData>();
+                cache.data.AddRange(JsonConvert.DeserializeObject<SymbolData[]>(json));
+            }
             else
             {
                 if (cache == null)
@@ -57,7 +63,14 @@ namespace ACE.Trading.Data
             string jsonString = JsonConvert.SerializeObject(cache.data.ToArray());
             Thread.Sleep(50);
             // write
-            File.WriteAllText(Cache.DATACACHE_FILENAME, jsonString);
+            if (Directory.Exists(Cache.DATACACHE_FILENAME))
+            {
+                File.WriteAllText(Path.GetDirectoryName(Cache.DATACACHE_FILENAME), jsonString);
+            }
+            else
+            {
+                File.WriteAllText("C:\\Users\\bellramt\\ace\\ACE-DATACACHE.x3", jsonString);
+            }
             // encrypt - Not Yet Implemented
 
 

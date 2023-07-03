@@ -62,21 +62,23 @@ namespace ACE.Trading.Analytics.Slopes
 
         // extra data
         private decimal _openPrice;
+
         [Newtonsoft.Json.JsonIgnoreAttribute]
         public decimal getOpenPrice
         {
             get { return _openPrice; }
         }
-        [Newtonsoft.Json.JsonIgnoreAttribute]
 
         private decimal _closePrice;
+
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public decimal getClosePrice
         {
             get { return _closePrice; }
         }
-        [Newtonsoft.Json.JsonIgnoreAttribute]
 
         private decimal _highPrice;
+        
         [Newtonsoft.Json.JsonIgnoreAttribute]
         public decimal getHighPrice
         {
@@ -84,6 +86,7 @@ namespace ACE.Trading.Analytics.Slopes
         }
 
         private decimal _lowPrice;
+        
         [Newtonsoft.Json.JsonIgnoreAttribute]
         public decimal getLowPrice
         {

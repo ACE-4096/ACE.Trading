@@ -36,21 +36,46 @@ namespace ACE.Trading.Data.Graphics
         System.Windows.Forms.Timer collectedDataPollingTimer;
         TreeNode PredictionsNode, DataNode;
 
+        #region Loading / Saving
         private void PredictionView_Load(object sender, EventArgs e)
         {
             DataCache.Load();
             logger.startLogging();
-
-
             refreshGui();
-
             collectedDataPollingTimer = new System.Windows.Forms.Timer();
             collectedDataPollingTimer.Interval = 1000;
             collectedDataPollingTimer.Tick += CollectedDataPollingTimer_Tick;
             collectedDataPollingTimer.Enabled = true;
+        }
+        private async void loadFineTunedModels()
+        {
+            OpenAiIntegration ai = new OpenAiIntegration();
+            Task<FineTuneResultList> results = ai.getFineTuneList();
 
-
-
+            while (!results.IsCompleted) { Thread.Sleep(1000); }
+            if (results.IsCompletedSuccessfully)
+            {
+                BeginInvoke((MethodInvoker)delegate
+                {
+                    modelIdCombo.Items.Clear();
+                    foreach (var model in results.Result.data)
+                    {
+                        if (model.FineTunedModel != null)
+                        {
+                            modelIdCombo.Items.Add(model.FineTunedModel);
+                        }
+                    }
+                });
+            }
+            else if (results.IsCanceled)
+            {
+                MessageBox.Show("Error retreiving fine tuned models.");
+            }
+            else if (results.IsFaulted)
+            {
+                MessageBox.Show("Error retreiving fine tuned models.");
+                Debug.Print(results.Exception.ToString());
+            }
         }
         private void refreshGui()
         {
@@ -77,9 +102,9 @@ namespace ACE.Trading.Data.Graphics
             }
 
             DataNode.ExpandAll();
-            
+
             // Predicted Data
-            
+
             // get slopes/prices filtered into lists per symbol
             foreach (string str in symbols)
             {
@@ -130,6 +155,12 @@ namespace ACE.Trading.Data.Graphics
             new Thread(loadFineTunedModels).Start();
 
         }
+        private void PredictionView_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            logger.stopLogging();
+            DataCache.Save();
+        }
+        #endregion
 
         private void CollectedDataPollingTimer_Tick(object? sender, EventArgs e)
         {
@@ -142,50 +173,7 @@ namespace ACE.Trading.Data.Graphics
             this.Text = $"Prediction View | Collected Data: {dataCount}";
         }
 
-        private async void loadFineTunedModels()
-        {
-            OpenAiIntegration ai = new OpenAiIntegration();
-            Task<FineTuneResultList> results = ai.getFineTuneList();
-
-            while (!results.IsCompleted) { Thread.Sleep(1000); }
-            if (results.IsCompletedSuccessfully)
-            {
-                BeginInvoke((MethodInvoker)delegate
-                {
-                    modelIdCombo.Items.Clear();
-                    foreach (var model in results.Result.data)
-                    {
-                        if (model.FineTunedModel != null)
-                        {
-                            modelIdCombo.Items.Add(model.FineTunedModel);
-                        }
-                    }
-                });
-            }
-            else if (results.IsCanceled)
-            {
-                MessageBox.Show("Error retreiving fine tuned models.");
-            }
-            else if (results.IsFaulted)
-            {
-                MessageBox.Show("Error retreiving fine tuned models.");
-                Debug.Print(results.Exception.ToString());
-            }
-        }
-
-        private void treeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            if (DataNode.Nodes.Contains(e.Node))
-            {
-                var sd = DataCache.GetSymbolData(e.Node.Text);
-
-                genGraphFromSymbolData(sd);
-            }else if (PredictionsNode.Nodes.Contains(e.Node))
-            {
-
-            }
-        }
-
+        #region Graphics
         private void genGraphFromSymbolData(SymbolData sd)
         {
             List<double> prices = new List<double>();
@@ -256,17 +244,10 @@ namespace ACE.Trading.Data.Graphics
             formsPlot1.Plot.AddScatter(predictedDateTimes.ToArray(), predictedPrices.ToArray());
             formsPlot1.Refresh();
         }
+        #endregion
 
-        // Open sliud language slope file
-        private void fluidLanguageToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            filename = openFile();
-            switch (Path.GetExtension(filename))
-            {
-
-            }
-        }
-
+        // NOT YET IMPLEMENTED
+        // Open fliud language slope file
         private string openFile()
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -282,26 +263,7 @@ namespace ACE.Trading.Data.Graphics
             return "";
         }
 
-        private void predictBtn_Click(object sender, EventArgs e)
-        {
-            if (modelIdCombo.SelectedIndex == -1)
-            {
-                MessageBox.Show("No model selected for predictions.");
-                return;
-            }
-            if (symbolCombo.SelectedIndex == -1)
-            {
-                MessageBox.Show("No symbol selected for predictions.");
-                return;
-            }
-            if (promptNum.Value <= 0 || promptNum.Value > 12)
-            {
-                MessageBox.Show($"Cannot predict with {promptNum.Value} prompts.");
-                return;
-            }
-            var parameters = new PredictionParams() { modelId = modelIdCombo.Text, symbol = symbolCombo.Text, promptNum = (int)promptNum.Value };
-            new Thread(predict).Start(parameters);
-        }
+        #region Predictions
         class PredictionParams
         {
             public string modelId;
@@ -337,35 +299,67 @@ namespace ACE.Trading.Data.Graphics
             }
 
         }
+        #endregion
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+
+        #region Click events
+        private void treeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
+            if (DataNode.Nodes.Contains(e.Node))
+            {
+                var sd = DataCache.GetSymbolData(e.Node.Text);
 
+                genGraphFromSymbolData(sd);
+            }
+            else if (PredictionsNode.Nodes.Contains(e.Node))
+            {
+
+            }
         }
-
-        private void PredictionView_FormClosing(object sender, FormClosingEventArgs e)
+        private void predictBtn_Click(object sender, EventArgs e)
         {
-            logger.stopLogging();
-            DataCache.Save();
+            if (modelIdCombo.SelectedIndex == -1)
+            {
+                MessageBox.Show("No model selected for predictions.");
+                return;
+            }
+            if (symbolCombo.SelectedIndex == -1)
+            {
+                MessageBox.Show("No symbol selected for predictions.");
+                return;
+            }
+            if (promptNum.Value <= 0 || promptNum.Value > 12)
+            {
+                MessageBox.Show($"Cannot predict with {promptNum.Value} prompts.");
+                return;
+            }
+            var parameters = new PredictionParams() { modelId = modelIdCombo.Text, symbol = symbolCombo.Text, promptNum = (int)promptNum.Value };
+            new Thread(predict).Start(parameters);
         }
-
         private void clearGraphBtn_Click(object sender, EventArgs e)
         {
             formsPlot1.Plot.Clear(); 
             formsPlot1.Reset(); 
             formsPlot1.Refresh();
         }
-
         private void refreshDataBtn_Click(object sender, EventArgs e)
         {
             refreshGui();
         }
-
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             logger.stopLogging();
             DataCache.Save();
             logger.startLogging();
         }
+        private void fluidLanguageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            filename = openFile();
+            switch (Path.GetExtension(filename))
+            {
+
+            }
+        }
+        #endregion
     }
 }

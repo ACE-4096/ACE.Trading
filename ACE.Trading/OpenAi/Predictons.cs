@@ -142,7 +142,7 @@ namespace ACE.Trading.OpenAi
                         if (p2.lastKnownPrice < p.lowPrice) p.lowPrice = p2.lastKnownPrice;
                     }
                 }
-
+                p.timeUtc = startTime;
 
                 p1.Sort(DataHandling.sortTime_latestFirst);
                 p.closePrice = p1.First().closePrice;
@@ -174,16 +174,18 @@ namespace ACE.Trading.OpenAi
             }
 
             string prompt = FluidLanguage.lineSeperator;
+            List<PricePointSlope> limitedInputSlopes = new List<PricePointSlope>();
             for (int j = inputSlopes.Count-numOfPromptSlopes; j < inputSlopes.Count; j++)
             {
                 prompt += FluidLanguage.formatBinanceLine(inputSlopes[j]);
+                limitedInputSlopes.Add(inputSlopes[j]);
             }
             string prediction = await new OpenAiIntegration().PredictFromFineTune(prompt, model.ModelID);
 
             List<PricePointSlope> outputSlopes = OpenAi.Formatting.FluidLanguage.Decode(prediction);
 
             // Log prediction data
-            long id = Analytics.Predictions.addSlopePrediction(symbol, model, inputSlopes, outputSlopes);
+            long id = Analytics.Predictions.addSlopePrediction(symbol, model, limitedInputSlopes, outputSlopes);
 
             return id;
         }

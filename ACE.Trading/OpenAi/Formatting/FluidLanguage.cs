@@ -68,8 +68,11 @@ namespace ACE.Trading.OpenAi.Formatting
 
                     // gradient
                     // ". The gradient of the slope was " = 32 chars
-                    string newString = s.Substring(secondIndex + 32);
-                    int thirdIndex = newString.IndexOf('$') - 1;
+                    if (s.Length <= secondIndex + 32)
+                        continue;
+
+                    string newString = s.Substring(secondIndex + 33);
+                    int thirdIndex = newString.IndexOf('$');
                     if (thirdIndex == -1 || newString.Length <= thirdIndex)
                         continue;
                     decimal gradient;
@@ -117,7 +120,7 @@ namespace ACE.Trading.OpenAi.Formatting
 
                     //Convert to price points
                     List<PricePoint> points = new List<PricePoint>();
-                    DateTime startTime = DateTimeOffset.FromUnixTimeSeconds(openTime).DateTime;
+                    DateTime startTime = DateTimeOffset.FromUnixTimeMilliseconds(openTime).DateTime;
                     for (int k = 0; k < duration; k++)
                     {
                         decimal pointOpenPrice = openPrice + (gradient * k);

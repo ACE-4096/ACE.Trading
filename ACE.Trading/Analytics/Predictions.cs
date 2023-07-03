@@ -131,6 +131,11 @@ namespace ACE.Trading.Analytics
                 // deserialize
                 cache = JsonConvert.DeserializeObject<Cache>(json);
             }
+            else if (File.Exists("C:\\Users\\bellramt\\ace\\ACE-PREDICTIONHISTORY.x3"))
+            {
+                string json = File.ReadAllText("C:\\Users\\bellramt\\ace\\ACE-PREDICTIONHISTORY.x3");
+                cache = JsonConvert.DeserializeObject<Cache>(json);
+            }
             else
             {
                 if (cache == null)
@@ -143,12 +148,15 @@ namespace ACE.Trading.Analytics
         {
             // serialize
             string jsonString = JsonConvert.SerializeObject(cache);
-
-            // encrypt - Not Yet Implemented
-
-
-            // write
-            File.WriteAllText(Cache.DATACACHE_FILENAME, jsonString);
+            Thread.Sleep(50);
+            if (Directory.Exists(Cache.DATACACHE_FILENAME))
+            {
+                File.WriteAllText(Path.GetDirectoryName(Cache.DATACACHE_FILENAME), jsonString);
+            }
+            else
+            {
+                File.WriteAllText("C:\\Users\\bellramt\\ace\\ACE-PREDICTIONHISTORY.x3", jsonString);
+            }
         }
     }
 
