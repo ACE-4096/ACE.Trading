@@ -406,19 +406,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\bellramt\\.nuget\\packages\\": {}
+    "C:\\Users\\Toby\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\bellramt\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\OpenAI_API.csproj",
+      "projectUniqueName": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\OpenAI_API.csproj",
       "projectName": "OpenAI_API",
-      "projectPath": "C:\\Users\\bellramt\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\OpenAI_API.csproj",
-      "packagesPath": "C:\\Users\\bellramt\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\bellramt\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\obj\\",
+      "projectPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\OpenAI_API.csproj",
+      "packagesPath": "C:\\Users\\Toby\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\bellramt\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Toby\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -426,8 +431,8 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Users\\bellramt\\Downloads": {},
-        "https://www.nuget.org/api/v2/": {}
+        "C:\\Program Files\\dotnet\\library-packs": {},
+        "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net6.0": {
@@ -470,7 +475,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
       }
     }
   }

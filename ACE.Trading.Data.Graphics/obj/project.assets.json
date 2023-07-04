@@ -3627,19 +3627,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\bellramt\\.nuget\\packages\\": {}
+    "C:\\Users\\Toby\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\bellramt\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\ACE.Trading.Graphics.csproj",
+      "projectUniqueName": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\ACE.Trading.Graphics.csproj",
       "projectName": "ACE.Trading.Graphics",
-      "projectPath": "C:\\Users\\bellramt\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\ACE.Trading.Graphics.csproj",
-      "packagesPath": "C:\\Users\\bellramt\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\bellramt\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\obj\\",
+      "projectPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\ACE.Trading.Graphics.csproj",
+      "packagesPath": "C:\\Users\\Toby\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\bellramt\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Toby\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -3647,15 +3652,15 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Users\\bellramt\\Downloads": {},
-        "https://www.nuget.org/api/v2/": {}
+        "C:\\Program Files\\dotnet\\library-packs": {},
+        "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net6.0-windows7.0": {
           "targetAlias": "net6.0-windows",
           "projectReferences": {
-            "C:\\Users\\bellramt\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\ACE.Trading.csproj": {
-              "projectPath": "C:\\Users\\bellramt\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\ACE.Trading.csproj"
+            "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\ACE.Trading.csproj": {
+              "projectPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\ACE.Trading.csproj"
             }
           }
         }
@@ -3694,7 +3699,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
       }
     }
   }

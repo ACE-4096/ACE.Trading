@@ -105,6 +105,7 @@ namespace ACE.Trading.Data
         public decimal closePrice;
         public decimal highPrice;
         public decimal lowPrice;
+        public decimal volume;
 
         // time of price point
         [Newtonsoft.Json.JsonIgnore]
@@ -167,6 +168,7 @@ namespace ACE.Trading.Data
                 pricePoint.highPrice = x.HighPrice;
                 pricePoint.closePrice = x.ClosePrice;
                 pricePoint.openPrice = x.OpenPrice;
+                pricePoint.volume = x.Volume;
                 pricePoints.Add(pricePoint);
             }
             return pricePoints;

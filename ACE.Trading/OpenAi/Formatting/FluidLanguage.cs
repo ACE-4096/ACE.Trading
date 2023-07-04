@@ -17,20 +17,17 @@ namespace ACE.Trading.OpenAi.Formatting
         public static string formatString = "During the minute proceeding the unix time of {0}, The open price of was ${1}, Close Time (Unix): {2}, Close Price: {3}{4}";
         public static string formatSlopeString = "A trading slope had an open time of {0} Unix Time, The open price was ${1}. The gradient of the slope was {2}$/minute, The duration of the slope was {3} minutes. The total price change of the slope period was ${4}. The slope finished at the time of {5} Unix time, with a price of ${6}{7}";
         public static string lineSeperator = " ||| ";
-
         public static string formatBinanceLine(string input)
         {
             string[] inputs = input.Split(',');
             return string.Format(formatString, inputs[0], inputs[1], inputs[4], inputs[5], lineSeperator);
         }
-
         public static string formatBinanceLine(PricePointSlope input)
         {
             long openTime = ((DateTimeOffset)input.openTimeUtc).ToUnixTimeMilliseconds();
             long closeTime = ((DateTimeOffset)input.openTimeUtc).ToUnixTimeMilliseconds();
             return string.Format(formatSlopeString, openTime, input.getOpenPrice, input.getGradient, input.numOfPricePoints, input.getDeltaPrice, closeTime, input.getClosePrice, lineSeperator);
         }
-
         public static List<PricePointSlope> Decode(string input)
         {
 

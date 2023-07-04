@@ -5,6 +5,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using ACE.Trading.Data;
+using ACE.Trading.OpenAi.Formatting;
 
 namespace ACE.Trading.Analytics.Slopes
 {
@@ -99,6 +100,14 @@ namespace ACE.Trading.Analytics.Slopes
             get { return slopePricePoints.Last(); }
         }
 
+        [Newtonsoft.Json.JsonIgnoreAttribute]
+        public decimal getVolume
+        {
+            get { return volume; }
+        }
+
+        private decimal volume;
+
         // time of price point
         private long _openTimeUtc;
         [Newtonsoft.Json.JsonIgnoreAttribute]
@@ -139,16 +148,22 @@ namespace ACE.Trading.Analytics.Slopes
             // Calc avg, High and Low prices
 
             decimal avg = slopePricePoints[0].avgPrice, high = slopePricePoints[0].highPrice, low = slopePricePoints[0].lowPrice;
-
+            decimal volume = slopePricePoints[0].volume;
             for (int i = 1; i < slopePricePoints.Count; i++)
             {
                 low = slopePricePoints[i].lowPrice < low ? slopePricePoints[i].lowPrice : low;
                 high = slopePricePoints[i].highPrice > high ? slopePricePoints[i].highPrice : high;
                 avg += slopePricePoints[i].avgPrice;
+                volume+= slopePricePoints[i].volume;
             }
             _highPrice = high;
             _lowPrice = low;
             _avgPrice = avg / slopePricePoints.Count;
+        }
+
+        private long getAvgVolume()
+        {
+
         }
 
         internal PricePointSlope(PricePoint first)
@@ -162,5 +177,9 @@ namespace ACE.Trading.Analytics.Slopes
             reCalc();
         }
 
+        public string ToString(int SlopeNum)
+        {
+            return string.Format(MinLanguage.Encoding.slopeFormat, SlopeNum, OpenTimeUnix, _openPrice, CloseTimeUnix, _closePrice, _slopeGradient, volume  );
+        }
     }
 }
