@@ -42,7 +42,7 @@ namespace ACE.Trading.Analytics.Slopes
             List<PricePointSlope> slopes = new List<PricePointSlope>();
             if (BinanceConvertions.readToPricePointArray(filename, out points))
             {
-                slopes = Convertions.FindAll(points);
+                slopes = Convertions.FindAllV2(points);
             }
             if (slopes == null || slopes.Count == 0)
                 return null;
@@ -70,10 +70,6 @@ namespace ACE.Trading.Analytics.Slopes
             return td;
         }
 
-        public static void convert(string binanceDataFilename, string ou, int promptInputs, int completionOutputs)
-        {
-
-        }
 
         public static string convertToString(string filename, int promptInputs, int completionOutputs)
         {

@@ -169,6 +169,12 @@ namespace ACE.Trading.OpenAi
         {
             return await api.Files.GetFilesAsync();
         }
+
+        public async Task<string> getFileData(string fileId)
+        {
+            return await api.Files.GetFileContentAsStringAsync(fileId);
+        }
+
         public async Task<OpenAI_API.Files.File> uploadFile(string filename)
         {
             if (!System.IO.File.Exists(filename))

@@ -43,6 +43,7 @@
             symbolCombo = new ToolStripComboBox();
             timeIntervalCombo = new ToolStripComboBox();
             durationCombo = new ToolStripComboBox();
+            openTrainingFileToolStripMenuItem = new ToolStripMenuItem();
             collectedDataToolStripMenuItem = new ToolStripMenuItem();
             saveToolStripMenuItem = new ToolStripMenuItem();
             viewToolStripMenuItem = new ToolStripMenuItem();
@@ -54,6 +55,7 @@
             // 
             // formsPlot1
             // 
+            formsPlot1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             formsPlot1.Location = new Point(262, 34);
             formsPlot1.Margin = new Padding(4, 3, 4, 3);
             formsPlot1.Name = "formsPlot1";
@@ -128,7 +130,7 @@
             // 
             // menuStrip2
             // 
-            menuStrip2.Items.AddRange(new ToolStripItem[] { refreshDataBtn, clearGraphBtn, symbolsListToolStripMenuItem, collectedDataToolStripMenuItem });
+            menuStrip2.Items.AddRange(new ToolStripItem[] { refreshDataBtn, clearGraphBtn, symbolsListToolStripMenuItem, openTrainingFileToolStripMenuItem, collectedDataToolStripMenuItem });
             menuStrip2.Location = new Point(0, 0);
             menuStrip2.Name = "menuStrip2";
             menuStrip2.Size = new Size(800, 24);
@@ -174,6 +176,13 @@
             durationCombo.Size = new Size(121, 23);
             durationCombo.Text = "Duration";
             // 
+            // openTrainingFileToolStripMenuItem
+            // 
+            openTrainingFileToolStripMenuItem.Name = "openTrainingFileToolStripMenuItem";
+            openTrainingFileToolStripMenuItem.Size = new Size(116, 20);
+            openTrainingFileToolStripMenuItem.Text = "Open Training File";
+            openTrainingFileToolStripMenuItem.Click += openTrainingFileToolStripMenuItem_Click;
+            // 
             // collectedDataToolStripMenuItem
             // 
             collectedDataToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, viewToolStripMenuItem, addToSymbolListToolStripMenuItem });
@@ -186,20 +195,20 @@
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(175, 22);
+            saveToolStripMenuItem.Size = new Size(177, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // viewToolStripMenuItem
             // 
             viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            viewToolStripMenuItem.Size = new Size(175, 22);
+            viewToolStripMenuItem.Size = new Size(177, 22);
             viewToolStripMenuItem.Text = "View";
             // 
             // addToSymbolListToolStripMenuItem
             // 
             addToSymbolListToolStripMenuItem.Name = "addToSymbolListToolStripMenuItem";
-            addToSymbolListToolStripMenuItem.Size = new Size(175, 22);
+            addToSymbolListToolStripMenuItem.Size = new Size(177, 22);
             addToSymbolListToolStripMenuItem.Text = "Add To Symbol List";
             // 
             // PredictionView
@@ -230,7 +239,6 @@
         private ScottPlot.FormsPlot formsPlot1;
         private TreeView treeView;
         private MenuStrip menuStrip1;
-        private ToolStripMenuItem toolStripMenuItem1;
         private ToolStripMenuItem openTrainingDataSlopeToolStripMenuItem;
         private ToolStripMenuItem pricePointsToolStripMenuItem;
         private ToolStripMenuItem unlanguisticToolStripMenuItem;
@@ -259,5 +267,6 @@
         private ToolStripComboBox symbolCombo;
         private ToolStripComboBox timeIntervalCombo;
         private ToolStripComboBox durationCombo;
+        private ToolStripMenuItem openTrainingFileToolStripMenuItem;
     }
 }

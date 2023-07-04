@@ -42,7 +42,7 @@ namespace ACE.Trading.OpenAi.Formatting
                     Debug.WriteLine("Invalid INPUT");
                     return output;
                 }
-                string[] completionSlopes = input.Split(lineSeperator);
+                string[] completionSlopes = input.Split(lineSeperator, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string s in completionSlopes)
                 {
                     //OpenTime
@@ -120,11 +120,11 @@ namespace ACE.Trading.OpenAi.Formatting
 
                     //Convert to price points
                     List<PricePoint> points = new List<PricePoint>();
-                    DateTime startTime = DateTimeOffset.FromUnixTimeMilliseconds(openTime).DateTime;
+                    DateTime startTime = DateTimeOffset.FromUnixTimeMilliseconds(openTime).DateTime.AddDays(1.575);                    //DateTime closeTime = DateTimeOffset.FromUnixTimeMilliseconds(closeTime).DateTime;
                     for (int k = 0; k < duration; k++)
                     {
                         decimal pointOpenPrice = openPrice + (gradient * k);
-                        decimal pointClosePrice = pointOpenPrice + (gradient * k + 1);
+                        decimal pointClosePrice = pointOpenPrice + (gradient * (k+1));
                         decimal high = gradient > 0 ? pointClosePrice : pointOpenPrice;
                         decimal low = gradient < 0 ? pointClosePrice : pointOpenPrice;
                         points.Add(new PricePoint()

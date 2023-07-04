@@ -158,7 +158,7 @@ namespace ACE.Trading.OpenAi
 
             BinanceHandler bh = new BinanceHandler();
             List<PricePoint> points =  PricePoint.FromBinanceKline(bh.getLastHour(symbol).Result.Data);
-            List<PricePointSlope> inputSlopes = Convertions.FindAll(points.ToArray());
+            List<PricePointSlope> inputSlopes = Convertions.FindAllV2(points.ToArray());
 
 
 
@@ -184,7 +184,7 @@ namespace ACE.Trading.OpenAi
 
             string prompt = FluidLanguage.lineSeperator;
             List<PricePointSlope> limitedInputSlopes = new List<PricePointSlope>();
-            for (int j = inputSlopes.Count-numOfPromptSlopes; j < inputSlopes.Count; j++)
+            for (int j = 0; j < numOfPromptSlopes; j++)
             {
                 prompt += FluidLanguage.formatBinanceLine(inputSlopes[j]);
                 limitedInputSlopes.Add(inputSlopes[j]);

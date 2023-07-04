@@ -100,3 +100,9 @@ C:\Users\Toby\Documents\GitHub\ACE.Trading\OpenAiCryptoTrader\bin\Debug\net6.0\S
 C:\Users\Toby\Documents\GitHub\ACE.Trading\OpenAiCryptoTrader\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\Toby\Documents\GitHub\ACE.Trading\OpenAiCryptoTrader\bin\Debug\net6.0\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
 C:\Users\Toby\Documents\GitHub\ACE.Trading\OpenAiCryptoTrader\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\OpenAiCryptoTrader\bin\Debug\net6.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\OpenAiCryptoTrader\bin\Debug\net6.0\ScottPlot.dll
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\OpenAiCryptoTrader\bin\Debug\net6.0\System.Drawing.Common.dll
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\OpenAiCryptoTrader\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\OpenAiCryptoTrader\bin\Debug\net6.0\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\OpenAiCryptoTrader\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll

@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,6 +16,7 @@ using ACE.Trading.OpenAi;
 using Binance.Net.Enums;
 using Binance.Net.Interfaces;
 using OpenAI_API.FineTune;
+using OpenAI_API.Moderation;
 using ScottPlot;
 using static System.Formats.Asn1.AsnWriter;
 using static ScottPlot.Generate;
@@ -33,7 +35,8 @@ namespace ACE.Trading.Data.Graphics
 
         List<List<PredictedPriceHistory>> priceHistories = new List<List<PredictedPriceHistory>>();
         List<List<PredictedSlopeHistory>> slopeHistories = new List<List<PredictedSlopeHistory>>();
-        PriceHistoryLogging logger = new PriceHistoryLogging();
+        //PriceHistoryLogging logger = new PriceHistoryLogging();
+        BinanceHandler bh = new BinanceHandler();
         System.Windows.Forms.Timer collectedDataPollingTimer;
         TreeNode PredictionsNode, DataNode;
 
@@ -41,12 +44,12 @@ namespace ACE.Trading.Data.Graphics
         private void PredictionView_Load(object sender, EventArgs e)
         {
             DataCache.Load();
-            logger.startLogging();
+            //logger.startLogging();
             refreshGui();
-            collectedDataPollingTimer = new System.Windows.Forms.Timer();
-            collectedDataPollingTimer.Interval = 1000;
-            collectedDataPollingTimer.Tick += CollectedDataPollingTimer_Tick;
-            collectedDataPollingTimer.Enabled = true;
+            //collectedDataPollingTimer = new System.Windows.Forms.Timer();
+            //collectedDataPollingTimer.Interval = 1000;
+            //collectedDataPollingTimer.Tick += CollectedDataPollingTimer_Tick;
+            //collectedDataPollingTimer.Enabled = true;
         }
         private async void loadFineTunedModels()
         {
@@ -181,20 +184,20 @@ namespace ACE.Trading.Data.Graphics
         private async void DurationCombo_SelectedIndexChanged(object? sender, EventArgs e)
         {
             // get duration
-            System.DateTime startTime = System.DateTime.Now, endTime = System.DateTime.Now;
+            System.DateTime startTime = System.DateTime.UtcNow, endTime = System.DateTime.UtcNow;
             switch (durationCombo.Text)
             {
                 case "OneMonth":
-                    startTime=startTime.AddMonths(-1);
+                    startTime = startTime.AddMonths(-1);
                     break;
                 case "OneWeek":
-                    startTime=startTime.AddDays(-7);
+                    startTime = startTime.AddDays(-7);
                     break;
                 case "OneDay":
-                    startTime=startTime.AddDays(-1);
+                    startTime = startTime.AddDays(-1);
                     break;
                 case "OneHour":
-                    startTime=startTime.AddHours(-1);
+                    startTime = startTime.AddHours(-1);
                     break;
             }
 
@@ -225,27 +228,31 @@ namespace ACE.Trading.Data.Graphics
                     timeInterval = KlineInterval.OneMinute;
                     break;
             }
-            
+
             if (symbols.Contains(symbolCombo.Text) && startTime != endTime)
             {
-                var result = new BinanceHandler().getMarketData(symbolCombo.Text, timeInterval, startTime, endTime);
-                while (!result.IsCompleted)Thread.Sleep(50) ;
+                var result = await bh.getMarketData(symbolCombo.Text, timeInterval, startTime, endTime);
+                if (result.Success)
+                {
+                    genMarketData(result.Data);
+                }
+                /*while (!result.IsCompleted)Thread.Sleep(50) ;
                 if (result.IsCompletedSuccessfully)
                 {
-                    genMarketData(result.Result.Data);
-                }
+                    
+                }*/
 
             }
         }
         private void genMarketData(IEnumerable<IBinanceKline> klines)
         {
             formsPlot1.Plot.AddCandlesticks(PricePoint.FromBinanceKline(klines).ToArray());
-
+            formsPlot1.Refresh();
         }
 
         private void PredictionView_FormClosing(object sender, FormClosingEventArgs e)
         {
-            logger.stopLogging();
+            //logger.stopLogging();
             DataCache.Save();
         }
         #endregion
@@ -281,11 +288,38 @@ namespace ACE.Trading.Data.Graphics
         }
         private void genGraphFromPrediction(PredictedSlopeHistory sd)
         {
-            if (sd.getPredictionOutput == null || sd.getPredictionInput == null)
+            if (sd.getPredictionInput == null)
             {
                 MessageBox.Show("Predisction history data is invalid");
                 return;
             }
+            if (sd.getPredictionOutput != null && sd.getPredictionOutput.Count > 0)
+            {
+                List<double> yVals1 = new List<double>();
+                List<double> xVals1 = new List<double>();
+                foreach (var slopeX in sd.getPredictionOutput)
+                {
+                    yVals1.Add((double)slopeX.getOpenPrice);
+                    xVals1.Add((double)slopeX.OpenTimeUnix);
+                }
+                formsPlot1.Plot.AddScatter(xVals1.ToArray(), yVals1.ToArray(), color: Color.Green);
+                this.Text += " | Output: " + sd.getPredictionOutput.Last().openTimeUtc;
+            }
+            List<double> yVals2 = new List<double>();
+            List<double> xVals2 = new List<double>();
+
+            // Display the rest
+            foreach (PricePointSlope slope in sd.getPredictionInput.ToArray())
+            {
+                yVals2.Add((double)slope.getOpenPrice);
+                xVals2.Add((double)slope.OpenTimeUnix);
+            }
+            this.Text += " | Input: " + sd.getPredictionInput.First().closeTimeUtc;
+            formsPlot1.Plot.AddScatter(xVals2.ToArray(), yVals2.ToArray(), color: Color.Blue);
+            formsPlot1.Refresh();
+
+            /*
+            List<PricePoint> predictedPoints = new List<PricePoint>();
             List<PricePoint> points = new List<PricePoint>();
             // Input
             foreach (PricePointSlope slope in sd.getPredictionInput)
@@ -294,21 +328,50 @@ namespace ACE.Trading.Data.Graphics
             }
 
             // Real Result
-            /*if (sd.getRealResult != null)
+            if (sd.getRealResult != null)
             {
                 foreach (PricePointSlope slope in sd.getRealResult)
                 {
                     realPrices.Add((double)slope.getOpenPrice);
                     realDateTimes.Add(slope.OpenTimeUnix);
                 }
-            }*/
+            }
 
             // Fake Result
             foreach (PricePointSlope slope in sd.getPredictionOutput)
             {
-                points.AddRange(slope.getSlopePoints);
+                predictedPoints.AddRange(slope.getSlopePoints);
             }
             formsPlot1.Plot.AddCandlesticks(points.ToArray());
+            formsPlot1.Plot.AddCandlesticks(predictedPoints.ToArray());
+            formsPlot1.Refresh();*/
+        }
+        private void genSlopeView(List<PricePointSlope> slopes, int selectedSlope = -1)
+        {
+            if (slopes == null)
+            {
+                MessageBox.Show("Predisction history data is invalid");
+                return;
+            }
+            if (selectedSlope >= 0 && selectedSlope < slopes.Count)
+            {
+                var slopeX = slopes[selectedSlope];
+                slopes.Remove(slopeX);
+                double[] yVals1 = new double[] { (double)slopeX.getOpenPrice, (double)slopeX.getClosePrice };
+                double[] xVals1 = new double[] { (double)slopeX.OpenTimeUnix, (double)slopeX.CloseTimeUnix };
+
+                formsPlot1.Plot.AddScatter(xVals1, yVals1, color: Color.Green);
+            }
+            List<double> yVals2 = new List<double>();
+            List<double> xVals2 = new List<double>();
+
+            // Display the rest
+            foreach (PricePointSlope slope in slopes.ToArray())
+            {
+                yVals2.Add((double)slope.getOpenPrice);
+                xVals2.Add((double)slope.OpenTimeUnix);
+            }
+            formsPlot1.Plot.AddScatter(xVals2.ToArray(), yVals2.ToArray(), color: Color.Blue);
             formsPlot1.Refresh();
         }
         #endregion
@@ -415,9 +478,9 @@ namespace ACE.Trading.Data.Graphics
         }
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            logger.stopLogging();
-            DataCache.Save();
-            logger.startLogging();
+            //logger.stopLogging();
+            //DataCache.Save();
+            //logger.startLogging();
         }
         private void fluidLanguageToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -427,6 +490,43 @@ namespace ACE.Trading.Data.Graphics
 
             }
         }
+        private void viewFileDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
         #endregion
+
+        private void openTrainingFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string filename = openFile();
+            if (filename == "") return;
+            string[] data = File.ReadAllLines(filename);
+
+            List<PricePointSlope> trainingSlopes = new List<PricePointSlope>();
+
+            foreach (string line in data)
+            {
+                if (line.Length <= 12) continue;
+                string prompt = line.Substring(12);
+                int indexA = prompt.IndexOf('\"');
+                if (indexA == -1) continue;
+                prompt = prompt.Substring(0, indexA);
+
+                int indexB = line.IndexOf("\", \"completion\": \"");
+                if (indexB == -1) continue;
+                string completion = line.Substring(indexB);
+                int indexC = completion.IndexOf("\"}") - 1;
+                if (indexC < completion.Length)
+                    completion = completion.Substring(0, indexC);
+
+                // if (line.Length < 12 + indexA + 18 && line.Length - 3 <= 12 + indexA + 18) continue;
+                //string completion = line.Substring(12 + indexA + 18, line.Length - 3 -( 12 + indexA + 18));
+                trainingSlopes.AddRange(OpenAi.Formatting.FluidLanguage.Decode(prompt));
+                trainingSlopes.AddRange(OpenAi.Formatting.FluidLanguage.Decode(completion));
+            }
+
+            genSlopeView(trainingSlopes);
+
+        }
     }
 }
