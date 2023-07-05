@@ -37,20 +37,32 @@
             promptNumLabel = new Label();
             promptNum = new NumericUpDown();
             menuStrip2 = new MenuStrip();
-            refreshDataBtn = new ToolStripMenuItem();
+            fileToolStripMenuItem = new ToolStripMenuItem();
+            openToolStripMenuItem = new ToolStripMenuItem();
+            openTrainingFileToolStripMenuItem = new ToolStripMenuItem();
+            viewToolStripMenuItem1 = new ToolStripMenuItem();
             clearGraphBtn = new ToolStripMenuItem();
-            symbolsListToolStripMenuItem = new ToolStripMenuItem();
+            marketHistoryToolStripMenuItem = new ToolStripMenuItem();
             symbolCombo = new ToolStripComboBox();
             timeIntervalCombo = new ToolStripComboBox();
             durationCombo = new ToolStripComboBox();
-            openTrainingFileToolStripMenuItem = new ToolStripMenuItem();
             collectedDataToolStripMenuItem = new ToolStripMenuItem();
             saveToolStripMenuItem = new ToolStripMenuItem();
             viewToolStripMenuItem = new ToolStripMenuItem();
             addToSymbolListToolStripMenuItem = new ToolStripMenuItem();
+            tabControl1 = new TabControl();
+            treeViewTab = new TabPage();
+            slopeTab = new TabPage();
+            checkBox1 = new CheckBox();
+            tradingTab = new TabPage();
+            predictionsTab = new TabPage();
             createNew.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)promptNum).BeginInit();
             menuStrip2.SuspendLayout();
+            tabControl1.SuspendLayout();
+            treeViewTab.SuspendLayout();
+            slopeTab.SuspendLayout();
+            predictionsTab.SuspendLayout();
             SuspendLayout();
             // 
             // formsPlot1
@@ -64,15 +76,15 @@
             // 
             // treeView
             // 
-            treeView.Location = new Point(12, 34);
+            treeView.Location = new Point(6, 6);
             treeView.Name = "treeView";
-            treeView.Size = new Size(243, 406);
+            treeView.Size = new Size(259, 366);
             treeView.TabIndex = 1;
             treeView.NodeMouseClick += treeView_NodeMouseClick;
             // 
             // predictBtn
             // 
-            predictBtn.Location = new Point(162, 66);
+            predictBtn.Location = new Point(184, 62);
             predictBtn.Name = "predictBtn";
             predictBtn.Size = new Size(75, 23);
             predictBtn.TabIndex = 3;
@@ -85,7 +97,7 @@
             modelIdCombo.FormattingEnabled = true;
             modelIdCombo.Location = new Point(6, 35);
             modelIdCombo.Name = "modelIdCombo";
-            modelIdCombo.Size = new Size(231, 23);
+            modelIdCombo.Size = new Size(253, 23);
             modelIdCombo.TabIndex = 4;
             // 
             // modelIdLabel
@@ -104,59 +116,80 @@
             createNew.Controls.Add(modelIdCombo);
             createNew.Controls.Add(predictBtn);
             createNew.Controls.Add(modelIdLabel);
-            createNew.Location = new Point(12, 446);
+            createNew.Location = new Point(3, 3);
             createNew.Name = "createNew";
-            createNew.Size = new Size(243, 89);
+            createNew.Size = new Size(265, 97);
             createNew.TabIndex = 6;
             createNew.TabStop = false;
-            createNew.Text = "Predict Next Slopes";
+            createNew.Text = "Fine Tunes";
             // 
             // promptNumLabel
             // 
             promptNumLabel.AutoSize = true;
             promptNumLabel.Location = new Point(10, 66);
             promptNumLabel.Name = "promptNumLabel";
-            promptNumLabel.Size = new Size(77, 15);
+            promptNumLabel.Size = new Size(110, 15);
             promptNumLabel.TabIndex = 7;
-            promptNumLabel.Text = "PromptNum:";
+            promptNumLabel.Text = "Slopes Per Prompt: ";
             // 
             // promptNum
             // 
-            promptNum.Location = new Point(93, 64);
+            promptNum.Location = new Point(126, 64);
             promptNum.Name = "promptNum";
-            promptNum.Size = new Size(53, 23);
+            promptNum.Size = new Size(38, 23);
             promptNum.TabIndex = 6;
             promptNum.Value = new decimal(new int[] { 12, 0, 0, 0 });
             // 
             // menuStrip2
             // 
-            menuStrip2.Items.AddRange(new ToolStripItem[] { refreshDataBtn, clearGraphBtn, symbolsListToolStripMenuItem, openTrainingFileToolStripMenuItem, collectedDataToolStripMenuItem });
+            menuStrip2.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, viewToolStripMenuItem1, collectedDataToolStripMenuItem });
             menuStrip2.Location = new Point(0, 0);
             menuStrip2.Name = "menuStrip2";
             menuStrip2.Size = new Size(800, 24);
             menuStrip2.TabIndex = 7;
             menuStrip2.Text = "menuStrip2";
             // 
-            // refreshDataBtn
+            // fileToolStripMenuItem
             // 
-            refreshDataBtn.Name = "refreshDataBtn";
-            refreshDataBtn.Size = new Size(58, 20);
-            refreshDataBtn.Text = "Refresh";
-            refreshDataBtn.Click += refreshDataBtn_Click;
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStripMenuItem });
+            fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            fileToolStripMenuItem.Size = new Size(37, 20);
+            fileToolStripMenuItem.Text = "File";
+            // 
+            // openToolStripMenuItem
+            // 
+            openToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openTrainingFileToolStripMenuItem });
+            openToolStripMenuItem.Name = "openToolStripMenuItem";
+            openToolStripMenuItem.Size = new Size(103, 22);
+            openToolStripMenuItem.Text = "Open";
+            // 
+            // openTrainingFileToolStripMenuItem
+            // 
+            openTrainingFileToolStripMenuItem.Name = "openTrainingFileToolStripMenuItem";
+            openTrainingFileToolStripMenuItem.Size = new Size(137, 22);
+            openTrainingFileToolStripMenuItem.Text = "Training File";
+            openTrainingFileToolStripMenuItem.Click += openTrainingFileToolStripMenuItem_Click;
+            // 
+            // viewToolStripMenuItem1
+            // 
+            viewToolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { clearGraphBtn, marketHistoryToolStripMenuItem });
+            viewToolStripMenuItem1.Name = "viewToolStripMenuItem1";
+            viewToolStripMenuItem1.Size = new Size(44, 20);
+            viewToolStripMenuItem1.Text = "View";
             // 
             // clearGraphBtn
             // 
             clearGraphBtn.Name = "clearGraphBtn";
-            clearGraphBtn.Size = new Size(81, 20);
+            clearGraphBtn.Size = new Size(152, 22);
             clearGraphBtn.Text = "Clear Graph";
             clearGraphBtn.Click += clearGraphBtn_Click;
             // 
-            // symbolsListToolStripMenuItem
+            // marketHistoryToolStripMenuItem
             // 
-            symbolsListToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { symbolCombo, timeIntervalCombo, durationCombo });
-            symbolsListToolStripMenuItem.Name = "symbolsListToolStripMenuItem";
-            symbolsListToolStripMenuItem.Size = new Size(97, 20);
-            symbolsListToolStripMenuItem.Text = "Market History";
+            marketHistoryToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { symbolCombo, timeIntervalCombo, durationCombo });
+            marketHistoryToolStripMenuItem.Name = "marketHistoryToolStripMenuItem";
+            marketHistoryToolStripMenuItem.Size = new Size(152, 22);
+            marketHistoryToolStripMenuItem.Text = "Market History";
             // 
             // symbolCombo
             // 
@@ -176,13 +209,6 @@
             durationCombo.Size = new Size(121, 23);
             durationCombo.Text = "Duration";
             // 
-            // openTrainingFileToolStripMenuItem
-            // 
-            openTrainingFileToolStripMenuItem.Name = "openTrainingFileToolStripMenuItem";
-            openTrainingFileToolStripMenuItem.Size = new Size(116, 20);
-            openTrainingFileToolStripMenuItem.Text = "Open Training File";
-            openTrainingFileToolStripMenuItem.Click += openTrainingFileToolStripMenuItem_Click;
-            // 
             // collectedDataToolStripMenuItem
             // 
             collectedDataToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, viewToolStripMenuItem, addToSymbolListToolStripMenuItem });
@@ -195,29 +221,91 @@
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(177, 22);
+            saveToolStripMenuItem.Size = new Size(175, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // viewToolStripMenuItem
             // 
             viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            viewToolStripMenuItem.Size = new Size(177, 22);
+            viewToolStripMenuItem.Size = new Size(175, 22);
             viewToolStripMenuItem.Text = "View";
             // 
             // addToSymbolListToolStripMenuItem
             // 
             addToSymbolListToolStripMenuItem.Name = "addToSymbolListToolStripMenuItem";
-            addToSymbolListToolStripMenuItem.Size = new Size(177, 22);
+            addToSymbolListToolStripMenuItem.Size = new Size(175, 22);
             addToSymbolListToolStripMenuItem.Text = "Add To Symbol List";
+            // 
+            // tabControl1
+            // 
+            tabControl1.Controls.Add(treeViewTab);
+            tabControl1.Controls.Add(slopeTab);
+            tabControl1.Controls.Add(tradingTab);
+            tabControl1.Controls.Add(predictionsTab);
+            tabControl1.Location = new Point(12, 34);
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(279, 501);
+            tabControl1.TabIndex = 8;
+            // 
+            // treeViewTab
+            // 
+            treeViewTab.Controls.Add(treeView);
+            treeViewTab.Location = new Point(4, 24);
+            treeViewTab.Name = "treeViewTab";
+            treeViewTab.Padding = new Padding(3);
+            treeViewTab.Size = new Size(271, 473);
+            treeViewTab.TabIndex = 0;
+            treeViewTab.Text = "Data View";
+            treeViewTab.UseVisualStyleBackColor = true;
+            // 
+            // slopeTab
+            // 
+            slopeTab.Controls.Add(checkBox1);
+            slopeTab.Location = new Point(4, 24);
+            slopeTab.Name = "slopeTab";
+            slopeTab.Padding = new Padding(3);
+            slopeTab.Size = new Size(271, 473);
+            slopeTab.TabIndex = 1;
+            slopeTab.Text = "Slopes";
+            slopeTab.UseVisualStyleBackColor = true;
+            // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(6, 6);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(82, 19);
+            checkBox1.TabIndex = 0;
+            checkBox1.Text = "Use Slopes";
+            checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // tradingTab
+            // 
+            tradingTab.Location = new Point(4, 24);
+            tradingTab.Name = "tradingTab";
+            tradingTab.Size = new Size(271, 473);
+            tradingTab.TabIndex = 2;
+            tradingTab.Text = "Trading";
+            tradingTab.UseVisualStyleBackColor = true;
+            // 
+            // predictionsTab
+            // 
+            predictionsTab.Controls.Add(createNew);
+            predictionsTab.Location = new Point(4, 24);
+            predictionsTab.Name = "predictionsTab";
+            predictionsTab.Size = new Size(271, 473);
+            predictionsTab.TabIndex = 3;
+            predictionsTab.Text = "Predictions";
+            predictionsTab.UseVisualStyleBackColor = true;
             // 
             // PredictionView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 547);
-            Controls.Add(createNew);
-            Controls.Add(treeView);
+            Controls.Add(tabControl1);
             Controls.Add(formsPlot1);
             Controls.Add(menuStrip2);
             MainMenuStrip = menuStrip2;
@@ -230,6 +318,11 @@
             ((System.ComponentModel.ISupportInitialize)promptNum).EndInit();
             menuStrip2.ResumeLayout(false);
             menuStrip2.PerformLayout();
+            tabControl1.ResumeLayout(false);
+            treeViewTab.ResumeLayout(false);
+            slopeTab.ResumeLayout(false);
+            slopeTab.PerformLayout();
+            predictionsTab.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -258,15 +351,24 @@
         private MenuStrip menuStrip2;
         private ToolStripMenuItem toolStripMenuItem2;
         private ToolStripMenuItem refreshDataBtn;
-        private ToolStripMenuItem clearGraphBtn;
         private ToolStripMenuItem collectedDataToolStripMenuItem;
         private ToolStripMenuItem saveToolStripMenuItem;
         private ToolStripMenuItem viewToolStripMenuItem;
         private ToolStripMenuItem addToSymbolListToolStripMenuItem;
-        private ToolStripMenuItem symbolsListToolStripMenuItem;
         private ToolStripComboBox symbolCombo;
         private ToolStripComboBox timeIntervalCombo;
         private ToolStripComboBox durationCombo;
+        private ToolStripMenuItem fileToolStripMenuItem;
+        private ToolStripMenuItem openToolStripMenuItem;
         private ToolStripMenuItem openTrainingFileToolStripMenuItem;
+        private ToolStripMenuItem viewToolStripMenuItem1;
+        private ToolStripMenuItem clearGraphBtn;
+        private ToolStripMenuItem marketHistoryToolStripMenuItem;
+        private TabControl tabControl1;
+        private TabPage treeViewTab;
+        private TabPage slopeTab;
+        private CheckBox checkBox1;
+        private TabPage tradingTab;
+        private TabPage predictionsTab;
     }
 }

@@ -24,7 +24,7 @@ namespace ACE.Trading.OpenAi.Formatting
         }
         public static string formatBinanceLine(PricePointSlope input)
         {
-            return string.Format(formatSlopeString, input.OpenTimeUnix, input.getOpenPrice, input.getGradient, input.numOfPricePoints, input.getDeltaPrice, input.closetimen, input.getClosePrice, lineSeperator);
+            return string.Format(formatSlopeString, input.OpenTimeUnix, input.getOpenPrice, input.getGradient, input.numOfPricePoints, input.getDeltaPrice, input.CloseTimeUnix, input.getClosePrice, lineSeperator);
         }
         public static List<PricePointSlope> Decode(string input)
         {

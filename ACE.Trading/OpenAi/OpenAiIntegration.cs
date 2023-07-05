@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using ACE.Trading.Data;
 using static ACE.Trading.Data.DataHandling;
 using OpenAI_API.Files;
+using Microsoft.VisualBasic;
 
 namespace ACE.Trading.OpenAi
 {
@@ -25,7 +26,7 @@ namespace ACE.Trading.OpenAi
 
         internal const string apiKey = "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";
 
-        private OpenAIAPI api;
+        private static OpenAIAPI api;
 
         #region Events
         // Depreciated
@@ -37,6 +38,10 @@ namespace ACE.Trading.OpenAi
         // public event BarReplyHandler onBarReply;
         #endregion
 
+        public static async List<Model> getModels()
+        {
+            return await api.Models.GetModelsAsync();
+        }
 
         public OpenAiIntegration()
         {            

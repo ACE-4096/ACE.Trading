@@ -63,7 +63,11 @@ namespace ACE.Trading.Data.Collection
 
         public async Task<WebCallResult<IEnumerable<IBinanceKline>>> getLastHour(string symbol)
         {
-            return await client.SpotApi.ExchangeData.GetKlinesAsync(symbol, KlineInterval.OneMinute, DateTime.UtcNow.AddHours(-1), DateTime.UtcNow); 
+            return await client.SpotApi.ExchangeData.GetKlinesAsync(symbol, KlineInterval.OneMinute, DateTime.UtcNow.AddHours(-1), DateTime.UtcNow);
+        }
+        public async Task<WebCallResult<IEnumerable<IBinanceKline>>> getLastThreeHour(string symbol)
+        {
+            return await client.SpotApi.ExchangeData.GetKlinesAsync(symbol, KlineInterval.OneMinute, DateTime.UtcNow.AddHours(-3), DateTime.UtcNow);
         }
         public async Task<WebCallResult<IEnumerable<IBinanceKline>>> getMarketData(string symbol, KlineInterval interval, DateTime Start, DateTime End)
         {

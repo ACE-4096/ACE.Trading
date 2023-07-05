@@ -157,12 +157,8 @@ namespace ACE.Trading.OpenAi
             */
 
             BinanceHandler bh = new BinanceHandler();
-            List<PricePoint> points =  PricePoint.FromBinanceKline(bh.getLastHour(symbol).Result.Data);
+            List<PricePoint> points =  PricePoint.FromBinanceKline(bh.getLastThreeHour(symbol).Result.Data);
             List<PricePointSlope> inputSlopes = Convertions.FindAllV2(points.ToArray());
-
-
-
-
 
             // check validity of price history
             if (inputSlopes == null && inputSlopes?.Count == 0)
@@ -176,7 +172,7 @@ namespace ACE.Trading.OpenAi
             {
                 Debug.WriteLine("Input Slopes List is empty. No Data");
                 return -3;
-            }else if (inputSlopes.Count - numOfPromptSlopes < 0)
+            }else if (inputSlopes.Count < numOfPromptSlopes)
             {
                 Debug.WriteLine("Not enough slopes to create the prompt");
                 return -4;
@@ -192,14 +188,12 @@ namespace ACE.Trading.OpenAi
             */
 
             // Min Language
-            string prompt = MinLanguage.Encoding.slopeSeperator;
             List<PricePointSlope> limitedInputSlopes = new List<PricePointSlope>();
-            for (int j = 0; j < numOfPromptSlopes; j++)
-            {
-                prompt += inputSlopes[j].ToString() + MinLanguage.Encoding.slopeSeperator;
+            for (int j = 0; j < numOfPromptSlopes; j++) { 
                 limitedInputSlopes.Add(inputSlopes[j]);
             }
 
+            string prompt = MinLanguage.Encode(limitedInputSlopes);
             string prediction = await new OpenAiIntegration().PredictFromFineTune(prompt, model.ModelID);
 
             List<PricePointSlope> outputSlopes = MinLanguage.Decode(prediction);

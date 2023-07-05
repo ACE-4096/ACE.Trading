@@ -29,7 +29,7 @@ namespace ACE.Trading.Data.Graphics
         {
             InitializeComponent();
         }
-
+        Model[] models;
         string[] symbols;
         string filename;
 
@@ -69,6 +69,7 @@ namespace ACE.Trading.Data.Graphics
                             modelIdCombo.Items.Add(model.FineTunedModel);
                         }
                     }
+                    var models = OpenAi.OpenAiIntegration.getModels();
                 });
             }
             else if (results.IsCanceled)
@@ -174,7 +175,7 @@ namespace ACE.Trading.Data.Graphics
                     priceNode.Nodes.Add($"Accuracy: {price.computeAccuracy()}");
                 }
             }
-            PredictionsNode.ExpandAll();
+            //PredictionsNode.ExpandAll();
 
             modelIdCombo.Items.Clear();
             new Thread(loadFineTunedModels).Start();
@@ -527,6 +528,11 @@ namespace ACE.Trading.Data.Graphics
 
             genSlopeView(trainingSlopes);
 
+        }
+
+        private void clearGraphToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            refreshGui();
         }
     }
 }
