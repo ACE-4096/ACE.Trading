@@ -26,7 +26,7 @@ namespace ACE.Trading.OpenAi
 
         internal const string apiKey = "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";
 
-        private static OpenAIAPI api;
+        private OpenAIAPI api;
 
         #region Events
         // Depreciated
@@ -38,7 +38,7 @@ namespace ACE.Trading.OpenAi
         // public event BarReplyHandler onBarReply;
         #endregion
 
-        public static async List<Model> getModels()
+        public async Task<List<Model>> getModels()
         {
             return await api.Models.GetModelsAsync();
         }

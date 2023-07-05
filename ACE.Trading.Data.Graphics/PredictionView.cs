@@ -18,6 +18,9 @@ using Binance.Net.Interfaces;
 using OpenAI_API.FineTune;
 using OpenAI_API.Moderation;
 using ScottPlot;
+using OpenAI_API;
+using OpenAI_API.Models;
+
 using static System.Formats.Asn1.AsnWriter;
 using static ScottPlot.Generate;
 
@@ -29,7 +32,7 @@ namespace ACE.Trading.Data.Graphics
         {
             InitializeComponent();
         }
-        Model[] models;
+        List<Model> modelList = new List<Model>();
         string[] symbols;
         string filename;
 
@@ -51,25 +54,23 @@ namespace ACE.Trading.Data.Graphics
             //collectedDataPollingTimer.Tick += CollectedDataPollingTimer_Tick;
             //collectedDataPollingTimer.Enabled = true;
         }
-        private async void loadFineTunedModels()
+        private async void loadModels()
         {
+
+            // Loads fine tund models
             OpenAiIntegration ai = new OpenAiIntegration();
-            Task<FineTuneResultList> results = ai.getFineTuneList();
+            /*Task<FineTuneResultList> results = ai.getFineTuneList();
 
             while (!results.IsCompleted) { Thread.Sleep(1000); }
             if (results.IsCompletedSuccessfully)
             {
                 BeginInvoke((MethodInvoker)delegate
                 {
-                    modelIdCombo.Items.Clear();
-                    foreach (var model in results.Result.data)
+                    foreach (var tune in results.Result.data)
                     {
-                        if (model.FineTunedModel != null)
-                        {
-                            modelIdCombo.Items.Add(model.FineTunedModel);
-                        }
+                        
+                        modelList.Add(new Model(tune.FineTunedModel));
                     }
-                    var models = OpenAi.OpenAiIntegration.getModels();
                 });
             }
             else if (results.IsCanceled)
@@ -81,6 +82,38 @@ namespace ACE.Trading.Data.Graphics
                 MessageBox.Show("Error retreiving fine tuned models.");
                 Debug.Print(results.Exception.ToString());
             }
+            */
+            // Loads Standard Models
+            var result = ai.getModels(); 
+            while (!result.IsCompleted) { Thread.Sleep(1000); }
+            if (result.IsCompletedSuccessfully)
+            {
+                BeginInvoke((MethodInvoker)delegate
+                {
+                    modelList.AddRange(result.Result);
+                });
+            }
+            else if (result.IsCanceled)
+            {
+                MessageBox.Show("Error retreiving fine tuned models.");
+            }
+            else if (result.IsFaulted)
+            {
+                MessageBox.Show("Error retreiving fine tuned models.");
+                Debug.Print(result.Exception.ToString());
+            }
+
+            BeginInvoke((MethodInvoker)delegate { 
+                // Display all models
+                modelIdCombo.Items.Clear();
+                foreach (var model in modelList.ToArray())
+                {
+                    if (model.ModelID != null)
+                    {
+                        modelIdCombo.Items.Add(model.ModelID);
+                    }
+                }
+            });
         }
         private void refreshGui()
         {
@@ -178,7 +211,7 @@ namespace ACE.Trading.Data.Graphics
             //PredictionsNode.ExpandAll();
 
             modelIdCombo.Items.Clear();
-            new Thread(loadFineTunedModels).Start();
+            new Thread(loadModels).Start();
 
         }
 
