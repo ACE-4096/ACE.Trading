@@ -1,4 +1,5 @@
 ﻿using ACE.Trading.Analytics.Slopes;
+using ACE.Trading.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,18 +23,73 @@ namespace ACE.Trading.OpenAi.Formatting
             /// {5} - Gradient
             /// {6} - Weight
             /// </summary>
-            public static string slopeFormat = "\"slope\": { \"starting_point\": [{1},{2}], \"ending_point\":  [{3},{4}], \"gradient\": {5}, \"weight\": {6}, \"pattern\": \"{7}\", \"phase\": \"{8}\" }";
-            public static string lineSeperator = " ||| ";
+            public static string slopeFormat = "{ \"starting_point\": [{1},{2}], \"ending_point\":  [{3},{4}], \"gradient\": {5}, \"weight\": {6} }";
+            public static string slopeSeperator = " ||| ";
         }
-        public static string formatBinanceLine(string input)
+        public static List<PricePointSlope> Decode(string input)
         {
-            string[] inputs = input.Split(',');
-            return string.Format(Encoding.formatString, inputs[0], inputs[1], inputs[4], inputs[5], Encoding.lineSeperator);
-        }
+            List<PricePointSlope> slopes = new List<PricePointSlope>();
+            foreach (var slopeLine in input.Split(Encoding.slopeSeperator, StringSplitOptions.RemoveEmptyEntries))
+            {
+                // Start Time
+                string line = slopeLine.Replace("{ \"starting_point\": [", "");
+                int firstIndex = line.IndexOf(',');
+                if (firstIndex == -1 || line.Length <= firstIndex) continue;
+                string unixStartTime = line.Substring(0, firstIndex);
+                long startTime;
+                if (!long.TryParse(unixStartTime, out startTime)) continue;
 
-        /*public static string toBinance
-        {
-            
-        }*/
+                // Start Price
+                firstIndex += 1;
+                int secondIndex = line.IndexOf(']');
+                if (secondIndex == -1 || line.Length <= secondIndex - firstIndex) continue;
+                string startPrice = line.Substring(firstIndex, secondIndex - firstIndex);
+                line = line.Substring(secondIndex);
+                decimal openPrice;
+                if (!decimal.TryParse(startPrice, out openPrice)) continue;
+
+                // End Time
+                firstIndex = line.IndexOf('[') + 1;
+                if (firstIndex == -1 || line.Length <= firstIndex) continue;
+                secondIndex = line.IndexOf(',');
+                if (secondIndex == -1 || line.Length <= secondIndex - firstIndex) continue;
+                string unixEndTime = line.Substring(firstIndex, secondIndex - firstIndex);
+                line = line.Substring(secondIndex+1);
+                long endTime;
+                if (!long.TryParse(unixEndTime, out endTime)) continue;
+
+                // End Price
+                firstIndex = line.IndexOf(']');
+                if (firstIndex == -1 || line.Length <= firstIndex) continue;
+                string endPrice = line.Substring(0, firstIndex);
+                decimal closePrice;
+                if (!decimal.TryParse(endPrice, out closePrice)) continue;
+
+                // Gradient
+                line = line.Substring(firstIndex);
+                line = line.Replace("], \"gradient\": ", "");
+                firstIndex = line.IndexOf(',');
+                if (firstIndex == -1 || line.Length <= firstIndex) continue;
+                string gradientStr = line.Substring(0, firstIndex);
+                decimal gradient;
+                if (!decimal.TryParse(gradientStr, out gradient)) continue;
+
+                // Weight / Volume
+                line = line.Substring(firstIndex + 1);
+                firstIndex = line.IndexOf(':');
+                if (firstIndex == -1 || line.Length <= firstIndex) continue;
+                secondIndex = line.IndexOf('}');
+                if (secondIndex == -1 || line.Length <= secondIndex - firstIndex) continue;
+                string weight = line.Substring(firstIndex, secondIndex - firstIndex);
+                decimal volume;
+                if (!decimal.TryParse(weight, out volume)) continue;
+
+                PricePoint start = new PricePoint() { openPrice = openPrice, unixTimeUtc = startTime, volume = volume/2 }; 
+                PricePoint end = new PricePoint() { closePrice = closePrice, unixTimeUtc = endTime, volume = volume / 2 };
+                PricePointSlope slope = new PricePointSlope(new List<PricePoint>(new[] { start, end }));
+                slopes.Add(slope);
+
+            }
+        }
     }
 }

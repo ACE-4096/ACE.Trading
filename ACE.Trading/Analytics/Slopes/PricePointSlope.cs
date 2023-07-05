@@ -161,15 +161,10 @@ namespace ACE.Trading.Analytics.Slopes
             _avgPrice = avg / slopePricePoints.Count;
         }
 
-        private long getAvgVolume()
-        {
-
-        }
 
         internal PricePointSlope(PricePoint first)
         {
-            slopePricePoints = new List<PricePoint>();
-            slopePricePoints.Add(first);
+            slopePricePoints = new List<PricePoint>(new[] { first });
         }
         internal void AddPoint(PricePoint point)
         {
@@ -177,9 +172,9 @@ namespace ACE.Trading.Analytics.Slopes
             reCalc();
         }
 
-        public string ToString(int SlopeNum)
-        {
-            return string.Format(MinLanguage.Encoding.slopeFormat, SlopeNum, OpenTimeUnix, _openPrice, CloseTimeUnix, _closePrice, _slopeGradient, volume  );
+        public override string ToString()
+        {   
+            return string.Format(MinLanguage.Encoding.slopeFormat, OpenTimeUnix, _openPrice, CloseTimeUnix, _closePrice, _slopeGradient, volume );
         }
     }
 }

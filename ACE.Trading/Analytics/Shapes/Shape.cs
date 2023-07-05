@@ -1,4 +1,5 @@
-﻿using ACE.Trading.OpenAi.Formatting;
+﻿using ACE.Trading.Analytics.Slopes;
+using ACE.Trading.OpenAi.Formatting;
 using ScottPlot.Drawing.Colormaps;
 using System;
 using System.Collections.Generic;
@@ -42,16 +43,13 @@ namespace ACE.Trading.Analytics.Shapes
 
     internal class Shape
     {
-        
         public Pattern pattern;
         public Phase phase;
-        public Shape(Pattern pattern, Phase phase) 
+        public PricePointSlope slopes;
+        
+        public Shape(Pattern pattern, Phase phase, PricePointSlope slopes) 
         {
-            this.phase = phase; this.pattern = pattern;
-        }
-        public override string ToString()
-        {
-            return string.Format(MinLanguage.Encoding.shapeFormat, pattern.ToString(), phase.ToString());
+            this.phase = phase; this.pattern = pattern; this.slopes = slopes;
         }
     }
 }
