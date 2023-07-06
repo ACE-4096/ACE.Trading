@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             formsPlot1 = new ScottPlot.FormsPlot();
-            treeView = new TreeView();
             predictBtn = new Button();
             modelIdCombo = new ComboBox();
             modelIdLabel = new Label();
@@ -51,17 +50,55 @@
             viewToolStripMenuItem = new ToolStripMenuItem();
             addToSymbolListToolStripMenuItem = new ToolStripMenuItem();
             tabControl1 = new TabControl();
-            treeViewTab = new TabPage();
+            trainingTab = new TabPage();
+            fineTuneModelCombo = new ComboBox();
+            trainExistingRadioBtn = new RadioButton();
+            trainNewRadioBtn = new RadioButton();
+            button1 = new Button();
+            numericUpDown5 = new NumericUpDown();
+            label6 = new Label();
+            numericUpDown4 = new NumericUpDown();
+            label2 = new Label();
+            numericUpDown1 = new NumericUpDown();
+            label1 = new Label();
+            numericUpDown3 = new NumericUpDown();
+            label4 = new Label();
+            label7 = new Label();
+            label5 = new Label();
+            modelSuffixTextBox = new TextBox();
+            filesListBox = new ListBox();
             slopeTab = new TabPage();
-            checkBox1 = new CheckBox();
+            groupBox1 = new GroupBox();
+            label13 = new Label();
+            timeIntervalCombo2 = new ComboBox();
+            trainingCompletionNum = new NumericUpDown();
+            label11 = new Label();
+            trainingPromptNum = new NumericUpDown();
+            label10 = new Label();
+            button3 = new Button();
+            label9 = new Label();
+            label8 = new Label();
+            finishDateTime = new DateTimePicker();
+            startDateTime = new DateTimePicker();
+            genAndUploadBtn = new Button();
+            tolleranceNum = new NumericUpDown();
+            label3 = new Label();
             tradingTab = new TabPage();
             predictionsTab = new TabPage();
             createNew.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)promptNum).BeginInit();
             menuStrip2.SuspendLayout();
             tabControl1.SuspendLayout();
-            treeViewTab.SuspendLayout();
+            trainingTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown5).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown4).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown3).BeginInit();
             slopeTab.SuspendLayout();
+            groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)trainingCompletionNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)trainingPromptNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)tolleranceNum).BeginInit();
             predictionsTab.SuspendLayout();
             SuspendLayout();
             // 
@@ -73,14 +110,6 @@
             formsPlot1.Name = "formsPlot1";
             formsPlot1.Size = new Size(525, 501);
             formsPlot1.TabIndex = 0;
-            // 
-            // treeView
-            // 
-            treeView.Location = new Point(6, 6);
-            treeView.Name = "treeView";
-            treeView.Size = new Size(259, 366);
-            treeView.TabIndex = 1;
-            treeView.NodeMouseClick += treeView_NodeMouseClick;
             // 
             // predictBtn
             // 
@@ -208,6 +237,7 @@
             durationCombo.Name = "durationCombo";
             durationCombo.Size = new Size(121, 23);
             durationCombo.Text = "Duration";
+            durationCombo.SelectedIndexChanged += durationCombo_SelectedIndexChanged_1;
             // 
             // collectedDataToolStripMenuItem
             // 
@@ -239,7 +269,7 @@
             // 
             // tabControl1
             // 
-            tabControl1.Controls.Add(treeViewTab);
+            tabControl1.Controls.Add(trainingTab);
             tabControl1.Controls.Add(slopeTab);
             tabControl1.Controls.Add(tradingTab);
             tabControl1.Controls.Add(predictionsTab);
@@ -249,20 +279,184 @@
             tabControl1.Size = new Size(279, 501);
             tabControl1.TabIndex = 8;
             // 
-            // treeViewTab
+            // trainingTab
             // 
-            treeViewTab.Controls.Add(treeView);
-            treeViewTab.Location = new Point(4, 24);
-            treeViewTab.Name = "treeViewTab";
-            treeViewTab.Padding = new Padding(3);
-            treeViewTab.Size = new Size(271, 473);
-            treeViewTab.TabIndex = 0;
-            treeViewTab.Text = "Data View";
-            treeViewTab.UseVisualStyleBackColor = true;
+            trainingTab.Controls.Add(fineTuneModelCombo);
+            trainingTab.Controls.Add(trainExistingRadioBtn);
+            trainingTab.Controls.Add(trainNewRadioBtn);
+            trainingTab.Controls.Add(button1);
+            trainingTab.Controls.Add(numericUpDown5);
+            trainingTab.Controls.Add(label6);
+            trainingTab.Controls.Add(numericUpDown4);
+            trainingTab.Controls.Add(label2);
+            trainingTab.Controls.Add(numericUpDown1);
+            trainingTab.Controls.Add(label1);
+            trainingTab.Controls.Add(numericUpDown3);
+            trainingTab.Controls.Add(label4);
+            trainingTab.Controls.Add(label7);
+            trainingTab.Controls.Add(label5);
+            trainingTab.Controls.Add(modelSuffixTextBox);
+            trainingTab.Controls.Add(filesListBox);
+            trainingTab.Location = new Point(4, 24);
+            trainingTab.Name = "trainingTab";
+            trainingTab.Padding = new Padding(3);
+            trainingTab.Size = new Size(271, 473);
+            trainingTab.TabIndex = 0;
+            trainingTab.Text = "Training";
+            trainingTab.UseVisualStyleBackColor = true;
+            // 
+            // fineTuneModelCombo
+            // 
+            fineTuneModelCombo.Enabled = false;
+            fineTuneModelCombo.FormattingEnabled = true;
+            fineTuneModelCombo.Location = new Point(13, 302);
+            fineTuneModelCombo.Name = "fineTuneModelCombo";
+            fineTuneModelCombo.Size = new Size(182, 23);
+            fineTuneModelCombo.TabIndex = 23;
+            // 
+            // trainExistingRadioBtn
+            // 
+            trainExistingRadioBtn.AutoSize = true;
+            trainExistingRadioBtn.Location = new Point(201, 303);
+            trainExistingRadioBtn.Name = "trainExistingRadioBtn";
+            trainExistingRadioBtn.Size = new Size(66, 19);
+            trainExistingRadioBtn.TabIndex = 22;
+            trainExistingRadioBtn.Text = "Existing";
+            trainExistingRadioBtn.UseVisualStyleBackColor = true;
+            trainExistingRadioBtn.CheckedChanged += TrainingModelType_CheckedChanged;
+            // 
+            // trainNewRadioBtn
+            // 
+            trainNewRadioBtn.AutoSize = true;
+            trainNewRadioBtn.Checked = true;
+            trainNewRadioBtn.Location = new Point(201, 274);
+            trainNewRadioBtn.Name = "trainNewRadioBtn";
+            trainNewRadioBtn.Size = new Size(49, 19);
+            trainNewRadioBtn.TabIndex = 21;
+            trainNewRadioBtn.TabStop = true;
+            trainNewRadioBtn.Text = "New";
+            trainNewRadioBtn.UseVisualStyleBackColor = true;
+            trainNewRadioBtn.CheckedChanged += TrainingModelType_CheckedChanged;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(103, 331);
+            button1.Name = "button1";
+            button1.Size = new Size(75, 23);
+            button1.TabIndex = 20;
+            button1.Text = "Fine Tune";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
+            // numericUpDown5
+            // 
+            numericUpDown5.DecimalPlaces = 2;
+            numericUpDown5.Location = new Point(153, 219);
+            numericUpDown5.Name = "numericUpDown5";
+            numericUpDown5.Size = new Size(54, 23);
+            numericUpDown5.TabIndex = 19;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(13, 221);
+            label6.Name = "label6";
+            label6.Size = new Size(136, 15);
+            label6.TabIndex = 18;
+            label6.Text = "Learning Rate Multiplier:";
+            // 
+            // numericUpDown4
+            // 
+            numericUpDown4.DecimalPlaces = 2;
+            numericUpDown4.Location = new Point(153, 190);
+            numericUpDown4.Minimum = new decimal(new int[] { 1, 0, 0, 131072 });
+            numericUpDown4.Name = "numericUpDown4";
+            numericUpDown4.Size = new Size(54, 23);
+            numericUpDown4.TabIndex = 17;
+            numericUpDown4.Value = new decimal(new int[] { 1, 0, 0, 131072 });
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(13, 192);
+            label2.Name = "label2";
+            label2.Size = new Size(117, 15);
+            label2.TabIndex = 16;
+            label2.Text = "Prompt Weight Loss:";
+            // 
+            // numericUpDown1
+            // 
+            numericUpDown1.Location = new Point(153, 161);
+            numericUpDown1.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            numericUpDown1.Name = "numericUpDown1";
+            numericUpDown1.Size = new Size(54, 23);
+            numericUpDown1.TabIndex = 15;
+            numericUpDown1.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(13, 163);
+            label1.Name = "label1";
+            label1.Size = new Size(79, 15);
+            label1.TabIndex = 14;
+            label1.Text = "Epoch Count:";
+            // 
+            // numericUpDown3
+            // 
+            numericUpDown3.Location = new Point(153, 132);
+            numericUpDown3.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            numericUpDown3.Name = "numericUpDown3";
+            numericUpDown3.Size = new Size(54, 23);
+            numericUpDown3.TabIndex = 13;
+            numericUpDown3.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(13, 134);
+            label4.Name = "label4";
+            label4.Size = new Size(63, 15);
+            label4.TabIndex = 12;
+            label4.Text = "Batch Size:";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(6, 14);
+            label7.Name = "label7";
+            label7.Size = new Size(84, 15);
+            label7.TabIndex = 8;
+            label7.Text = "Uploaded Files";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(12, 276);
+            label5.Name = "label5";
+            label5.Size = new Size(44, 15);
+            label5.TabIndex = 7;
+            label5.Text = "Model:";
+            // 
+            // modelSuffixTextBox
+            // 
+            modelSuffixTextBox.Location = new Point(62, 273);
+            modelSuffixTextBox.Name = "modelSuffixTextBox";
+            modelSuffixTextBox.Size = new Size(133, 23);
+            modelSuffixTextBox.TabIndex = 6;
+            // 
+            // filesListBox
+            // 
+            filesListBox.FormattingEnabled = true;
+            filesListBox.ItemHeight = 15;
+            filesListBox.Location = new Point(6, 32);
+            filesListBox.Name = "filesListBox";
+            filesListBox.Size = new Size(259, 94);
+            filesListBox.TabIndex = 0;
             // 
             // slopeTab
             // 
-            slopeTab.Controls.Add(checkBox1);
+            slopeTab.Controls.Add(groupBox1);
             slopeTab.Location = new Point(4, 24);
             slopeTab.Name = "slopeTab";
             slopeTab.Padding = new Padding(3);
@@ -271,15 +465,149 @@
             slopeTab.Text = "Slopes";
             slopeTab.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // groupBox1
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(6, 6);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(82, 19);
-            checkBox1.TabIndex = 0;
-            checkBox1.Text = "Use Slopes";
-            checkBox1.UseVisualStyleBackColor = true;
+            groupBox1.Controls.Add(label13);
+            groupBox1.Controls.Add(timeIntervalCombo2);
+            groupBox1.Controls.Add(trainingCompletionNum);
+            groupBox1.Controls.Add(label11);
+            groupBox1.Controls.Add(trainingPromptNum);
+            groupBox1.Controls.Add(label10);
+            groupBox1.Controls.Add(button3);
+            groupBox1.Controls.Add(label9);
+            groupBox1.Controls.Add(label8);
+            groupBox1.Controls.Add(finishDateTime);
+            groupBox1.Controls.Add(startDateTime);
+            groupBox1.Controls.Add(genAndUploadBtn);
+            groupBox1.Controls.Add(tolleranceNum);
+            groupBox1.Controls.Add(label3);
+            groupBox1.Location = new Point(6, 6);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(259, 253);
+            groupBox1.TabIndex = 1;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Training Files";
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.Location = new Point(23, 121);
+            label13.Name = "label13";
+            label13.Size = new Size(49, 15);
+            label13.TabIndex = 15;
+            label13.Text = "Interval:";
+            // 
+            // timeIntervalCombo2
+            // 
+            timeIntervalCombo2.FormattingEnabled = true;
+            timeIntervalCombo2.Location = new Point(78, 118);
+            timeIntervalCombo2.Name = "timeIntervalCombo2";
+            timeIntervalCombo2.Size = new Size(135, 23);
+            timeIntervalCombo2.TabIndex = 13;
+            // 
+            // trainingCompletionNum
+            // 
+            trainingCompletionNum.Location = new Point(125, 80);
+            trainingCompletionNum.Name = "trainingCompletionNum";
+            trainingCompletionNum.Size = new Size(54, 23);
+            trainingCompletionNum.TabIndex = 12;
+            trainingCompletionNum.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Location = new Point(9, 82);
+            label11.Name = "label11";
+            label11.Size = new Size(110, 15);
+            label11.TabIndex = 11;
+            label11.Text = "Completion Slopes:";
+            // 
+            // trainingPromptNum
+            // 
+            trainingPromptNum.Location = new Point(125, 51);
+            trainingPromptNum.Name = "trainingPromptNum";
+            trainingPromptNum.Size = new Size(54, 23);
+            trainingPromptNum.TabIndex = 10;
+            trainingPromptNum.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new Point(32, 53);
+            label10.Name = "label10";
+            label10.Size = new Size(87, 15);
+            label10.TabIndex = 9;
+            label10.Text = "Prompt Slopes:";
+            // 
+            // button3
+            // 
+            button3.Location = new Point(6, 203);
+            button3.Name = "button3";
+            button3.Size = new Size(101, 43);
+            button3.TabIndex = 8;
+            button3.Text = "Generate and Save";
+            button3.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(4, 182);
+            label9.Name = "label9";
+            label9.Size = new Size(68, 15);
+            label9.TabIndex = 7;
+            label9.Text = "Finish Date:";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(11, 153);
+            label8.Name = "label8";
+            label8.Size = new Size(61, 15);
+            label8.TabIndex = 6;
+            label8.Text = "Start Date:";
+            // 
+            // finishDateTime
+            // 
+            finishDateTime.Format = DateTimePickerFormat.Short;
+            finishDateTime.Location = new Point(78, 176);
+            finishDateTime.Name = "finishDateTime";
+            finishDateTime.Size = new Size(101, 23);
+            finishDateTime.TabIndex = 5;
+            // 
+            // startDateTime
+            // 
+            startDateTime.Format = DateTimePickerFormat.Short;
+            startDateTime.Location = new Point(78, 147);
+            startDateTime.Name = "startDateTime";
+            startDateTime.Size = new Size(101, 23);
+            startDateTime.TabIndex = 4;
+            // 
+            // genAndUploadBtn
+            // 
+            genAndUploadBtn.Location = new Point(144, 203);
+            genAndUploadBtn.Name = "genAndUploadBtn";
+            genAndUploadBtn.Size = new Size(109, 43);
+            genAndUploadBtn.TabIndex = 3;
+            genAndUploadBtn.Text = "Generate and Upload";
+            genAndUploadBtn.UseVisualStyleBackColor = true;
+            genAndUploadBtn.Click += genAndUploadBtn_Click;
+            // 
+            // tolleranceNum
+            // 
+            tolleranceNum.Location = new Point(125, 22);
+            tolleranceNum.Name = "tolleranceNum";
+            tolleranceNum.Size = new Size(54, 23);
+            tolleranceNum.TabIndex = 2;
+            tolleranceNum.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(56, 24);
+            label3.Name = "label3";
+            label3.Size = new Size(63, 15);
+            label3.TabIndex = 0;
+            label3.Text = "Tollerance:";
             // 
             // tradingTab
             // 
@@ -319,9 +647,18 @@
             menuStrip2.ResumeLayout(false);
             menuStrip2.PerformLayout();
             tabControl1.ResumeLayout(false);
-            treeViewTab.ResumeLayout(false);
+            trainingTab.ResumeLayout(false);
+            trainingTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown5).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown4).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown3).EndInit();
             slopeTab.ResumeLayout(false);
-            slopeTab.PerformLayout();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)trainingCompletionNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)trainingPromptNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)tolleranceNum).EndInit();
             predictionsTab.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -341,10 +678,7 @@
         private Button predictBtn;
         private Label modelIdLabel;
         private GroupBox createNew;
-        private Label label1;
-        private NumericUpDown numericUpDown1;
         private ComboBox comboBox2;
-        private Label label2;
         private ComboBox modelIdCombo;
         private Label promptNumLabel;
         private NumericUpDown promptNum;
@@ -365,10 +699,40 @@
         private ToolStripMenuItem clearGraphBtn;
         private ToolStripMenuItem marketHistoryToolStripMenuItem;
         private TabControl tabControl1;
-        private TabPage treeViewTab;
+        private TabPage trainingTab;
         private TabPage slopeTab;
-        private CheckBox checkBox1;
         private TabPage tradingTab;
         private TabPage predictionsTab;
+        private NumericUpDown tolleranceNum;
+        private Label label3;
+        private Label label5;
+        private TextBox modelSuffixTextBox;
+        private ListBox filesListBox;
+        private ComboBox fineTuneModelCombo;
+        private RadioButton trainExistingRadioBtn;
+        private RadioButton trainNewRadioBtn;
+        private Button button1;
+        private NumericUpDown numericUpDown5;
+        private Label label6;
+        private NumericUpDown numericUpDown4;
+        private Label label2;
+        private NumericUpDown numericUpDown1;
+        private Label label1;
+        private NumericUpDown numericUpDown3;
+        private Label label4;
+        private Label label7;
+        private GroupBox groupBox1;
+        private Button button3;
+        private Label label9;
+        private Label label8;
+        private DateTimePicker finishDateTime;
+        private DateTimePicker startDateTime;
+        private Button genAndUploadBtn;
+        private NumericUpDown trainingCompletionNum;
+        private Label label11;
+        private NumericUpDown trainingPromptNum;
+        private Label label10;
+        private Label label13;
+        private ComboBox timeIntervalCombo2;
     }
 }

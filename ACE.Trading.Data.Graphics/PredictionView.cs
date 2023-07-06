@@ -23,6 +23,9 @@ using OpenAI_API.Models;
 
 using static System.Formats.Asn1.AsnWriter;
 using static ScottPlot.Generate;
+using CryptoExchange.Net.Objects;
+using Newtonsoft.Json.Linq;
+using System.Drawing.Text;
 
 namespace ACE.Trading.Data.Graphics
 {
@@ -36,12 +39,23 @@ namespace ACE.Trading.Data.Graphics
         string[] symbols;
         string filename;
 
+        string[] intervals = new string[]
+            {
+                KlineInterval.ThreeDay.ToString(),
+                KlineInterval.OneDay.ToString(),
+                KlineInterval.TwelveHour.ToString(),
+                KlineInterval.EightHour.ToString(),
+                KlineInterval.OneHour.ToString(),
+                KlineInterval.ThirtyMinutes.ToString(),
+                KlineInterval.FifteenMinutes.ToString(),
+                KlineInterval.OneMinute.ToString()
+            };
+
         List<List<PredictedPriceHistory>> priceHistories = new List<List<PredictedPriceHistory>>();
         List<List<PredictedSlopeHistory>> slopeHistories = new List<List<PredictedSlopeHistory>>();
         //PriceHistoryLogging logger = new PriceHistoryLogging();
         BinanceHandler bh = new BinanceHandler();
-        System.Windows.Forms.Timer collectedDataPollingTimer;
-        TreeNode PredictionsNode, DataNode;
+        //System.Windows.Forms.Timer collectedDataPollingTimer;
 
         #region Loading / Saving
         private void PredictionView_Load(object sender, EventArgs e)
@@ -84,7 +98,7 @@ namespace ACE.Trading.Data.Graphics
             }
             */
             // Loads Standard Models
-            var result = ai.getModels(); 
+            var result = ai.getModels();
             while (!result.IsCompleted) { Thread.Sleep(1000); }
             if (result.IsCompletedSuccessfully)
             {
@@ -103,7 +117,8 @@ namespace ACE.Trading.Data.Graphics
                 Debug.Print(result.Exception.ToString());
             }
 
-            BeginInvoke((MethodInvoker)delegate { 
+            BeginInvoke((MethodInvoker)delegate
+            {
                 // Display all models
                 modelIdCombo.Items.Clear();
                 foreach (var model in modelList.ToArray())
@@ -117,20 +132,17 @@ namespace ACE.Trading.Data.Graphics
         }
         private void refreshGui()
         {
-            treeView.Nodes.Clear();
             symbols = DataCache.getAllSymbols();
             Analytics.Predictions.Load();
 
+            loadFiles();
+
             // show time intervals
+
             timeIntervalCombo.Items.Clear();
-            timeIntervalCombo.Items.Add(KlineInterval.ThreeDay);
-            timeIntervalCombo.Items.Add(KlineInterval.OneDay);
-            timeIntervalCombo.Items.Add(KlineInterval.TwelveHour);
-            timeIntervalCombo.Items.Add(KlineInterval.EightHour);
-            timeIntervalCombo.Items.Add(KlineInterval.OneHour);
-            timeIntervalCombo.Items.Add(KlineInterval.ThirtyMinutes);
-            timeIntervalCombo.Items.Add(KlineInterval.FifteenMinutes);
-            timeIntervalCombo.Items.Add(KlineInterval.OneMinute);
+            timeIntervalCombo.Items.AddRange(intervals);
+            timeIntervalCombo2.Items.Clear();
+            timeIntervalCombo2.Items.AddRange(intervals);
 
             // show time durations
             durationCombo.Items.Add(KlineInterval.OneMonth);
@@ -142,77 +154,22 @@ namespace ACE.Trading.Data.Graphics
             // Show symbols
             symbolCombo.Items.Clear();
             symbolCombo.Items.AddRange(symbols);
-
-            DataNode = treeView.Nodes.Add("Collected Data");
-            PredictionsNode = treeView.Nodes.Add("Predictions");
-
-
-            // Collected Data
-            foreach (string str in symbols)
-            {
-                var subNode = DataNode.Nodes.Add(str);
-
-                var sd = DataCache.GetSymbolData(str);
-
-                subNode.Nodes.Add($"Latest Price: ${sd.getLatestPrice}");
-                subNode.Nodes.Add($"Data Entries: {sd.getPriceHistory.Count}");
-
-            }
-
-            DataNode.ExpandAll();
-
-            // Predicted Data
-
-            // get slopes/prices filtered into lists per symbol
-            foreach (string str in symbols)
-            {
-                /*List<PredictedPriceHistory> priceHistory;
-                if (Analytics.Predictions.findPricePredictions(str, out priceHistory))
-                {
-                    priceHistories.Add(priceHistory);
-                }*/
-
-                List<PredictedSlopeHistory> slopeHistory;
-                if (Analytics.Predictions.findSlopePredictions(str, out slopeHistory))
-                {
-                    slopeHistories.Add(slopeHistory);
-                }
-            }
-
-            // Draw Slope Prediction Nodes
-            var MainSlopeNode = PredictionsNode.Nodes.Add("Slopes");
-            foreach (string str in symbols)
-            {
-                var subNode = MainSlopeNode.Nodes.Add(str);
-                var symbolSlopes = slopeHistories.Find(lst => lst.First().getSymbol == str);
-                if (symbolSlopes == null || symbolSlopes.Count == 0)
-                    continue;
-                foreach (var slope in symbolSlopes)
-                {
-                    var slopeNode = subNode.Nodes.Add(slope.getId.ToString());
-                    slopeNode.Nodes.Add($"Accuracy: {slope.computeAccuracy()}");
-                }
-            }
-
-            // Draw Price Prediction Nodes
-            var MainPriceNode = PredictionsNode.Nodes.Add("PricePoints");
-            foreach (string str in symbols)
-            {
-                var subNode = MainPriceNode.Nodes.Add(str);
-                var symbolprices = slopeHistories.Find(lst => lst.First().getSymbol == str);
-                if (symbolprices == null || symbolprices.Count == 0)
-                    continue;
-                foreach (var price in symbolprices)
-                {
-                    var priceNode = subNode.Nodes.Add(price.getId.ToString());
-                    priceNode.Nodes.Add($"Accuracy: {price.computeAccuracy()}");
-                }
-            }
-            //PredictionsNode.ExpandAll();
-
             modelIdCombo.Items.Clear();
             new Thread(loadModels).Start();
 
+        }
+
+        private async void loadFiles()
+        {
+            OpenAi.OpenAiIntegration ai = new OpenAiIntegration();
+            var result = await ai.getFiles();
+            if (result != null && result.Count > 0)
+            {
+                foreach (var file in result)
+                {
+                    filesListBox.Items.Add(file.Name + " | " + file.Bytes + 'B');
+                }
+            }
         }
 
         private async void DurationCombo_SelectedIndexChanged(object? sender, EventArgs e)
@@ -291,16 +248,6 @@ namespace ACE.Trading.Data.Graphics
         }
         #endregion
 
-        private void CollectedDataPollingTimer_Tick(object? sender, EventArgs e)
-        {
-            long dataCount = 0;
-            foreach (var symbol in symbols)
-            {
-                var sd = DataCache.GetSymbolData(symbol);
-                dataCount += sd.getPriceHistory.Count;
-            }
-            this.Text = $"Prediction View | Collected Data: {dataCount}";
-        }
 
         #region Graphics
         private void genGraphFromSymbolData(SymbolData sd)
@@ -467,19 +414,6 @@ namespace ACE.Trading.Data.Graphics
 
 
         #region Click events
-        private void treeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            if (DataNode.Nodes.Contains(e.Node))
-            {
-                var sd = DataCache.GetSymbolData(e.Node.Text);
-
-                genGraphFromSymbolData(sd);
-            }
-            else if (PredictionsNode.Nodes.Contains(e.Node))
-            {
-
-            }
-        }
         private void predictBtn_Click(object sender, EventArgs e)
         {
             if (modelIdCombo.SelectedIndex == -1)
@@ -528,8 +462,6 @@ namespace ACE.Trading.Data.Graphics
         {
 
         }
-        #endregion
-
         private void openTrainingFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string filename = openFile();
@@ -562,10 +494,106 @@ namespace ACE.Trading.Data.Graphics
             genSlopeView(trainingSlopes);
 
         }
-
-        private void clearGraphToolStripMenuItem_Click(object sender, EventArgs e)
+        #endregion
+        private void TrainingModelType_CheckedChanged(object sender, EventArgs e)
         {
-            refreshGui();
+            if (trainExistingRadioBtn.Checked)
+            {
+                modelSuffixTextBox.Enabled = false;
+                fineTuneModelCombo.Enabled = true;
+            }
+            else
+            {
+                modelSuffixTextBox.Enabled = true;
+                fineTuneModelCombo.Enabled = false;
+            }
+        }
+        private async void genAndUploadBtn_Click(object sender, EventArgs e)
+        {
+            KlineInterval timeInterval = KlineInterval.OneMinute;
+            switch (timeIntervalCombo2.Text)
+            {
+                case "OneDay":
+                    timeInterval = KlineInterval.OneDay;
+                    break;
+                case "TwelveHour":
+                    timeInterval = KlineInterval.TwelveHour;
+                    break;
+                case "EightHour":
+                    timeInterval = KlineInterval.EightHour;
+                    break;
+                case "OneHour":
+                    timeInterval = KlineInterval.OneHour;
+                    break;
+                case "ThirtyMinutes":
+                    timeInterval = KlineInterval.ThirtyMinutes;
+                    break;
+                case "FifteenMinutes":
+                    timeInterval = KlineInterval.FifteenMinutes;
+                    break;
+                case "OneMinute":
+                    timeInterval = KlineInterval.OneMinute;
+                    break;
+            }
+            if (symbolCombo.SelectedIndex == -1)
+            {
+                MessageBox.Show("No Symbol selected.");
+                return;
+            }
+            
+            
+            
+            // Get binance data
+            // loop through sice cap is 500 klines per request
+            TimeSpan span = finishDateTime.Value.Subtract(startDateTime.Value);
+            List<PricePoint> points = new List<PricePoint>();
+            const int hoursPerCycle = 6;
+            System.DateTime startTime = startDateTime.Value, finishTime = startDateTime.Value.AddHours(hoursPerCycle);
+            int i;
+            for (i = 0; i < span.TotalHours-hoursPerCycle; i += hoursPerCycle)
+            {
+                WebCallResult<IEnumerable<IBinanceKline>> result = await bh.getMarketData(symbolCombo.Text, timeInterval, startTime, finishTime);
+
+                points.AddRange(PricePoint.FromBinanceKline(result.Data));
+                startTime = startTime.AddHours(hoursPerCycle);
+                finishTime = finishTime.AddHours(hoursPerCycle);
+            }
+
+            // do remainder
+            startTime = startTime.AddHours(hoursPerCycle);
+            finishTime = finishTime.AddHours(span.TotalHours - i).AddMinutes(span.Minutes);
+            var marketDataResult = await bh.getMarketData(symbolCombo.Text, timeInterval, startTime, finishTime);
+            points.AddRange(PricePoint.FromBinanceKline(marketDataResult.Data));
+
+            // convert to slopes
+            List<PricePointSlope> slopes = Convertions.FindAllV2(points.ToArray(), (int)tolleranceNum.Value);
+            // display data
+            genSlopeView(slopes);
+            // convert to trainingData
+            TrainingData td = BinanceToTraining.slopesToTrainginData(slopes, (int)trainingPromptNum.Value, (int)trainingCompletionNum.Value);
+            // save to tmp
+            string tmpFile = Path.GetTempFileName() + ".jsonl";
+            File.WriteAllText(tmpFile, td.ToString());
+            
+            // Upload
+            OpenAiIntegration ai = new OpenAiIntegration();
+            var uploadResult = await ai.uploadFile(tmpFile);
+            
+            //while (!uploadResult.IsCompleted) { Thread.Sleep(1000); }
+            
+            //if (!uploadResult.IsCompletedSuccessfully) { MessageBox.Show(uploadResult.Exception.ToString()); return; }
+            
+            MessageBox.Show("Task Completed, File id: " + uploadResult.Id + "| File Name: " + uploadResult.Name);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void durationCombo_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+
         }
     }
 }

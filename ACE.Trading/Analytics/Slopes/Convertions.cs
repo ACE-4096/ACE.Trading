@@ -7,7 +7,7 @@ using ACE.Trading.Data;
 
 namespace ACE.Trading.Analytics.Slopes
 {
-    internal class Convertions
+    public class Convertions
     {
         public static List<PricePointSlope> FindAll(PricePoint[] pricePoints)
         {
@@ -87,7 +87,12 @@ namespace ACE.Trading.Analytics.Slopes
 
             return slopeList;
         }
+
         public static List<PricePointSlope> FindAllV2(PricePoint[] pricePoints)
+        {
+            return FindAllV2(pricePoints, 3);
+        }
+        public static List<PricePointSlope> FindAllV2(PricePoint[] pricePoints, int tollerance)
         {
 
             if (pricePoints.Length == 0)
@@ -109,10 +114,10 @@ namespace ACE.Trading.Analytics.Slopes
                         currentSlope.AddPoint(pricePoints[i]);
                     }
                     // if proceeding price point follows pattern ignore the deviation
-                    else if (pricePoints.Length > i + 3)
+                    else if (pricePoints.Length > i + tollerance)
                     {
-                        if (pricePoints[i + 3].avgPrice > currentSlope.getLatestPoint.avgPrice ||
-                        pricePoints[i + 3].highPrice > currentSlope.getLatestPoint.highPrice)
+                        if (pricePoints[i + tollerance].avgPrice > currentSlope.getLatestPoint.avgPrice ||
+                        pricePoints[i + tollerance].highPrice > currentSlope.getLatestPoint.highPrice)
                         {
                             currentSlope.AddPoint(pricePoints[i]);
                         }
@@ -142,10 +147,10 @@ namespace ACE.Trading.Analytics.Slopes
                         currentSlope.AddPoint(pricePoints[i]);
                     }
                     // if proceeding price point follows pattern ignore the deviation
-                    else if (pricePoints.Length > i + 3)
+                    else if (pricePoints.Length > i + tollerance)
                     {
-                        if (pricePoints[i + 3].avgPrice < currentSlope.getLatestPoint.avgPrice ||
-                        pricePoints[i + 3].lowPrice < currentSlope.getLatestPoint.lowPrice)
+                        if (pricePoints[i + tollerance].avgPrice < currentSlope.getLatestPoint.avgPrice ||
+                        pricePoints[i + tollerance].lowPrice < currentSlope.getLatestPoint.lowPrice)
                         {
                             currentSlope.AddPoint(pricePoints[i]);
                         }
@@ -165,7 +170,7 @@ namespace ACE.Trading.Analytics.Slopes
 
             return slopeList;
         }
-        internal static int sortTime_oldestFirst(PricePoint x, PricePoint y)
+        public static int sortTime_oldestFirst(PricePoint x, PricePoint y)
         {
             if (x.timeUtc > y.timeUtc)
                 return -1;
@@ -173,7 +178,7 @@ namespace ACE.Trading.Analytics.Slopes
                 return +1;
             return 0;
         }
-        internal static int sortTime_latestFirst(PricePoint x, PricePoint y)
+        public static int sortTime_latestFirst(PricePoint x, PricePoint y)
         {
             if (x.timeUtc > y.timeUtc)
                 return -1;
@@ -181,7 +186,7 @@ namespace ACE.Trading.Analytics.Slopes
                 return +1;
             return 0;
         }
-        internal static int sortTime_oldestFirst(PricePointSlope x, PricePointSlope y)
+        public static int sortTime_oldestFirst(PricePointSlope x, PricePointSlope y)
         {
             if (x.openTimeUtc > y.openTimeUtc)
                 return -1;
@@ -189,7 +194,7 @@ namespace ACE.Trading.Analytics.Slopes
                 return +1;
             return 0;
         }
-        internal static int sortTime_latestFirst(PricePointSlope x, PricePointSlope y)
+        public static int sortTime_latestFirst(PricePointSlope x, PricePointSlope y)
         {
             if (x.openTimeUtc > y.openTimeUtc)
                 return -1;

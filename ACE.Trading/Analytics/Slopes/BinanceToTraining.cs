@@ -51,6 +51,7 @@ namespace ACE.Trading.Analytics.Slopes
         }
         public static TrainingData slopesToTrainginData(List<PricePointSlope> slopes, int numOfSlopesPerPrompt, int numOfSlopesPerCompletion)
         {
+            slopes.Sort(Convertions.sortTime_oldestFirst);
             TrainingData td = new TrainingData();
 
 
