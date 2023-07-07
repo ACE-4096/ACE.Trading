@@ -51,21 +51,23 @@
             addToSymbolListToolStripMenuItem = new ToolStripMenuItem();
             tabControl1 = new TabControl();
             trainingTab = new TabPage();
-            fineTuneModelCombo = new ComboBox();
-            trainExistingRadioBtn = new RadioButton();
-            trainNewRadioBtn = new RadioButton();
-            button1 = new Button();
-            numericUpDown5 = new NumericUpDown();
-            label6 = new Label();
-            numericUpDown4 = new NumericUpDown();
-            label2 = new Label();
-            numericUpDown1 = new NumericUpDown();
-            label1 = new Label();
-            numericUpDown3 = new NumericUpDown();
+            deleteFileBtn = new Button();
+            fineTuneGroupBox = new GroupBox();
             label4 = new Label();
-            label7 = new Label();
-            label5 = new Label();
+            fineTuneModelCombo = new ComboBox();
             modelSuffixTextBox = new TextBox();
+            trainExistingRadioBtn = new RadioButton();
+            label5 = new Label();
+            trainNewRadioBtn = new RadioButton();
+            batchSizeNum = new NumericUpDown();
+            button1 = new Button();
+            label1 = new Label();
+            learningRateNum = new NumericUpDown();
+            epochCountNum = new NumericUpDown();
+            label6 = new Label();
+            label2 = new Label();
+            promptWeightNum = new NumericUpDown();
+            label7 = new Label();
             filesListBox = new ListBox();
             slopeTab = new TabPage();
             groupBox1 = new GroupBox();
@@ -90,10 +92,11 @@
             menuStrip2.SuspendLayout();
             tabControl1.SuspendLayout();
             trainingTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown5).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown4).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown3).BeginInit();
+            fineTuneGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)batchSizeNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)learningRateNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)epochCountNum).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)promptWeightNum).BeginInit();
             slopeTab.SuspendLayout();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)trainingCompletionNum).BeginInit();
@@ -105,10 +108,10 @@
             // formsPlot1
             // 
             formsPlot1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            formsPlot1.Location = new Point(262, 34);
+            formsPlot1.Location = new Point(294, 34);
             formsPlot1.Margin = new Padding(4, 3, 4, 3);
             formsPlot1.Name = "formsPlot1";
-            formsPlot1.Size = new Size(525, 501);
+            formsPlot1.Size = new Size(493, 501);
             formsPlot1.TabIndex = 0;
             // 
             // predictBtn
@@ -151,6 +154,7 @@
             createNew.TabIndex = 6;
             createNew.TabStop = false;
             createNew.Text = "Fine Tunes";
+            createNew.Enter += createNew_Enter;
             // 
             // promptNumLabel
             // 
@@ -195,7 +199,7 @@
             // openTrainingFileToolStripMenuItem
             // 
             openTrainingFileToolStripMenuItem.Name = "openTrainingFileToolStripMenuItem";
-            openTrainingFileToolStripMenuItem.Size = new Size(137, 22);
+            openTrainingFileToolStripMenuItem.Size = new Size(139, 22);
             openTrainingFileToolStripMenuItem.Text = "Training File";
             openTrainingFileToolStripMenuItem.Click += openTrainingFileToolStripMenuItem_Click;
             // 
@@ -251,20 +255,20 @@
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(175, 22);
+            saveToolStripMenuItem.Size = new Size(177, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // viewToolStripMenuItem
             // 
             viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            viewToolStripMenuItem.Size = new Size(175, 22);
+            viewToolStripMenuItem.Size = new Size(177, 22);
             viewToolStripMenuItem.Text = "View";
             // 
             // addToSymbolListToolStripMenuItem
             // 
             addToSymbolListToolStripMenuItem.Name = "addToSymbolListToolStripMenuItem";
-            addToSymbolListToolStripMenuItem.Size = new Size(175, 22);
+            addToSymbolListToolStripMenuItem.Size = new Size(177, 22);
             addToSymbolListToolStripMenuItem.Text = "Add To Symbol List";
             // 
             // tabControl1
@@ -281,21 +285,9 @@
             // 
             // trainingTab
             // 
-            trainingTab.Controls.Add(fineTuneModelCombo);
-            trainingTab.Controls.Add(trainExistingRadioBtn);
-            trainingTab.Controls.Add(trainNewRadioBtn);
-            trainingTab.Controls.Add(button1);
-            trainingTab.Controls.Add(numericUpDown5);
-            trainingTab.Controls.Add(label6);
-            trainingTab.Controls.Add(numericUpDown4);
-            trainingTab.Controls.Add(label2);
-            trainingTab.Controls.Add(numericUpDown1);
-            trainingTab.Controls.Add(label1);
-            trainingTab.Controls.Add(numericUpDown3);
-            trainingTab.Controls.Add(label4);
+            trainingTab.Controls.Add(deleteFileBtn);
+            trainingTab.Controls.Add(fineTuneGroupBox);
             trainingTab.Controls.Add(label7);
-            trainingTab.Controls.Add(label5);
-            trainingTab.Controls.Add(modelSuffixTextBox);
             trainingTab.Controls.Add(filesListBox);
             trainingTab.Location = new Point(4, 24);
             trainingTab.Name = "trainingTab";
@@ -305,31 +297,91 @@
             trainingTab.Text = "Training";
             trainingTab.UseVisualStyleBackColor = true;
             // 
+            // deleteFileBtn
+            // 
+            deleteFileBtn.Enabled = false;
+            deleteFileBtn.Location = new Point(193, 202);
+            deleteFileBtn.Name = "deleteFileBtn";
+            deleteFileBtn.Size = new Size(75, 23);
+            deleteFileBtn.TabIndex = 25;
+            deleteFileBtn.Text = "Delete";
+            deleteFileBtn.UseVisualStyleBackColor = true;
+            deleteFileBtn.Click += deleteFileBtn_Click;
+            // 
+            // fineTuneGroupBox
+            // 
+            fineTuneGroupBox.Controls.Add(label4);
+            fineTuneGroupBox.Controls.Add(fineTuneModelCombo);
+            fineTuneGroupBox.Controls.Add(modelSuffixTextBox);
+            fineTuneGroupBox.Controls.Add(trainExistingRadioBtn);
+            fineTuneGroupBox.Controls.Add(label5);
+            fineTuneGroupBox.Controls.Add(trainNewRadioBtn);
+            fineTuneGroupBox.Controls.Add(batchSizeNum);
+            fineTuneGroupBox.Controls.Add(button1);
+            fineTuneGroupBox.Controls.Add(label1);
+            fineTuneGroupBox.Controls.Add(learningRateNum);
+            fineTuneGroupBox.Controls.Add(epochCountNum);
+            fineTuneGroupBox.Controls.Add(label6);
+            fineTuneGroupBox.Controls.Add(label2);
+            fineTuneGroupBox.Controls.Add(promptWeightNum);
+            fineTuneGroupBox.Enabled = false;
+            fineTuneGroupBox.Location = new Point(3, 231);
+            fineTuneGroupBox.Name = "fineTuneGroupBox";
+            fineTuneGroupBox.Size = new Size(265, 239);
+            fineTuneGroupBox.TabIndex = 24;
+            fineTuneGroupBox.TabStop = false;
+            fineTuneGroupBox.Text = "Fine Tune";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(6, 33);
+            label4.Name = "label4";
+            label4.Size = new Size(63, 15);
+            label4.TabIndex = 12;
+            label4.Text = "Batch Size:";
+            // 
             // fineTuneModelCombo
             // 
             fineTuneModelCombo.Enabled = false;
             fineTuneModelCombo.FormattingEnabled = true;
-            fineTuneModelCombo.Location = new Point(13, 302);
+            fineTuneModelCombo.Location = new Point(8, 176);
             fineTuneModelCombo.Name = "fineTuneModelCombo";
             fineTuneModelCombo.Size = new Size(182, 23);
             fineTuneModelCombo.TabIndex = 23;
             // 
+            // modelSuffixTextBox
+            // 
+            modelSuffixTextBox.Location = new Point(57, 147);
+            modelSuffixTextBox.Name = "modelSuffixTextBox";
+            modelSuffixTextBox.Size = new Size(133, 23);
+            modelSuffixTextBox.TabIndex = 6;
+            // 
             // trainExistingRadioBtn
             // 
             trainExistingRadioBtn.AutoSize = true;
-            trainExistingRadioBtn.Location = new Point(201, 303);
+            trainExistingRadioBtn.Location = new Point(196, 177);
             trainExistingRadioBtn.Name = "trainExistingRadioBtn";
-            trainExistingRadioBtn.Size = new Size(66, 19);
+            trainExistingRadioBtn.Size = new Size(65, 19);
             trainExistingRadioBtn.TabIndex = 22;
             trainExistingRadioBtn.Text = "Existing";
             trainExistingRadioBtn.UseVisualStyleBackColor = true;
             trainExistingRadioBtn.CheckedChanged += TrainingModelType_CheckedChanged;
             // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(7, 150);
+            label5.Name = "label5";
+            label5.Size = new Size(44, 15);
+            label5.TabIndex = 7;
+            label5.Text = "Model:";
+            // 
             // trainNewRadioBtn
             // 
             trainNewRadioBtn.AutoSize = true;
             trainNewRadioBtn.Checked = true;
-            trainNewRadioBtn.Location = new Point(201, 274);
+            trainNewRadioBtn.Location = new Point(196, 148);
             trainNewRadioBtn.Name = "trainNewRadioBtn";
             trainNewRadioBtn.Size = new Size(49, 19);
             trainNewRadioBtn.TabIndex = 21;
@@ -338,87 +390,78 @@
             trainNewRadioBtn.UseVisualStyleBackColor = true;
             trainNewRadioBtn.CheckedChanged += TrainingModelType_CheckedChanged;
             // 
+            // batchSizeNum
+            // 
+            batchSizeNum.Location = new Point(146, 31);
+            batchSizeNum.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            batchSizeNum.Name = "batchSizeNum";
+            batchSizeNum.Size = new Size(54, 23);
+            batchSizeNum.TabIndex = 13;
+            batchSizeNum.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
             // button1
             // 
-            button1.Location = new Point(103, 331);
+            button1.Location = new Point(94, 205);
             button1.Name = "button1";
             button1.Size = new Size(75, 23);
             button1.TabIndex = 20;
             button1.Text = "Fine Tune";
             button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
-            // 
-            // numericUpDown5
-            // 
-            numericUpDown5.DecimalPlaces = 2;
-            numericUpDown5.Location = new Point(153, 219);
-            numericUpDown5.Name = "numericUpDown5";
-            numericUpDown5.Size = new Size(54, 23);
-            numericUpDown5.TabIndex = 19;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new Point(13, 221);
-            label6.Name = "label6";
-            label6.Size = new Size(136, 15);
-            label6.TabIndex = 18;
-            label6.Text = "Learning Rate Multiplier:";
-            // 
-            // numericUpDown4
-            // 
-            numericUpDown4.DecimalPlaces = 2;
-            numericUpDown4.Location = new Point(153, 190);
-            numericUpDown4.Minimum = new decimal(new int[] { 1, 0, 0, 131072 });
-            numericUpDown4.Name = "numericUpDown4";
-            numericUpDown4.Size = new Size(54, 23);
-            numericUpDown4.TabIndex = 17;
-            numericUpDown4.Value = new decimal(new int[] { 1, 0, 0, 131072 });
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(13, 192);
-            label2.Name = "label2";
-            label2.Size = new Size(117, 15);
-            label2.TabIndex = 16;
-            label2.Text = "Prompt Weight Loss:";
-            // 
-            // numericUpDown1
-            // 
-            numericUpDown1.Location = new Point(153, 161);
-            numericUpDown1.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(54, 23);
-            numericUpDown1.TabIndex = 15;
-            numericUpDown1.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            button1.Click += fineTuneBtn_Click;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(13, 163);
+            label1.Location = new Point(6, 62);
             label1.Name = "label1";
             label1.Size = new Size(79, 15);
             label1.TabIndex = 14;
             label1.Text = "Epoch Count:";
             // 
-            // numericUpDown3
+            // learningRateNum
             // 
-            numericUpDown3.Location = new Point(153, 132);
-            numericUpDown3.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            numericUpDown3.Name = "numericUpDown3";
-            numericUpDown3.Size = new Size(54, 23);
-            numericUpDown3.TabIndex = 13;
-            numericUpDown3.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            learningRateNum.DecimalPlaces = 2;
+            learningRateNum.Location = new Point(146, 118);
+            learningRateNum.Name = "learningRateNum";
+            learningRateNum.Size = new Size(54, 23);
+            learningRateNum.TabIndex = 19;
             // 
-            // label4
+            // epochCountNum
             // 
-            label4.AutoSize = true;
-            label4.Location = new Point(13, 134);
-            label4.Name = "label4";
-            label4.Size = new Size(63, 15);
-            label4.TabIndex = 12;
-            label4.Text = "Batch Size:";
+            epochCountNum.Location = new Point(146, 60);
+            epochCountNum.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            epochCountNum.Name = "epochCountNum";
+            epochCountNum.Size = new Size(54, 23);
+            epochCountNum.TabIndex = 15;
+            epochCountNum.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(6, 120);
+            label6.Name = "label6";
+            label6.Size = new Size(136, 15);
+            label6.TabIndex = 18;
+            label6.Text = "Learning Rate Multiplier:";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(6, 91);
+            label2.Name = "label2";
+            label2.Size = new Size(117, 15);
+            label2.TabIndex = 16;
+            label2.Text = "Prompt Weight Loss:";
+            // 
+            // promptWeightNum
+            // 
+            promptWeightNum.DecimalPlaces = 2;
+            promptWeightNum.Location = new Point(146, 89);
+            promptWeightNum.Minimum = new decimal(new int[] { 1, 0, 0, 131072 });
+            promptWeightNum.Name = "promptWeightNum";
+            promptWeightNum.Size = new Size(54, 23);
+            promptWeightNum.TabIndex = 17;
+            promptWeightNum.Value = new decimal(new int[] { 1, 0, 0, 131072 });
             // 
             // label7
             // 
@@ -429,30 +472,15 @@
             label7.TabIndex = 8;
             label7.Text = "Uploaded Files";
             // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new Point(12, 276);
-            label5.Name = "label5";
-            label5.Size = new Size(44, 15);
-            label5.TabIndex = 7;
-            label5.Text = "Model:";
-            // 
-            // modelSuffixTextBox
-            // 
-            modelSuffixTextBox.Location = new Point(62, 273);
-            modelSuffixTextBox.Name = "modelSuffixTextBox";
-            modelSuffixTextBox.Size = new Size(133, 23);
-            modelSuffixTextBox.TabIndex = 6;
-            // 
             // filesListBox
             // 
             filesListBox.FormattingEnabled = true;
             filesListBox.ItemHeight = 15;
             filesListBox.Location = new Point(6, 32);
             filesListBox.Name = "filesListBox";
-            filesListBox.Size = new Size(259, 94);
+            filesListBox.Size = new Size(259, 154);
             filesListBox.TabIndex = 0;
+            filesListBox.SelectedIndexChanged += filesListBox_SelectedIndexChanged;
             // 
             // slopeTab
             // 
@@ -605,7 +633,7 @@
             label3.AutoSize = true;
             label3.Location = new Point(56, 24);
             label3.Name = "label3";
-            label3.Size = new Size(63, 15);
+            label3.Size = new Size(65, 15);
             label3.TabIndex = 0;
             label3.Text = "Tollerance:";
             // 
@@ -649,10 +677,12 @@
             tabControl1.ResumeLayout(false);
             trainingTab.ResumeLayout(false);
             trainingTab.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown5).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown4).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown3).EndInit();
+            fineTuneGroupBox.ResumeLayout(false);
+            fineTuneGroupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)batchSizeNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)learningRateNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)epochCountNum).EndInit();
+            ((System.ComponentModel.ISupportInitialize)promptWeightNum).EndInit();
             slopeTab.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
@@ -712,13 +742,13 @@
         private RadioButton trainExistingRadioBtn;
         private RadioButton trainNewRadioBtn;
         private Button button1;
-        private NumericUpDown numericUpDown5;
+        private NumericUpDown learningRateNum;
         private Label label6;
-        private NumericUpDown numericUpDown4;
+        private NumericUpDown promptWeightNum;
         private Label label2;
-        private NumericUpDown numericUpDown1;
+        private NumericUpDown epochCountNum;
         private Label label1;
-        private NumericUpDown numericUpDown3;
+        private NumericUpDown batchSizeNum;
         private Label label4;
         private Label label7;
         private GroupBox groupBox1;
@@ -734,5 +764,7 @@
         private Label label10;
         private Label label13;
         private ComboBox timeIntervalCombo2;
+        private GroupBox fineTuneGroupBox;
+        private Button deleteFileBtn;
     }
 }

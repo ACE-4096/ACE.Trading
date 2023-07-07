@@ -47,9 +47,9 @@ namespace ACE.Trading.Analytics.Slopes
             if (slopes == null || slopes.Count == 0)
                 return null;
 
-            return slopesToTrainginData(slopes, numOfSlopesPerPrompt, numOfSlopesPerCompletion);
+            return slopesToTraingingDataFliudLanguage(slopes, numOfSlopesPerPrompt, numOfSlopesPerCompletion);
         }
-        public static TrainingData slopesToTrainginData(List<PricePointSlope> slopes, int numOfSlopesPerPrompt, int numOfSlopesPerCompletion)
+        public static TrainingData slopesToTraingingDataFliudLanguage(List<PricePointSlope> slopes, int numOfSlopesPerPrompt, int numOfSlopesPerCompletion)
         {
             slopes.Sort(Convertions.sortTime_oldestFirst);
             TrainingData td = new TrainingData();
@@ -58,6 +58,27 @@ namespace ACE.Trading.Analytics.Slopes
             for (int i = 0; i < (slopes.Count - (numOfSlopesPerPrompt + numOfSlopesPerCompletion)); i += numOfSlopesPerPrompt + numOfSlopesPerCompletion)
             {
                 string prompt = FluidLanguage.lineSeperator, completion = "";
+                for (int j = 0; j < numOfSlopesPerPrompt; j++)
+                {
+                    prompt += FluidLanguage.formatBinanceLine(slopes[i + j]);
+                }
+                for (int k = 0; k < numOfSlopesPerCompletion; k++)
+                {
+                    completion += FluidLanguage.formatBinanceLine(slopes[i + numOfSlopesPerPrompt + k]);
+                }
+                td.Add(prompt, completion);
+            }
+            return td;
+        }
+        public static TrainingData slopesToTraingingDataMinLanguage(List<PricePointSlope> slopes, int numOfSlopesPerPrompt, int numOfSlopesPerCompletion)
+        {
+            slopes.Sort(Convertions.sortTime_oldestFirst);
+            TrainingData td = new TrainingData();
+
+
+            for (int i = 0; i < (slopes.Count - (numOfSlopesPerPrompt + numOfSlopesPerCompletion)); i += numOfSlopesPerPrompt + numOfSlopesPerCompletion)
+            {
+                string prompt = MinLanguage.Encoding.slopeSeperator, completion = "";
                 for (int j = 0; j < numOfSlopesPerPrompt; j++)
                 {
                     prompt += FluidLanguage.formatBinanceLine(slopes[i + j]);

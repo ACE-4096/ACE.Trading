@@ -36,7 +36,7 @@ namespace ACE.Trading.OpenAi.Formatting
 
             string output = "";
             foreach (var slope in inputSlopes){
-                output += $"{{ 'starting_point': [{0}, {1}], 'ending_point':  [{2}, {3}], 'gradient': {4}, 'weight': {5} }},";
+                output += $"{{ 'starting_point': [{slope.OpenTimeUnix}, {slope.getOpenPrice}], 'ending_point':  [{slope.CloseTimeUnix}, {slope.getClosePrice}], 'gradient': {slope.getGradient}, 'weight': {slope.getVolume} }},";
             }
             if (output.Length > Encoding.slopeFormat.Length)
             {

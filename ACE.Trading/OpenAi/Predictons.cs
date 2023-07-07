@@ -177,7 +177,7 @@ namespace ACE.Trading.OpenAi
                 Debug.WriteLine("Not enough slopes to create the prompt");
                 return -4;
             }
-            /* Fiud Language
+            //Fiud Language
             string prompt = FluidLanguage.lineSeperator;
             List<PricePointSlope> limitedInputSlopes = new List<PricePointSlope>();
             for (int j = 0; j < numOfPromptSlopes; j++)
@@ -185,18 +185,18 @@ namespace ACE.Trading.OpenAi
                 prompt += FluidLanguage.formatBinanceLine(inputSlopes[j]);
                 limitedInputSlopes.Add(inputSlopes[j]);
             }
-            */
+            
 
-            // Min Language
+            /*// Min Language
             List<PricePointSlope> limitedInputSlopes = new List<PricePointSlope>();
             for (int j = 0; j < numOfPromptSlopes; j++) { 
                 limitedInputSlopes.Add(inputSlopes[j]);
             }
 
-            string prompt = MinLanguage.Encode(limitedInputSlopes);
+            string prompt = FluidLanguage.Encode(limitedInputSlopes);*/
             string prediction = await new OpenAiIntegration().PredictFromFineTune(prompt, model.ModelID);
 
-            List<PricePointSlope> outputSlopes = MinLanguage.Decode(prediction);
+            List<PricePointSlope> outputSlopes = FluidLanguage.Decode(prediction);
 
             // Log prediction data
             long id = Analytics.Predictions.addSlopePrediction(symbol, model, limitedInputSlopes, outputSlopes);

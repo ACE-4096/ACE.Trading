@@ -26,6 +26,7 @@ using static ScottPlot.Generate;
 using CryptoExchange.Net.Objects;
 using Newtonsoft.Json.Linq;
 using System.Drawing.Text;
+using OpenAI_API.Files;
 
 namespace ACE.Trading.Data.Graphics
 {
@@ -36,6 +37,7 @@ namespace ACE.Trading.Data.Graphics
             InitializeComponent();
         }
         List<Model> modelList = new List<Model>();
+        List<OpenAI_API.Files.File> files = new List<OpenAI_API.Files.File>();
         string[] symbols;
         string filename;
 
@@ -117,8 +119,16 @@ namespace ACE.Trading.Data.Graphics
                 Debug.Print(result.Exception.ToString());
             }
 
+            var newResult = await ai.getFineTuneList();
             BeginInvoke((MethodInvoker)delegate
             {
+                foreach (var fineTuneId in newResult.data)
+                {
+                    if (fineTuneId.FineTunedModel != null)
+                    {
+                        fineTuneModelCombo.Items.Add(fineTuneId.FineTunedModel);
+                    }
+                }
                 // Display all models
                 modelIdCombo.Items.Clear();
                 foreach (var model in modelList.ToArray())
@@ -162,10 +172,10 @@ namespace ACE.Trading.Data.Graphics
         private async void loadFiles()
         {
             OpenAi.OpenAiIntegration ai = new OpenAiIntegration();
-            var result = await ai.getFiles();
-            if (result != null && result.Count > 0)
+            files = await ai.getFiles();
+            if (files != null && files.Count > 0)
             {
-                foreach (var file in result)
+                foreach (var file in files)
                 {
                     filesListBox.Items.Add(file.Name + " | " + file.Bytes + 'B');
                 }
@@ -466,7 +476,7 @@ namespace ACE.Trading.Data.Graphics
         {
             string filename = openFile();
             if (filename == "") return;
-            string[] data = File.ReadAllLines(filename);
+            string[] data = System.IO.File.ReadAllLines(filename);
 
             List<PricePointSlope> trainingSlopes = new List<PricePointSlope>();
 
@@ -540,9 +550,9 @@ namespace ACE.Trading.Data.Graphics
                 MessageBox.Show("No Symbol selected.");
                 return;
             }
-            
-            
-            
+
+
+
             // Get binance data
             // loop through sice cap is 500 klines per request
             TimeSpan span = finishDateTime.Value.Subtract(startDateTime.Value);
@@ -550,7 +560,7 @@ namespace ACE.Trading.Data.Graphics
             const int hoursPerCycle = 6;
             System.DateTime startTime = startDateTime.Value, finishTime = startDateTime.Value.AddHours(hoursPerCycle);
             int i;
-            for (i = 0; i < span.TotalHours-hoursPerCycle; i += hoursPerCycle)
+            for (i = 0; i < span.TotalHours - hoursPerCycle; i += hoursPerCycle)
             {
                 WebCallResult<IEnumerable<IBinanceKline>> result = await bh.getMarketData(symbolCombo.Text, timeInterval, startTime, finishTime);
 
@@ -573,27 +583,106 @@ namespace ACE.Trading.Data.Graphics
             TrainingData td = BinanceToTraining.slopesToTrainginData(slopes, (int)trainingPromptNum.Value, (int)trainingCompletionNum.Value);
             // save to tmp
             string tmpFile = Path.GetTempFileName() + ".jsonl";
-            File.WriteAllText(tmpFile, td.ToString());
-            
+            System.IO.File.WriteAllText(tmpFile, td.ToString());
+
             // Upload
             OpenAiIntegration ai = new OpenAiIntegration();
             var uploadResult = await ai.uploadFile(tmpFile);
-            
+
             //while (!uploadResult.IsCompleted) { Thread.Sleep(1000); }
-            
+
             //if (!uploadResult.IsCompletedSuccessfully) { MessageBox.Show(uploadResult.Exception.ToString()); return; }
-            
+
             MessageBox.Show("Task Completed, File id: " + uploadResult.Id + "| File Name: " + uploadResult.Name);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void fineTuneBtn_Click(object sender, EventArgs e)
         {
+            string filename = "";
+            if (filesListBox.SelectedIndex == -1 && filesListBox.SelectedIndex >= files.Count)
+            {
+                MessageBox.Show("No Files Selected.");
+                return;
+            }
+            else
+            {
+                filename = files[filesListBox.SelectedIndex].Id;
+            }
+            if (trainNewRadioBtn.Checked && modelSuffixTextBox.Text == "")
+            {
+                MessageBox.Show("Model suffix entered. Use this to id yor different models.");
+                return;
+            }
+            if (trainExistingRadioBtn.Checked && (fineTuneModelCombo.Text == "" || fineTuneModelCombo.SelectedIndex == -1))
+            {
+                MessageBox.Show("No model selected to train.");
+                return;
+            }
+
+            if (symbolCombo.Text == "" || symbolCombo.SelectedIndex == -1)
+            {
+                MessageBox.Show("Invalid symbol selected.");
+                return;
+            }
+
+            OpenAiIntegration ai = new OpenAiIntegration();
+            HyperParams hypers = new HyperParams
+            {
+                BatchSize = (int)batchSizeNum.Value,
+                PromptLossWeight = (double)promptWeightNum.Value,
+                NumberOfEpochs = (int)epochCountNum.Value,
+                LearningRateMultiplier = (double)learningRateNum.Value
+            };
+
+
+
+            var result = ai.fineTune(filename, symbolCombo.Text, hypers);
+            while (!result.IsCompleted) Thread.Sleep(1000);
+            if (!result.IsCompletedSuccessfully)
+            {
+                MessageBox.Show(result.Exception.ToString());
+            }
+            MessageBox.Show($"Fine tune created. Id: {result.Result.FineTunedModel}");
+
 
         }
 
         private void durationCombo_SelectedIndexChanged_1(object sender, EventArgs e)
         {
 
+        }
+
+        private void createNew_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void filesListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (filesListBox.SelectedIndex == -1)
+            {
+                fineTuneGroupBox.Enabled = deleteFileBtn.Enabled = false;
+            }
+            else
+            {
+                fineTuneGroupBox.Enabled = deleteFileBtn.Enabled = true;
+            }
+        }
+
+        private async void deleteFileBtn_Click(object sender, EventArgs e)
+        {
+            if (filesListBox.SelectedIndex == -1 && filesListBox.SelectedIndex >= files.Count)
+            {
+                MessageBox.Show("No Files Selected.");
+                return;
+            }
+            else
+            {
+                OpenAiIntegration ai = new OpenAiIntegration();
+                var result = await ai.deleteFile(files[filesListBox.SelectedIndex].Id);
+
+                MessageBox.Show(result == null || result.Deleted ? "File successfully deleted." : "Unable to delete file.");
+            }
         }
     }
 }
