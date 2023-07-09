@@ -105,10 +105,10 @@
             // formsPlot1
             // 
             formsPlot1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            formsPlot1.Location = new Point(262, 34);
+            formsPlot1.Location = new Point(291, 34);
             formsPlot1.Margin = new Padding(4, 3, 4, 3);
             formsPlot1.Name = "formsPlot1";
-            formsPlot1.Size = new Size(525, 501);
+            formsPlot1.Size = new Size(496, 501);
             formsPlot1.TabIndex = 0;
             // 
             // predictBtn
@@ -145,9 +145,9 @@
             createNew.Controls.Add(modelIdCombo);
             createNew.Controls.Add(predictBtn);
             createNew.Controls.Add(modelIdLabel);
-            createNew.Location = new Point(3, 3);
+            createNew.Location = new Point(6, 3);
             createNew.Name = "createNew";
-            createNew.Size = new Size(265, 97);
+            createNew.Size = new Size(265, 93);
             createNew.TabIndex = 6;
             createNew.TabStop = false;
             createNew.Text = "Fine Tunes";

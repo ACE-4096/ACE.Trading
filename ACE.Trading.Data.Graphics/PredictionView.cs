@@ -540,9 +540,7 @@ namespace ACE.Trading.Data.Graphics
                 MessageBox.Show("No Symbol selected.");
                 return;
             }
-            
-            
-            
+
             // Get binance data
             // loop through sice cap is 500 klines per request
             TimeSpan span = finishDateTime.Value.Subtract(startDateTime.Value);
@@ -550,7 +548,7 @@ namespace ACE.Trading.Data.Graphics
             const int hoursPerCycle = 6;
             System.DateTime startTime = startDateTime.Value, finishTime = startDateTime.Value.AddHours(hoursPerCycle);
             int i;
-            for (i = 0; i < span.TotalHours-hoursPerCycle; i += hoursPerCycle)
+            for (i = 0; i < span.TotalHours - hoursPerCycle; i += hoursPerCycle)
             {
                 WebCallResult<IEnumerable<IBinanceKline>> result = await bh.getMarketData(symbolCombo.Text, timeInterval, startTime, finishTime);
 
@@ -574,15 +572,15 @@ namespace ACE.Trading.Data.Graphics
             // save to tmp
             string tmpFile = Path.GetTempFileName() + ".jsonl";
             File.WriteAllText(tmpFile, td.ToString());
-            
+
             // Upload
             OpenAiIntegration ai = new OpenAiIntegration();
             var uploadResult = await ai.uploadFile(tmpFile);
-            
+
             //while (!uploadResult.IsCompleted) { Thread.Sleep(1000); }
-            
+
             //if (!uploadResult.IsCompletedSuccessfully) { MessageBox.Show(uploadResult.Exception.ToString()); return; }
-            
+
             MessageBox.Show("Task Completed, File id: " + uploadResult.Id + "| File Name: " + uploadResult.Name);
         }
 
