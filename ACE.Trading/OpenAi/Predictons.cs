@@ -178,25 +178,25 @@ namespace ACE.Trading.OpenAi
                 return -4;
             }
             //Fiud Language
-            string prompt = FluidLanguage.lineSeperator;
+            /*string prompt = MinLanguage.lineSeperator;
             List<PricePointSlope> limitedInputSlopes = new List<PricePointSlope>();
             for (int j = 0; j < numOfPromptSlopes; j++)
             {
                 prompt += FluidLanguage.formatBinanceLine(inputSlopes[j]);
                 limitedInputSlopes.Add(inputSlopes[j]);
-            }
-            
+            }*/
 
-            /*// Min Language
+
+            // Min Language
             List<PricePointSlope> limitedInputSlopes = new List<PricePointSlope>();
             for (int j = 0; j < numOfPromptSlopes; j++) { 
                 limitedInputSlopes.Add(inputSlopes[j]);
             }
 
-            string prompt = FluidLanguage.Encode(limitedInputSlopes);*/
+            string prompt = MinLanguage.Encode(limitedInputSlopes);
             string prediction = await new OpenAiIntegration().PredictFromFineTune(prompt, model.ModelID);
 
-            List<PricePointSlope> outputSlopes = FluidLanguage.Decode(prediction);
+            List<PricePointSlope> outputSlopes = MinLanguage.Decode(prediction);
 
             // Log prediction data
             long id = Analytics.Predictions.addSlopePrediction(symbol, model, limitedInputSlopes, outputSlopes);

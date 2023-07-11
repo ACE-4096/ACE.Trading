@@ -46,7 +46,7 @@ namespace OpenAI_API.FineTune
         }
         public async Task<FineTuneResult> RetrieveFineTune(string Id)
         {
-            return await HttpPost<FineTuneResult>(url: formatPathParams(Id));
+            return await HttpGet<FineTuneResult>(url: formatPathParams(Id));
         }
         public async Task<FineTuneResultList> RetrieveFineTuneList()
         {

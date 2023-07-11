@@ -72,7 +72,7 @@ namespace ACE.Trading.Analytics.Slopes
         }
         public static TrainingData slopesToTraingingDataMinLanguage(List<PricePointSlope> slopes, int numOfSlopesPerPrompt, int numOfSlopesPerCompletion)
         {
-            slopes.Sort(Convertions.sortTime_oldestFirst);
+            slopes.Sort(Convertions.sortTime_latestFirst);
             TrainingData td = new TrainingData();
 
 
@@ -81,12 +81,13 @@ namespace ACE.Trading.Analytics.Slopes
                 string prompt = MinLanguage.Encoding.slopeSeperator, completion = "";
                 for (int j = 0; j < numOfSlopesPerPrompt; j++)
                 {
-                    prompt += FluidLanguage.formatBinanceLine(slopes[i + j]);
+                    prompt += MinLanguage.Encode(slopes[i + j]);
                 }
                 for (int k = 0; k < numOfSlopesPerCompletion; k++)
                 {
-                    completion += FluidLanguage.formatBinanceLine(slopes[i + numOfSlopesPerPrompt + k]);
+                    completion += MinLanguage.Encode(slopes[i + numOfSlopesPerPrompt + k]);
                 }
+                completion = completion.Substring(0, completion.Length - 1);
                 td.Add(prompt, completion);
             }
             return td;

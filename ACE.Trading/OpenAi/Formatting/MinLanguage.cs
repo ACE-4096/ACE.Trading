@@ -8,23 +8,23 @@ using System.Threading.Tasks;
 
 namespace ACE.Trading.OpenAi.Formatting
 {
-    internal class MinLanguage
+    public class MinLanguage
     {
         public static class Encoding
         {
             public static string formatString = "Open Time (Unix): {0}, Open Price: {1}, Close Time (Unix): {2}, Close Price: {3}{4}";
 
             /// <summary>
-            /// {0} - Slope Number
-            /// {1} - Starting Point X
-            /// {2} - Starting Point Y
-            /// {3} - Ending Point X
-            /// {4} - Ending Point Y
-            /// {5} - Gradient
+            /// {0} - Slope Number,
+            /// {1} - Starting Point X,
+            /// {2} - Starting Point Y,
+            /// {3} - Ending Point X,
+            /// {4} - Ending Point Y,
+            /// {5} - Gradient,
             /// {6} - Weight
             /// </summary>
             public static string slopeFormat = "{ 'starting_point': [{0}, {1}], \"ending_point\":  [{2}, {3}], 'gradient': {4}, 'weight': {5} }";
-            public static string slopeSeperator = " ||| ";
+            public static string slopeSeperator = "},{";
         }
         /// <summary>
         /// Prompt Builder
@@ -44,15 +44,32 @@ namespace ACE.Trading.OpenAi.Formatting
             }
             return output;
         }
+        public static string Encode(PricePointSlope slope)
+        {
+
+            string output = "";
+                output += $"{{ 'starting_point': [{slope.OpenTimeUnix}, {slope.getOpenPrice}], 'ending_point':  [{slope.CloseTimeUnix}, {slope.getClosePrice}], 'gradient': {slope.getGradient}, 'weight': {slope.getVolume} }},";
+            return output;
+        }
 
         public static List<PricePointSlope> Decode(string input)
         {
+            input = input.Replace(" ||| ", "");
             List<PricePointSlope> slopes = new List<PricePointSlope>();
             foreach (var slopeLine in input.Split(Encoding.slopeSeperator, StringSplitOptions.RemoveEmptyEntries))
             {
                 // Start Time
                 #region
-                string line = slopeLine.Replace("{ \"starting_point\": [", "");
+                string line;
+                if (slopeLine.Contains("{ 'starting_point': ["))
+                {
+                    line = slopeLine.Replace("{ 'starting_point': [", "");
+                }
+                else
+                {
+                    line = slopeLine.Replace(" 'starting_point': [", "");
+                }
+                
                 int firstIndex = line.IndexOf(',');
                 if (firstIndex == -1 || line.Length <= firstIndex)
                     continue;
@@ -68,7 +85,7 @@ namespace ACE.Trading.OpenAi.Formatting
                 if (secondIndex == -1 || line.Length <= secondIndex - firstIndex) 
                     continue;
                 string startPrice = line.Substring(firstIndex, secondIndex - firstIndex);
-                line = line.Substring(secondIndex);
+                 line = line.Substring(secondIndex);
                 decimal openPrice;
                 if (!decimal.TryParse(startPrice, out openPrice)) 
                     continue;
@@ -78,10 +95,11 @@ namespace ACE.Trading.OpenAi.Formatting
                 firstIndex = line.IndexOf('[') + 1;
                 if (firstIndex == -1 || line.Length <= firstIndex) 
                     continue;
+                line = line.Substring(firstIndex);
                 secondIndex = line.IndexOf(',');
-                if (secondIndex == -1 || line.Length <= secondIndex - firstIndex) 
+                if (secondIndex == -1 || line.Length <= secondIndex) 
                     continue;
-                string unixEndTime = line.Substring(firstIndex, secondIndex - firstIndex);
+                string unixEndTime = line.Substring(0,secondIndex );
                 line = line.Substring(secondIndex+1);
                 long endTime;
                 if (!long.TryParse(unixEndTime, out endTime)) 
@@ -100,7 +118,7 @@ namespace ACE.Trading.OpenAi.Formatting
                 // Gradient
                 #region 
                 line = line.Substring(firstIndex);
-                line = line.Replace("], \"gradient\": ", "");
+                line = line.Replace("], 'gradient': ", "");
                 firstIndex = line.IndexOf(',');
                 if (firstIndex == -1 || line.Length <= firstIndex) 
                     continue;
@@ -112,13 +130,12 @@ namespace ACE.Trading.OpenAi.Formatting
                 // Weight / Volume
                 #region 
                 line = line.Substring(firstIndex + 1);
-                firstIndex = line.IndexOf(':');
+                firstIndex = line.IndexOf(':')+1;
                 if (firstIndex == -1 || line.Length <= firstIndex) 
                     continue;
                 secondIndex = line.IndexOf('}');
-                if (secondIndex == -1 || line.Length <= secondIndex - firstIndex) 
-                    continue;
-                string weight = line.Substring(firstIndex, secondIndex - firstIndex);
+                if (secondIndex == -1) { secondIndex = line.Length - firstIndex; } else secondIndex = secondIndex - firstIndex;
+                string weight = line.Substring(firstIndex, secondIndex);
                 decimal volume;
                 if (!decimal.TryParse(weight, out volume)) 
                     continue;

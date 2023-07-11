@@ -37,6 +37,7 @@ namespace ACE.Trading.Data.Graphics
             InitializeComponent();
         }
         List<Model> modelList = new List<Model>();
+        List<FineTuneResult> fineTunes = new List<FineTuneResult>();
         List<OpenAI_API.Files.File> files = new List<OpenAI_API.Files.File>();
         string[] symbols;
         string filename;
@@ -75,30 +76,18 @@ namespace ACE.Trading.Data.Graphics
 
             // Loads fine tund models
             OpenAiIntegration ai = new OpenAiIntegration();
-            /*Task<FineTuneResultList> results = ai.getFineTuneList();
+            fineTunes.Clear();
+            FineTuneResultList results = await ai.getFineTuneList();
+            fineTunes.AddRange(results.data);
 
-            while (!results.IsCompleted) { Thread.Sleep(1000); }
-            if (results.IsCompletedSuccessfully)
+            BeginInvoke((MethodInvoker)delegate
             {
-                BeginInvoke((MethodInvoker)delegate
+                tunesCombo.Items.Clear();
+                foreach (var tune in fineTunes)
                 {
-                    foreach (var tune in results.Result.data)
-                    {
-                        
-                        modelList.Add(new Model(tune.FineTunedModel));
-                    }
-                });
-            }
-            else if (results.IsCanceled)
-            {
-                MessageBox.Show("Error retreiving fine tuned models.");
-            }
-            else if (results.IsFaulted)
-            {
-                MessageBox.Show("Error retreiving fine tuned models.");
-                Debug.Print(results.Exception.ToString());
-            }
-            */
+                    tunesCombo.Items.Add(tune.Id);
+                }
+            });
             // Loads Standard Models
             var result = ai.getModels();
             while (!result.IsCompleted) { Thread.Sleep(1000); }
@@ -171,6 +160,7 @@ namespace ACE.Trading.Data.Graphics
 
         private async void loadFiles()
         {
+            filesListBox.Items.Clear();
             OpenAi.OpenAiIntegration ai = new OpenAiIntegration();
             files = await ai.getFiles();
             if (files != null && files.Count > 0)
@@ -258,6 +248,59 @@ namespace ACE.Trading.Data.Graphics
         }
         #endregion
 
+        #region Slope Generation
+        private async Task<int> generateSlopes(string symbol, KlineInterval interval, System.DateTime startTime, System.DateTime finishTime, string filename = "")
+        {
+            if (filename == "")
+            {
+                SaveFileDialog sfd = new SaveFileDialog() { AddExtension = true, DefaultExt = ".jsonl" };
+                if (sfd.ShowDialog() != DialogResult.OK)
+                {
+                    MessageBox.Show("No filename specified.");
+                    return -1;
+                }
+                filename = sfd.FileName.Contains(".jsonl") ? sfd.FileName : sfd.FileName + ".jsonl";
+            }
+
+
+            // Get binance data
+            // loop through sice cap is 500 klines per request
+            TimeSpan span = finishTime.Subtract(startTime);
+            List<PricePoint> points = new List<PricePoint>();
+            const int hoursPerCycle = 6; finishTime = startTime.AddHours(hoursPerCycle);
+            int i;
+            for (i = 0; i < span.TotalHours - hoursPerCycle; i += hoursPerCycle)
+            {
+                WebCallResult<IEnumerable<IBinanceKline>> result = await bh.getMarketData(symbolCombo.Text, interval, startTime, finishTime);
+
+                points.AddRange(PricePoint.FromBinanceKline(result.Data));
+                startTime = startTime.AddHours(hoursPerCycle);
+                finishTime = finishTime.AddHours(hoursPerCycle);
+            }
+
+            // do remainder
+            startTime = startTime.AddHours(hoursPerCycle);
+            finishTime = finishTime.AddHours(span.TotalHours - i).AddMinutes(span.Minutes);
+            var marketDataResult = await bh.getMarketData(symbolCombo.Text, interval, startTime, finishTime);
+            points.AddRange(PricePoint.FromBinanceKline(marketDataResult.Data));
+
+            // convert to slopes
+            List<PricePointSlope> slopes = Convertions.FindAllV2(points.ToArray(), (int)tolleranceNum.Value);
+
+            // display data
+            genSlopeView(slopes);
+
+            // convert to trainingData
+            TrainingData td = BinanceToTraining.slopesToTraingingDataMinLanguage(slopes, (int)trainingPromptNum.Value, (int)trainingCompletionNum.Value);
+
+            // save to tmp
+
+            System.IO.File.WriteAllText(filename, td.ToString());
+
+            return 0;
+
+        }
+        #endregion
 
         #region Graphics
         private void genGraphFromSymbolData(SymbolData sd)
@@ -365,6 +408,35 @@ namespace ACE.Trading.Data.Graphics
             formsPlot1.Plot.AddScatter(xVals2.ToArray(), yVals2.ToArray(), color: Color.Blue);
             formsPlot1.Refresh();
         }
+        private void genSlopeView(List<PricePointSlope> promptSlopes, List<PricePointSlope> completionSlopes)
+        {
+            if (promptSlopes == null || completionSlopes == null)
+            {
+                MessageBox.Show("Predisction history data is invalid");
+                return;
+            }
+            List<double> yVals1 = new List<double>();
+            List<double> xVals1 = new List<double>();
+
+            // Display the rest
+            foreach (PricePointSlope slope in promptSlopes.ToArray())
+            {
+                yVals1.Add((double)slope.getOpenPrice);
+                xVals1.Add((double)slope.OpenTimeUnix);
+            }
+            formsPlot1.Plot.AddScatter(xVals1.ToArray(), yVals1.ToArray(), color: Color.Blue);
+            List<double> yVals2 = new List<double>();
+            List<double> xVals2 = new List<double>();
+
+            // Display the rest
+            foreach (PricePointSlope slope in completionSlopes.ToArray())
+            {
+                yVals2.Add((double)slope.getOpenPrice);
+                xVals2.Add((double)slope.OpenTimeUnix);
+            }
+            formsPlot1.Plot.AddScatter(xVals2.ToArray(), yVals2.ToArray(), color: Color.Orange);
+            formsPlot1.Refresh();
+        }
         #endregion
 
         // NOT YET IMPLEMENTED
@@ -372,7 +444,7 @@ namespace ACE.Trading.Data.Graphics
         private string openFile()
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = " (*.*)|*.*";
+            ofd.Filter = "Json Lines File (*.jsonl)|*.jsonl";
 
             ofd.Multiselect = false;
             ofd.CheckFileExists = true;
@@ -423,7 +495,7 @@ namespace ACE.Trading.Data.Graphics
         #endregion
 
 
-        #region Click events
+        #region GUI Events
         private void predictBtn_Click(object sender, EventArgs e)
         {
             if (modelIdCombo.SelectedIndex == -1)
@@ -478,7 +550,8 @@ namespace ACE.Trading.Data.Graphics
             if (filename == "") return;
             string[] data = System.IO.File.ReadAllLines(filename);
 
-            List<PricePointSlope> trainingSlopes = new List<PricePointSlope>();
+            List<PricePointSlope> promptSlopes = new List<PricePointSlope>();
+            List<PricePointSlope> completionSlopes = new List<PricePointSlope>();
 
             foreach (string line in data)
             {
@@ -490,21 +563,20 @@ namespace ACE.Trading.Data.Graphics
 
                 int indexB = line.IndexOf("\", \"completion\": \"");
                 if (indexB == -1) continue;
-                string completion = line.Substring(indexB);
+                string completion = line.Substring(indexB+ "\", \"completion\": \"".Length);
                 int indexC = completion.IndexOf("\"}") - 1;
                 if (indexC < completion.Length)
                     completion = completion.Substring(0, indexC);
 
                 // if (line.Length < 12 + indexA + 18 && line.Length - 3 <= 12 + indexA + 18) continue;
                 //string completion = line.Substring(12 + indexA + 18, line.Length - 3 -( 12 + indexA + 18));
-                trainingSlopes.AddRange(OpenAi.Formatting.FluidLanguage.Decode(prompt));
-                trainingSlopes.AddRange(OpenAi.Formatting.FluidLanguage.Decode(completion));
+                promptSlopes.AddRange(OpenAi.Formatting.MinLanguage.Decode(prompt));
+                completionSlopes.AddRange(OpenAi.Formatting.MinLanguage.Decode(completion));
             }
 
-            genSlopeView(trainingSlopes);
+            genSlopeView(promptSlopes, completionSlopes);
 
         }
-        #endregion
         private void TrainingModelType_CheckedChanged(object sender, EventArgs e)
         {
             if (trainExistingRadioBtn.Checked)
@@ -550,53 +622,36 @@ namespace ACE.Trading.Data.Graphics
                 MessageBox.Show("No Symbol selected.");
                 return;
             }
-
-
-
-            // Get binance data
-            // loop through sice cap is 500 klines per request
-            TimeSpan span = finishDateTime.Value.Subtract(startDateTime.Value);
-            List<PricePoint> points = new List<PricePoint>();
-            const int hoursPerCycle = 6;
-            System.DateTime startTime = startDateTime.Value, finishTime = startDateTime.Value.AddHours(hoursPerCycle);
-            int i;
-            for (i = 0; i < span.TotalHours - hoursPerCycle; i += hoursPerCycle)
+            if (uploadFileName.Text.Length == 0)
             {
-                WebCallResult<IEnumerable<IBinanceKline>> result = await bh.getMarketData(symbolCombo.Text, timeInterval, startTime, finishTime);
-
-                points.AddRange(PricePoint.FromBinanceKline(result.Data));
-                startTime = startTime.AddHours(hoursPerCycle);
-                finishTime = finishTime.AddHours(hoursPerCycle);
+                MessageBox.Show("File name cannot be empty.");
+                return;
+            }
+            else
+            if (!uploadFileName.Text.Contains(".jsonl"))
+            {
+                MessageBox.Show("File name must have the extension '.jsonl'");
+                return;
             }
 
-            // do remainder
-            startTime = startTime.AddHours(hoursPerCycle);
-            finishTime = finishTime.AddHours(span.TotalHours - i).AddMinutes(span.Minutes);
-            var marketDataResult = await bh.getMarketData(symbolCombo.Text, timeInterval, startTime, finishTime);
-            points.AddRange(PricePoint.FromBinanceKline(marketDataResult.Data));
+            int x = await generateSlopes(symbolCombo.Text, timeInterval, startDateTime.Value, finishDateTime.Value, filename = uploadFileName.Text);
 
-            // convert to slopes
-            List<PricePointSlope> slopes = Convertions.FindAllV2(points.ToArray(), (int)tolleranceNum.Value);
-            // display data
-            genSlopeView(slopes);
-            // convert to trainingData
-            TrainingData td = BinanceToTraining.slopesToTrainginData(slopes, (int)trainingPromptNum.Value, (int)trainingCompletionNum.Value);
-            // save to tmp
-            string tmpFile = Path.GetTempFileName() + ".jsonl";
-            System.IO.File.WriteAllText(tmpFile, td.ToString());
+            if (!System.IO.File.Exists(uploadFileName.Text) || x != 0)
+            {
+                MessageBox.Show("File generation failed.");
+                return;
+            }
 
             // Upload
             OpenAiIntegration ai = new OpenAiIntegration();
-            var uploadResult = await ai.uploadFile(tmpFile);
+            var uploadResult = await ai.uploadFile(uploadFileName.Text);
 
-            //while (!uploadResult.IsCompleted) { Thread.Sleep(1000); }
+            FineTunes.FineTunes.AddFile(new FineTunes.FineTuneFile(uploadResult.Id, (int)trainingPromptNum.Value));
 
-            //if (!uploadResult.IsCompletedSuccessfully) { MessageBox.Show(uploadResult.Exception.ToString()); return; }
-
-            MessageBox.Show("Task Completed, File id: " + uploadResult.Id + "| File Name: " + uploadResult.Name);
+            refreshGui();
+            MessageBox.Show("Task Completed,\n\nFile id: " + uploadResult.Id + "\nFile Name: " + uploadResult.Name);
         }
-
-        private void fineTuneBtn_Click(object sender, EventArgs e)
+        private async void fineTuneBtn_Click(object sender, EventArgs e)
         {
             string filename = "";
             if (filesListBox.SelectedIndex == -1 && filesListBox.SelectedIndex >= files.Count)
@@ -634,41 +689,32 @@ namespace ACE.Trading.Data.Graphics
                 LearningRateMultiplier = (double)learningRateNum.Value
             };
 
+            var result = await ai.fineTune(filename, symbolCombo.Text, hypers);
+            FineTunes.FineTunes.Add(new(result));
 
-
-            var result = ai.fineTune(filename, symbolCombo.Text, hypers);
-            while (!result.IsCompleted) Thread.Sleep(1000);
-            if (!result.IsCompletedSuccessfully)
-            {
-                MessageBox.Show(result.Exception.ToString());
-            }
-            MessageBox.Show($"Fine tune created. Id: {result.Result.FineTunedModel}");
+            MessageBox.Show($"Fine tune created. Current Status: {result.Status}");
 
 
         }
-
         private void durationCombo_SelectedIndexChanged_1(object sender, EventArgs e)
         {
 
         }
-
         private void createNew_Enter(object sender, EventArgs e)
         {
 
         }
-
         private void filesListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (filesListBox.SelectedIndex == -1)
             {
-                fineTuneGroupBox.Enabled = deleteFileBtn.Enabled = false;
+                fineTuneGroupBox.Enabled = deleteFileBtn.Enabled = button2.Enabled = false;
             }
             else
             {
-                fineTuneGroupBox.Enabled = deleteFileBtn.Enabled = true;
+                fineTuneGroupBox.Enabled = deleteFileBtn.Enabled = button2.Enabled = true;
             }
         }
-
         private async void deleteFileBtn_Click(object sender, EventArgs e)
         {
             if (filesListBox.SelectedIndex == -1 && filesListBox.SelectedIndex >= files.Count)
@@ -682,6 +728,155 @@ namespace ACE.Trading.Data.Graphics
                 var result = await ai.deleteFile(files[filesListBox.SelectedIndex].Id);
 
                 MessageBox.Show(result == null || result.Deleted ? "File successfully deleted." : "Unable to delete file.");
+                refreshGui();
+            }
+        }
+        private void button3_Click(object sender, EventArgs e)
+        {
+            KlineInterval timeInterval = KlineInterval.OneMinute;
+            switch (timeIntervalCombo2.Text)
+            {
+                case "OneDay":
+                    timeInterval = KlineInterval.OneDay;
+                    break;
+                case "TwelveHour":
+                    timeInterval = KlineInterval.TwelveHour;
+                    break;
+                case "EightHour":
+                    timeInterval = KlineInterval.EightHour;
+                    break;
+                case "OneHour":
+                    timeInterval = KlineInterval.OneHour;
+                    break;
+                case "ThirtyMinutes":
+                    timeInterval = KlineInterval.ThirtyMinutes;
+                    break;
+                case "FifteenMinutes":
+                    timeInterval = KlineInterval.FifteenMinutes;
+                    break;
+                case "OneMinute":
+                    timeInterval = KlineInterval.OneMinute;
+                    break;
+            }
+            if (symbolCombo.SelectedIndex == -1)
+            {
+                MessageBox.Show("No Symbol selected.");
+                return;
+            }
+
+            generateSlopes(symbolCombo.Text, timeInterval, startDateTime.Value, finishDateTime.Value, filename = uploadFileName.Text);
+
+        }
+        private async void uploadFileBtn_Click(object sender, EventArgs e)
+        {
+            // get filename
+            OpenFileDialog ofd = new OpenFileDialog() { CheckFileExists = true, Multiselect = false, Filter = "Json Lines Files|*.jsonl" };
+            if (ofd.ShowDialog() != DialogResult.OK)
+            {
+                MessageBox.Show("Invalid file / File does not exist.");
+                return;
+            }
+
+            //upload
+            OpenAiIntegration ai = new OpenAiIntegration();
+            var uploadResult = await ai.uploadFile(ofd.FileName);
+            refreshGui();
+            MessageBox.Show("Task Completed, File id: " + uploadResult.Id + "| File Name: " + uploadResult.Name);
+        }
+
+        // Help Info
+        private void batchSizeHelpBtn_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("The batch size to use for training. The batch size is the number of training examples used to train a single forward and backward pass.\r\n\r\nBy default, the batch size will be dynamically configured to be ~0.2% of the number of examples in the training set, capped at 256 - in general, we've found that larger batch sizes tend to work better for larger datasets.");
+        }
+        private void epochCountHelpBtn_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("The number of epochs to train the model for. An epoch refers to one full cycle through the training dataset.");
+        }
+        private void weightLossHelpBtn_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("The weight to use for loss on the prompt tokens. This controls how much the model tries to learn to generate the prompt (as compared to the completion which always has a weight of 1.0), and can add a stabilizing effect to training when completions are short.\r\n\r\nIf prompts are extremely long (relative to completions), it may make sense to reduce this weight so as to avoid over-prioritizing learning the prompt.");
+        }
+        private void learningMultiplierHelpBtn_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("The learning rate multiplier to use for training. The fine-tuning learning rate is the original learning rate used for pretraining multiplied by this value.\r\n\r\nBy default, the learning rate multiplier is the 0.05, 0.1, or 0.2 depending on final batch_size (larger learning rates tend to perform better with larger batch sizes). We recommend experimenting with values in the range 0.02 to 0.2 to see what produces the best results.");
+        }
+        private async void tunesCombo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tunesCombo.SelectedIndex == -1)
+                return;
+            if (tunesCombo.SelectedIndex >= fineTunes.Count)
+                return;
+
+            FineTuneResult tune = fineTunes[tunesCombo.SelectedIndex];
+            OpenAiIntegration ai = new OpenAiIntegration();
+            tune = await ai.getFineTuneUpdate(tune.Id);
+
+
+            tunesStatusLabel.Text = tune.Status;
+            tunesBaseModelLabel.Text = tune.model;
+            tunesCreatedAtLabel.Text = DateTimeOffset.FromUnixTimeSeconds(tune.createdAt).DateTime.ToString();
+            var tuneDetails = FineTunes.FineTunes.FindFineTuneById(tune.Id);
+            if (tuneDetails != null)
+            {
+                tunesSlopeNumLabel.Text = tuneDetails.slopesPerPrompt.ToString();
+            }
+            // hypers
+            tunesBatchSizeLabel.Text = tune.HyperParameters.BatchSize.ToString();
+            tunesEpochCountLabel.Text = tune.HyperParameters.NumberOfEpochs.ToString();
+            tunesWeightLossLabel.Text = tune.HyperParameters.PromptLossWeight.ToString();
+            tunesLearningMultiplierLabel.Text = tune.HyperParameters.LearningRateMultiplier.ToString();
+
+            tunesEventsList.Items.Clear();
+            if (tune.Events != null && tune.Events.Count > 0)
+            {
+                foreach (var eventX in tune.Events)
+                {
+                    tunesEventsList.Items.Add($"{eventX.Message}\n");
+                }
+            }
+
+        }
+        #endregion
+
+        private async void tunesEventsList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tunesCombo.SelectedIndex == -1)
+                return;
+            if (tunesCombo.SelectedIndex >= fineTunes.Count)
+                return;
+
+            FineTuneResult tune = fineTunes[tunesCombo.SelectedIndex];
+            OpenAiIntegration ai = new OpenAiIntegration();
+            tune = await ai.getFineTuneUpdate(tune.Id);
+
+            if (tunesEventsList.SelectedIndex == -1)
+                return;
+            if (tunesEventsList.SelectedIndex >= tune.Events.Count)
+                return;
+            var eventX = tune.Events[tunesEventsList.SelectedIndex];
+            var time = DateTimeOffset.FromUnixTimeSeconds(tune.createdAt).DateTime.ToString();
+
+            MessageBox.Show($"{eventX.Message}\nAt: {time}\nLevel: {eventX.level}");
+
+        }
+
+        private async void button2_Click(object sender, EventArgs e)
+        {
+            if (filesListBox.SelectedIndex == -1 && filesListBox.SelectedIndex >= files.Count)
+            {
+                MessageBox.Show("No Files Selected.");
+                return;
+            }
+            else
+            {
+                OpenAiIntegration ai = new OpenAiIntegration();
+                var result = await ai.getFileData(files[filesListBox.SelectedIndex].Id);
+                SaveFileDialog sfd = new SaveFileDialog() { Filter = "Any File Type|*.*" };
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    System.IO.File.WriteAllText(sfd.FileName, result);
+                }
             }
         }
     }
