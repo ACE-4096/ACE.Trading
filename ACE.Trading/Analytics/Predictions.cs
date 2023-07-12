@@ -26,7 +26,7 @@ namespace ACE.Trading.Analytics
             internal List<PredictedPriceHistory> priceHistory = new List<PredictedPriceHistory>();
 
             [JsonIgnore]
-            internal const string DATACACHE_FILENAME = "C:\\Users\\Toby\\.ace\\ACE-PREDICTIONHISTORY.x3";
+            internal const string DATACACHE_FILENAME = "ACE-PREDICTIONHISTORY.x3";
         }
 
         public static void addPricePrediction(string symbol, Model model, List<PricePoint> Input, List<PricePoint> Output)
@@ -318,9 +318,18 @@ namespace ACE.Trading.Analytics
             }
         }
 
-        // bool represents if all the required data is present to do calcs
-        [JsonProperty("Complete")]
-        bool Complete { get; set; }
+
+        [JsonProperty("Metrics")]
+        Optimisation.Metrics metrics { get; set; }
+
+        [JsonIgnore]
+        public Optimisation.Metrics getMtetrics
+        {
+            get
+            {
+                return metrics;
+            }
+        }
 
         [JsonIgnore]
         public bool isComplete
@@ -409,7 +418,6 @@ namespace ACE.Trading.Analytics
             {
                 this.PredictionInput = null;
                 this.PredictionOutput = null;
-                Complete = false;
             }
         }
 
