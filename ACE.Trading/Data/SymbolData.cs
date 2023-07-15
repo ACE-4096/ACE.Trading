@@ -6,6 +6,8 @@ using Binance.Net.Objects.Models;
 using Binance.Net.Interfaces;
 using ScottPlot;
 using System.Reflection.Metadata.Ecma335;
+using System.Collections.Generic;
+using ACE.Trading.Data.Collection;
 
 namespace ACE.Trading.Data
 {
@@ -172,6 +174,12 @@ namespace ACE.Trading.Data
                 pricePoints.Add(pricePoint);
             }
             return pricePoints;
+        }
+        public async static Task<List<PricePoint>> FromBinance(string symbol, DateTime start, DateTime end)
+        {
+            BinanceHandler handler = new BinanceHandler();
+            var data = await handler.getMarketData(symbol, Binance.Net.Enums.KlineInterval.OneMinute, start, end);
+            return FromBinanceKline(data.Data);
         }
 
     }

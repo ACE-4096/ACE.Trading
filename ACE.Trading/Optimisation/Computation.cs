@@ -15,7 +15,7 @@ namespace ACE.Trading.Optimisation
     /// </summary>
     public static class Computation
     {
-        public async static PredictedSlopeHistory Evaluate(PredictedSlopeHistory input)
+        public async static Task<PredictedSlopeHistory> Evaluate(PredictedSlopeHistory input)
         {
             if (input == null)
                 return null;
@@ -69,11 +69,78 @@ namespace ACE.Trading.Optimisation
                 }
             }
 
+            // removed duplicates from prediction
+            if (predictedPoints.Count != mins)
+            {
+                for (int i = 0; i < mins; i++)
+                {
+                    var x = predictedPoints.FindAll(p => DataHandling.findByTime(p, start.AddMinutes(i)));
+                    if (x == null)
+                    {
+                        continue; // BAD
+                    }
+                    else if (x.Count > 1)
+                    {
+                        foreach (var b in x)
+                        {
+                            predictedPoints.Remove(b);
+                        }
+                        predictedPoints.Add(x[0]);
+                    }
+                }
+            }
+
 
             // compares points to form a metric 
             Metrics metric = new Metrics();
 
-            
+            for (int i = 0; i < predictedPoints.Count; i++)
+            {
+                var comparedPoint = realPoints.Find(p => DataHandling.findByTime(p, predictedPoints[i].timeUtc));
+                if (comparedPoint == null)
+                {
+                    return input;
+                }
+                
+                if (i != 0) {
+                    // Gradient Deviance
+                    var prevComparedPoint = realPoints.Find(p => DataHandling.findByTime(p, predictedPoints[i-1].timeUtc));
+                    if (prevComparedPoint == null)
+                    {
+                        return input;
+                    }
+
+                    decimal realGradient = comparedPoint.avgPrice - prevComparedPoint.avgPrice;
+                    decimal fakeGradient = predictedPoints[i - 1].avgPrice - predictedPoints[i].avgPrice;
+                    metric.totalGradientDeviance += (double)Math.Abs(realGradient - fakeGradient);
+
+
+                    // Fluency
+                    // Checks previous price point is cronologically sequentual
+                    if (DataHandling.findByTime(predictedPoints[i - 1], predictedPoints[i].timeUtc.AddMinutes(-1)))
+                    {
+                        metric.fluency += (100.0 / predictedPoints.Count);
+                    }
+                }
+                
+                // Accuracy
+                metric.accuracy += (double)((100.00m / comparedPoint.avgPrice) * predictedPoints[i].avgPrice);
+                
+                // Price Deviance
+                metric.totalPriceDeviance += (double)Math.Abs(comparedPoint.avgPrice - predictedPoints[i].avgPrice);
+
+            }
+            metric.accuracy /= predictedPoints.Count;
+
+            // Avg Price deviance
+            metric.priceDeviance = metric.totalPriceDeviance / predictedPoints.Count;
+
+            //  Avg Gradient deviance
+            metric.gradientDeviance = metric.totalGradientDeviance / predictedPoints.Count;
+
+
+            metric.Lock();
+            input.setMtetrics = metric;
 
             return input;
         }

@@ -202,5 +202,25 @@ namespace ACE.Trading.Analytics.Slopes
                 return +1;
             return 0;
         }
+        public static int sortTime_oldestFirst(PredictedSlopeHistory x, PredictedSlopeHistory y)
+        {
+            if (x == null || y == null)
+                return 0;
+            if (x.getPredictionOutput.Last().openTimeUtc > y.getPredictionOutput.Last().openTimeUtc)
+                return -1;
+            if (x.getPredictionOutput.Last().openTimeUtc < y.getPredictionOutput.Last().openTimeUtc)
+                return +1;
+            return 0;
+        }
+        public static int sortTime_latestFirst(PredictedSlopeHistory x, PredictedSlopeHistory y)
+        {
+            if (x == null || y == null)
+                return 0;
+            if (x.getPredictionOutput.Last().openTimeUtc > y.getPredictionOutput.Last().openTimeUtc)
+                return -1;
+            if (x.getPredictionOutput.Last().openTimeUtc < y.getPredictionOutput.Last().openTimeUtc)
+                return +1;
+            return 0;
+        }
     }
 }

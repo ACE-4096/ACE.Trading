@@ -11,9 +11,19 @@ using ACE.Trading.Analytics.Slopes;
 using Binance.Net.Objects.Models.Spot.SubAccountData;
 using System.Data;
 using CryptoExchange.Net.CommonObjects;
+using Newtonsoft.Json.Linq;
 
 namespace ACE.Trading.Analytics
 {
+    public enum AccuracyLevel
+    {
+        VeryHigh = 90,
+        High = 80,
+        Medium = 65,
+        Marginal = 50,
+        Low = 40,
+        VeryLow = 30
+    }
     public static class Predictions
     {
         private static Cache cache = new Cache();
@@ -64,38 +74,6 @@ namespace ACE.Trading.Analytics
             histories = cache.slopeHistory.FindAll(ph => ph.getSymbol == symbol);
             return histories != null && histories?.Count > 0;
         }
-
-        public static decimal ComputeAverageSlopeAccuracy()
-        {
-            int num = 0;
-            decimal sum = 0.0m;
-            foreach (var item in cache.slopeHistory)
-            {
-                if (!item.isComplete)
-                    continue;
-
-                num++;
-                sum += item.computeAccuracy();
-
-            }
-            return sum / num;
-        }
-        public static decimal ComputeAveragePriceAccuracy()
-        {
-            int num = 0;
-            decimal sum = 0.0m;
-            foreach (var item in cache.slopeHistory)
-            {
-                if (!item.isComplete)
-                    continue;
-
-                num++;
-                sum += item.computeAccuracy();
-
-            }
-            return sum / num;
-        }
-
         public static void UpdatePredictions()
         {
             foreach(PredictedSlopeHistory p in cache.slopeHistory.ToArray())
@@ -116,6 +94,68 @@ namespace ACE.Trading.Analytics
                     cache.priceHistory.Add(p);
                 }
             }
+        }
+
+        // Evaluates the last 10 histories and computes an accuracy based on price and fluency comparisions
+        public static AccuracyLevel getAccuracyLevel(string symbol)
+        {
+            List<PredictedSlopeHistory> histories;
+            if (findSlopePredictions(symbol, out histories))
+            {
+                histories.Sort(Convertions.sortTime_latestFirst);
+                List<PredictedSlopeHistory> histToEval = new List<PredictedSlopeHistory>();
+                int max = 10;
+                if (histories.Count > max)
+                {
+                    for(int i = 0; i < max && max < histories.Count; i++)
+                    {
+                        if (histories[i].isComplete)
+                        {
+                            histToEval.Add(histories[i]);
+                        }
+                        else
+                        {
+                            max++;
+                        }
+                    }
+                }
+                else
+                {
+                    histToEval = histories;
+                }
+
+                double accuracy = 0.0;
+
+                foreach(var hist in histToEval)
+                {
+                    var mets = hist.getMtetrics;
+                    accuracy += (mets.fluency > 80.0) ? mets.accuracy : mets.accuracy / 2;
+                }
+                accuracy /= histToEval.Count;
+                if (accuracy > (int)AccuracyLevel.VeryHigh)
+                {
+                    return AccuracyLevel.VeryHigh;
+                }
+                else if (accuracy > (int)AccuracyLevel.High)
+                {
+                    return AccuracyLevel.High;
+                }
+                else if (accuracy > (int)AccuracyLevel.Medium)
+                {
+                    return AccuracyLevel.Medium;
+                }
+                else if (accuracy > (int)AccuracyLevel.Marginal)
+                {
+                    return AccuracyLevel.Marginal;
+                }
+                else if (accuracy > (int)AccuracyLevel.Low)
+                {
+                    return AccuracyLevel.Low;
+                }
+                else
+                    return AccuracyLevel.VeryLow;
+            }
+            else return AccuracyLevel.VeryLow;
         }
 
         public static void Load()
@@ -202,13 +242,13 @@ namespace ACE.Trading.Analytics
         public string getSymbol { get { return Symbol; } }
         #endregion
 
-        internal void update()
+        internal async void update()
         {
             RealResult = new List<PricePoint>();
             // Find bars from datacache that match predicted output timestamps
             foreach (var item in PredictionOutput)
             {
-                List<PricePoint> p = DataCache.findAllByTime(Symbol, item.timeUtc);
+                List<PricePoint> p = await PricePoint.FromBinance(Symbol, item.timeUtc, item.timeUtc);
                 if (p != null && p?.Count > 0)
                 {
                     decimal avg = 0.0m;
@@ -321,7 +361,6 @@ namespace ACE.Trading.Analytics
 
         [JsonProperty("Metrics")]
         Optimisation.Metrics metrics { get; set; }
-
         [JsonIgnore]
         public Optimisation.Metrics getMtetrics
         {
@@ -330,11 +369,19 @@ namespace ACE.Trading.Analytics
                 return metrics;
             }
         }
+        [JsonIgnore]
+        public Optimisation.Metrics setMtetrics
+        {
+            set
+            {
+                if (metrics == null && value.isLocked) metrics = value;
+            }
+        }
 
         [JsonIgnore]
         public bool isComplete
         {
-            get { return Complete; }
+            get { return metrics == null && metrics.isLocked; }
         }
 
         [JsonIgnore]
@@ -343,12 +390,12 @@ namespace ACE.Trading.Analytics
         [JsonIgnore]
         public string getSymbol { get { return Symbol; } }
         #endregion
-        internal void update()
+        internal async void update()
         {
             if (PredictionOutput == null || PredictionInput == null)
                 return;
-            List<PricePoint> points = DataCache.getAllPointsBetween(Symbol, PredictionOutput.First().openTimeUtc, PredictionOutput.Last().closeTimeUtc);
-
+            //List<PricePoint> points = DataCache.getAllPointsBetween(Symbol, PredictionOutput.First().openTimeUtc, PredictionOutput.Last().closeTimeUtc);
+            List<PricePoint> points = await PricePoint.FromBinance(Symbol, PredictionOutput.First().openTimeUtc, PredictionOutput.Last().closeTimeUtc);
             // split points into minutebased points
             DateTime startTime = PredictionOutput.First().openTimeUtc;
             DateTime nextTime = startTime.AddMinutes(1);
@@ -396,10 +443,6 @@ namespace ACE.Trading.Analytics
             }
             RealResult = Convertions.FindAll(outp.ToArray());
             TimeSpan x = PredictionOutput.First().openTimeUtc.Subtract(PredictionOutput.Last().closeTimeUtc);
-            if (x.TotalMinutes == 0)
-            {
-                Complete = true;
-            }
         }
 
         public PredictedSlopeHistory(long id, string symbol, Model model, List<PricePointSlope> input, List<PricePointSlope> output)
@@ -421,28 +464,5 @@ namespace ACE.Trading.Analytics
             }
         }
 
-
-        /// <summary>
-        /// Calculates the accuracy of the predicted result
-        /// </summary>
-        /// <returns>A percentage representing how accurate the predicted result is compared to the real result</returns>
-        public decimal computeAccuracy()
-        {
-            decimal accuracy = 0.0m; // %
-            if (PredictionInput?.Count > 0 && PredictionOutput?.Count > 0 && PredictionOutput?.Count == RealResult?.Count)
-            {
-                // sort to same order
-                PredictionOutput?.Sort(Convertions.sortTime_oldestFirst);
-                RealResult?.Sort(Convertions.sortTime_oldestFirst);
-
-                List<decimal> accuracyPerPrice = new List<decimal>();
-                for (int i = 0; i < PredictionOutput?.Count; i++)
-                {
-                    decimal x = (100.00m / RealResult[i].getDeltaPrice) * PredictionOutput[i].getDeltaPrice;
-                    accuracyPerPrice.Add(x);
-                }
-            }
-            return accuracy;
-        }
     }
 }

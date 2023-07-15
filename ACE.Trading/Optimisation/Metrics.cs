@@ -70,5 +70,18 @@ namespace ACE.Trading.Optimisation
         private double _totalGradientDeviance;
         [JsonIgnore]
         public double totalGradientDeviance { get { return _totalGradientDeviance; } set { if (!_locked) _totalGradientDeviance = value; } }
+    
+    
+        public Metrics()
+        {
+            _accuracy = 0;
+            _fluency = 0;
+            _priceDeviance = 0;
+            _gradientDeviance = 0;
+            _totalPriceDeviance = 0;
+            _totalGradientDeviance = 0;
+
+        }
+
     }
 }
