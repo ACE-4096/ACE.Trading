@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ACE.Trading.Optimization;
+using Newtonsoft.Json;
 using OpenAI_API.FineTune;
 using System;
 using System.Collections.Generic;

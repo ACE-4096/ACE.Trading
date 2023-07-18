@@ -7,8 +7,9 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ACE.Trading.Analytics.PredictedHistories;
 
-namespace ACE.Trading.Optimisation
+namespace ACE.Trading.Optimization
 {
     /// <summary>
     /// Computes metrics for a given prediction

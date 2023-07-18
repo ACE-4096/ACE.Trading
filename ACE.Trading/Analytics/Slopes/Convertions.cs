@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ACE.Trading.Data;
+using ACE.Trading.Analytics.PredictedHistories;
 
 namespace ACE.Trading.Analytics.Slopes
 {

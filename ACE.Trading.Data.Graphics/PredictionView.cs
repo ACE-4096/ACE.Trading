@@ -20,13 +20,13 @@ using OpenAI_API.Moderation;
 using ScottPlot;
 using OpenAI_API;
 using OpenAI_API.Models;
-
 using static System.Formats.Asn1.AsnWriter;
 using static ScottPlot.Generate;
 using CryptoExchange.Net.Objects;
 using Newtonsoft.Json.Linq;
 using System.Drawing.Text;
 using OpenAI_API.Files;
+using ACE.Trading.Analytics.PredictedHistories;
 
 namespace ACE.Trading.Data.Graphics
 {
@@ -56,8 +56,8 @@ namespace ACE.Trading.Data.Graphics
 
         List<List<PredictedPriceHistory>> priceHistories = new List<List<PredictedPriceHistory>>();
         List<List<PredictedSlopeHistory>> slopeHistories = new List<List<PredictedSlopeHistory>>();
-        //PriceHistoryLogging logger = new PriceHistoryLogging();
         BinanceHandler bh = new BinanceHandler();
+        //PriceHistoryLogging logger = new PriceHistoryLogging();
         //System.Windows.Forms.Timer collectedDataPollingTimer;
 
         #region Loading / Saving

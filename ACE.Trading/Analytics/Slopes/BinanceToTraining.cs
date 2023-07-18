@@ -40,7 +40,7 @@ namespace ACE.Trading.Analytics.Slopes
         {
             PricePoint[] points;
             List<PricePointSlope> slopes = new List<PricePointSlope>();
-            if (BinanceConvertions.readToPricePointArray(filename, out points))
+            if (PricePoint.FromBinanceFile(filename, out points))
             {
                 slopes = Convertions.FindAllV2(points);
             }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ACE.Trading.Optimisation
+namespace ACE.Trading.Optimization
 {
     public class Metrics
     {
