@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33815.320
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACE Risk Management System", "ACE Risk Management System\ACE Risk Management System.csproj", "{BF1E3FC1-428D-4AFC-BCE8-92DE9D5BE16F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BF1E3FC1-428D-4AFC-BCE8-92DE9D5BE16F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF1E3FC1-428D-4AFC-BCE8-92DE9D5BE16F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF1E3FC1-428D-4AFC-BCE8-92DE9D5BE16F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF1E3FC1-428D-4AFC-BCE8-92DE9D5BE16F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {41250414-D674-4756-A4CF-953D87341841}
+	EndGlobalSection
+EndGlobal

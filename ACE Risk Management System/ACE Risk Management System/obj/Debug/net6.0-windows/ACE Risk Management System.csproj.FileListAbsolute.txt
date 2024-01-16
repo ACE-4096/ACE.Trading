@@ -1,0 +1,17 @@
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\ACE Risk Management System.exe
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\ACE Risk Management System.deps.json
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\ACE Risk Management System.runtimeconfig.json
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\ACE Risk Management System.dll
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\ACE Risk Management System.pdb
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.csproj.AssemblyReference.cache
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE_Risk_Management_System.Form1.resources
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.csproj.GenerateResource.cache
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.AssemblyInfoInputs.cache
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.AssemblyInfo.cs
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.csproj.CoreCompileInputs.cache
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.dll
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\refint\ACE Risk Management System.dll
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.pdb
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.genruntimeconfig.cache
+C:\Users\bellramt\source\repos\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ref\ACE Risk Management System.dll
