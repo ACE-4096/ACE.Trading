@@ -35,3 +35,30 @@ C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk M
 C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE_Risk_Management_System.SettingsForm.resources
 C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\ACE Risk Management System.dll.config
 C:\Users\Toby\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE_Risk_Management_System.TradeControl.resources
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.csproj.AssemblyReference.cache
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE_Risk_Management_System.SettingsForm.resources
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.csproj.GenerateResource.cache
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.AssemblyInfoInputs.cache
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.AssemblyInfo.cs
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.csproj.CoreCompileInputs.cache
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.dll
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\refint\ACE Risk Management System.dll
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.pdb
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE_Risk_Management_System.TradeForm.resources
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE_Risk_Management_System.UserControls.OrderControl.resources
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE_Risk_Management_System.UserControls.TradeControl.resources
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\ACE Risk Management System.exe
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\ACE Risk Management System.dll.config
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\ACE Risk Management System.deps.json
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\ACE Risk Management System.runtimeconfig.json
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\ACE Risk Management System.dll
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\ACE Risk Management System.pdb
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\Newtonsoft.Json.dll
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.csproj.CopyComplete
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ACE Risk Management System.genruntimeconfig.cache
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\obj\Debug\net6.0-windows\ref\ACE Risk Management System.dll
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\CryptoExchange.Net.dll
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\bellramt\Documents\GitHub\ACE.Trading\ACE Risk Management System\ACE Risk Management System\bin\Debug\net6.0-windows\Okex.Net.dll

@@ -1,6 +1,6 @@
 ﻿namespace ACE_Risk_Management_System
 {
-    partial class Form1
+    partial class TradeForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            orderPanel = new Panel();
             label12 = new Label();
             label11 = new Label();
             label2 = new Label();
             RemoveTpBtn = new Button();
-            orderPanel = new Panel();
             AddTpBtn = new Button();
             tradeEntry = new NumericUpDown();
             label10 = new Label();
@@ -41,24 +41,22 @@
             tradeRR = new NumericUpDown();
             label3 = new Label();
             groupBox2 = new GroupBox();
+            gainTxt = new Label();
+            lossTxt = new Label();
+            qtyTxt = new Label();
+            label8 = new Label();
+            label6 = new Label();
+            label4 = new Label();
             label7 = new Label();
             label5 = new Label();
             CancelBtn = new Button();
             MarketBtn = new Button();
-            qty = new Label();
-            label8 = new Label();
-            potGain = new Label();
-            label9 = new Label();
-            potLoss = new Label();
-            label6 = new Label();
-            sizeToRisk = new Label();
-            label4 = new Label();
             menuStrip1 = new MenuStrip();
-            toolStripTextBox1 = new ToolStripTextBox();
+            balTxt = new ToolStripTextBox();
             settingsToolStripMenuItem = new ToolStripMenuItem();
-            toolStripTextBox2 = new ToolStripTextBox();
-            toolStripTextBox3 = new ToolStripTextBox();
-            panel1 = new Panel();
+            DailyPnlTxt = new ToolStripTextBox();
+            riskTxt = new ToolStripTextBox();
+            tradePanel = new Panel();
             label1 = new Label();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tradeEntry).BeginInit();
@@ -69,11 +67,11 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(orderPanel);
             groupBox1.Controls.Add(label12);
             groupBox1.Controls.Add(label11);
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(RemoveTpBtn);
-            groupBox1.Controls.Add(orderPanel);
             groupBox1.Controls.Add(AddTpBtn);
             groupBox1.Controls.Add(tradeEntry);
             groupBox1.Controls.Add(label10);
@@ -87,6 +85,13 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Risk Calculator";
             groupBox1.Enter += groupBox1_Enter;
+            // 
+            // orderPanel
+            // 
+            orderPanel.Location = new Point(6, 99);
+            orderPanel.Name = "orderPanel";
+            orderPanel.Size = new Size(387, 119);
+            orderPanel.TabIndex = 14;
             // 
             // label12
             // 
@@ -111,7 +116,7 @@
             label2.AutoSize = true;
             label2.Location = new Point(20, 1);
             label2.Name = "label2";
-            label2.Size = new Size(59, 15);
+            label2.Size = new Size(61, 15);
             label2.TabIndex = 11;
             label2.Text = "Trade Info";
             // 
@@ -122,19 +127,13 @@
             RemoveTpBtn.FlatStyle = FlatStyle.Flat;
             RemoveTpBtn.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             RemoveTpBtn.ForeColor = Color.Red;
-            RemoveTpBtn.Location = new Point(334, 42);
+            RemoveTpBtn.Location = new Point(347, 42);
             RemoveTpBtn.Name = "RemoveTpBtn";
-            RemoveTpBtn.Size = new Size(59, 23);
+            RemoveTpBtn.Size = new Size(46, 23);
             RemoveTpBtn.TabIndex = 10;
             RemoveTpBtn.Text = "- TP";
             RemoveTpBtn.UseVisualStyleBackColor = false;
-            // 
-            // orderPanel
-            // 
-            orderPanel.Location = new Point(6, 99);
-            orderPanel.Name = "orderPanel";
-            orderPanel.Size = new Size(387, 119);
-            orderPanel.TabIndex = 0;
+            RemoveTpBtn.Click += RemoveTpBtn_Click;
             // 
             // AddTpBtn
             // 
@@ -143,9 +142,9 @@
             AddTpBtn.FlatStyle = FlatStyle.Flat;
             AddTpBtn.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             AddTpBtn.ForeColor = Color.FromArgb(128, 255, 128);
-            AddTpBtn.Location = new Point(334, 15);
+            AddTpBtn.Location = new Point(347, 15);
             AddTpBtn.Name = "AddTpBtn";
-            AddTpBtn.Size = new Size(59, 23);
+            AddTpBtn.Size = new Size(46, 23);
             AddTpBtn.TabIndex = 1;
             AddTpBtn.Text = "+ TP";
             AddTpBtn.UseVisualStyleBackColor = false;
@@ -162,13 +161,14 @@
             tradeEntry.Name = "tradeEntry";
             tradeEntry.Size = new Size(105, 23);
             tradeEntry.TabIndex = 9;
+            tradeEntry.ValueChanged += tradeEntry_ValueChanged;
             // 
             // label10
             // 
             label10.AutoSize = true;
             label10.Location = new Point(8, 50);
             label10.Name = "label10";
-            label10.Size = new Size(114, 15);
+            label10.Size = new Size(116, 15);
             label10.TabIndex = 8;
             label10.Text = "Trade Entry Price ($):";
             // 
@@ -183,7 +183,7 @@
             calcBtn.TabIndex = 7;
             calcBtn.Text = "Calculate";
             calcBtn.UseVisualStyleBackColor = false;
-            calcBtn.Click += button1_Click;
+            calcBtn.Click += calcBtn_Click;
             // 
             // tradeRR
             // 
@@ -196,36 +196,90 @@
             tradeRR.Name = "tradeRR";
             tradeRR.Size = new Size(62, 23);
             tradeRR.TabIndex = 6;
+            tradeRR.ValueChanged += tradeEntry_ValueChanged;
             // 
             // label3
             // 
             label3.AutoSize = true;
             label3.Location = new Point(6, 19);
             label3.Name = "label3";
-            label3.Size = new Size(136, 15);
+            label3.Size = new Size(138, 15);
             label3.TabIndex = 5;
             label3.Text = "Trade Risk/Reward Ratio:";
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(gainTxt);
+            groupBox2.Controls.Add(lossTxt);
+            groupBox2.Controls.Add(qtyTxt);
+            groupBox2.Controls.Add(label8);
+            groupBox2.Controls.Add(label6);
+            groupBox2.Controls.Add(label4);
             groupBox2.Controls.Add(label7);
             groupBox2.Controls.Add(label5);
             groupBox2.Controls.Add(CancelBtn);
             groupBox2.Controls.Add(MarketBtn);
-            groupBox2.Controls.Add(qty);
-            groupBox2.Controls.Add(label8);
-            groupBox2.Controls.Add(potGain);
-            groupBox2.Controls.Add(label9);
-            groupBox2.Controls.Add(potLoss);
-            groupBox2.Controls.Add(label6);
-            groupBox2.Controls.Add(sizeToRisk);
-            groupBox2.Controls.Add(label4);
             groupBox2.Location = new Point(12, 289);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(399, 145);
             groupBox2.TabIndex = 8;
             groupBox2.TabStop = false;
             groupBox2.Text = "Data";
+            // 
+            // gainTxt
+            // 
+            gainTxt.AutoSize = true;
+            gainTxt.Location = new Point(110, 78);
+            gainTxt.Name = "gainTxt";
+            gainTxt.Size = new Size(0, 15);
+            gainTxt.TabIndex = 18;
+            // 
+            // lossTxt
+            // 
+            lossTxt.AutoSize = true;
+            lossTxt.ForeColor = Color.Red;
+            lossTxt.Location = new Point(110, 53);
+            lossTxt.Name = "lossTxt";
+            lossTxt.Size = new Size(0, 15);
+            lossTxt.TabIndex = 17;
+            // 
+            // qtyTxt
+            // 
+            qtyTxt.AutoSize = true;
+            qtyTxt.ForeColor = Color.FromArgb(128, 128, 255);
+            qtyTxt.Location = new Point(110, 29);
+            qtyTxt.Name = "qtyTxt";
+            qtyTxt.Size = new Size(0, 15);
+            qtyTxt.TabIndex = 16;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(11, 78);
+            label8.Name = "label8";
+            label8.Size = new Size(87, 15);
+            label8.TabIndex = 15;
+            label8.Text = "Projected Gain:";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.ForeColor = Color.Red;
+            label6.Location = new Point(11, 53);
+            label6.Name = "label6";
+            label6.Size = new Size(86, 15);
+            label6.TabIndex = 14;
+            label6.Text = "Projected Loss:";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.ForeColor = Color.FromArgb(128, 128, 255);
+            label4.Location = new Point(11, 29);
+            label4.Name = "label4";
+            label4.Size = new Size(93, 15);
+            label4.TabIndex = 13;
+            label4.Text = "Target Quantity:";
             // 
             // label7
             // 
@@ -269,96 +323,21 @@
             MarketBtn.Text = "Market Entry";
             MarketBtn.UseVisualStyleBackColor = false;
             // 
-            // qty
-            // 
-            qty.AutoSize = true;
-            qty.ForeColor = Color.FromArgb(128, 128, 255);
-            qty.Location = new Point(94, 65);
-            qty.Name = "qty";
-            qty.Size = new Size(0, 15);
-            qty.TabIndex = 8;
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.ForeColor = Color.FromArgb(128, 128, 255);
-            label8.Location = new Point(6, 65);
-            label8.Name = "label8";
-            label8.Size = new Size(64, 15);
-            label8.TabIndex = 7;
-            label8.Text = "Target Qty:";
-            // 
-            // potGain
-            // 
-            potGain.AutoSize = true;
-            potGain.ForeColor = Color.FromArgb(128, 128, 255);
-            potGain.Location = new Point(94, 49);
-            potGain.Name = "potGain";
-            potGain.Size = new Size(0, 15);
-            potGain.TabIndex = 6;
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.ForeColor = Color.FromArgb(128, 128, 255);
-            label9.Location = new Point(6, 49);
-            label9.Name = "label9";
-            label9.Size = new Size(86, 15);
-            label9.TabIndex = 5;
-            label9.Text = "Potencial Gain:";
-            // 
-            // potLoss
-            // 
-            potLoss.AutoSize = true;
-            potLoss.ForeColor = Color.FromArgb(128, 128, 255);
-            potLoss.Location = new Point(94, 34);
-            potLoss.Name = "potLoss";
-            potLoss.Size = new Size(0, 15);
-            potLoss.TabIndex = 4;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.ForeColor = Color.FromArgb(128, 128, 255);
-            label6.Location = new Point(6, 34);
-            label6.Name = "label6";
-            label6.Size = new Size(85, 15);
-            label6.TabIndex = 3;
-            label6.Text = "Potencial Loss:";
-            // 
-            // sizeToRisk
-            // 
-            sizeToRisk.AutoSize = true;
-            sizeToRisk.ForeColor = Color.FromArgb(128, 128, 255);
-            sizeToRisk.Location = new Point(76, 19);
-            sizeToRisk.Name = "sizeToRisk";
-            sizeToRisk.Size = new Size(0, 15);
-            sizeToRisk.TabIndex = 1;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.ForeColor = Color.FromArgb(128, 128, 255);
-            label4.Location = new Point(6, 19);
-            label4.Name = "label4";
-            label4.Size = new Size(68, 15);
-            label4.TabIndex = 0;
-            label4.Text = "Size to Risk:";
-            // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { toolStripTextBox1, settingsToolStripMenuItem, toolStripTextBox2, toolStripTextBox3 });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { balTxt, settingsToolStripMenuItem, DailyPnlTxt, riskTxt });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
+            menuStrip1.RenderMode = ToolStripRenderMode.Professional;
             menuStrip1.Size = new Size(574, 27);
             menuStrip1.TabIndex = 9;
             menuStrip1.Text = "menuStrip1";
             // 
-            // toolStripTextBox1
+            // balTxt
             // 
-            toolStripTextBox1.Alignment = ToolStripItemAlignment.Right;
-            toolStripTextBox1.Name = "toolStripTextBox1";
-            toolStripTextBox1.Size = new Size(100, 23);
+            balTxt.Alignment = ToolStripItemAlignment.Right;
+            balTxt.Name = "balTxt";
+            balTxt.Size = new Size(100, 23);
             // 
             // settingsToolStripMenuItem
             // 
@@ -368,50 +347,52 @@
             settingsToolStripMenuItem.Text = "Settings";
             settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
             // 
-            // toolStripTextBox2
+            // DailyPnlTxt
             // 
-            toolStripTextBox2.Alignment = ToolStripItemAlignment.Right;
-            toolStripTextBox2.Name = "toolStripTextBox2";
-            toolStripTextBox2.Size = new Size(100, 23);
+            DailyPnlTxt.Alignment = ToolStripItemAlignment.Right;
+            DailyPnlTxt.Name = "DailyPnlTxt";
+            DailyPnlTxt.Size = new Size(100, 23);
             // 
-            // toolStripTextBox3
+            // riskTxt
             // 
-            toolStripTextBox3.Alignment = ToolStripItemAlignment.Right;
-            toolStripTextBox3.Name = "toolStripTextBox3";
-            toolStripTextBox3.Size = new Size(100, 23);
+            riskTxt.Alignment = ToolStripItemAlignment.Right;
+            riskTxt.Name = "riskTxt";
+            riskTxt.Size = new Size(100, 23);
             // 
-            // panel1
+            // tradePanel
             // 
-            panel1.Location = new Point(417, 46);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(145, 388);
-            panel1.TabIndex = 1;
+            tradePanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tradePanel.AutoScroll = true;
+            tradePanel.Location = new Point(417, 46);
+            tradePanel.Name = "tradePanel";
+            tradePanel.Size = new Size(145, 388);
+            tradePanel.TabIndex = 1;
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Location = new Point(417, 30);
             label1.Name = "label1";
-            label1.Size = new Size(40, 15);
+            label1.Size = new Size(42, 15);
             label1.TabIndex = 10;
             label1.Text = "Trades";
             // 
-            // Form1
+            // TradeForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ActiveCaptionText;
             ClientSize = new Size(574, 446);
             Controls.Add(label1);
-            Controls.Add(panel1);
+            Controls.Add(tradePanel);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Controls.Add(menuStrip1);
             ForeColor = Color.FromArgb(128, 255, 128);
             MainMenuStrip = menuStrip1;
-            Name = "Form1";
+            Name = "TradeForm";
             Text = "ACE Risk Management";
-            Load += Form1_Load;
+            Load += TradeForm_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)tradeEntry).EndInit();
@@ -431,22 +412,13 @@
         private Label label3;
         private Button calcBtn;
         private GroupBox groupBox2;
-        private Label potGain;
-        private Label label9;
-        private Label potLoss;
-        private Label label6;
-        private Label sizeToRisk;
-        private Label label4;
         private NumericUpDown tradeEntry;
         private Label label10;
-        private Label qty;
-        private Label label8;
         private MenuStrip menuStrip1;
-        private ToolStripTextBox toolStripTextBox1;
+        private ToolStripTextBox balTxt;
         private ToolStripMenuItem settingsToolStripMenuItem;
-        private ToolStripTextBox toolStripTextBox2;
-        private ToolStripTextBox toolStripTextBox3;
-        private Panel orderPanel;
+        private ToolStripTextBox DailyPnlTxt;
+        private ToolStripTextBox riskTxt;
         private Panel list;
         private Button AddTpBtn;
         private Button RemoveTpBtn;
@@ -454,10 +426,17 @@
         private Label label5;
         private Button CancelBtn;
         private Button MarketBtn;
-        private Panel panel1;
+        private Panel tradePanel;
         private Label label1;
         private Label label7;
         private Label label12;
         private Label label11;
+        private Panel orderPanel;
+        private Label gainTxt;
+        private Label lossTxt;
+        private Label qtyTxt;
+        private Label label8;
+        private Label label6;
+        private Label label4;
     }
 }

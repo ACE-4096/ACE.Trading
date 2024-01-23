@@ -1,8 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "WvKj6ejEM1JNV3SHIzSj/GE+/uu6VoKdkfcRRLDLUB8eS6/CEDCr31L1hZY2XmQOaxq1ZFL1lG0yUqEE5yVCDQ==",
+  "dgSpecHash": "xQrZDf6O8OXgGzI9xbe0yk/fuXPwP5H1hgQ6l+I21ZWLFByOtw4Gaby/yB0PgZyr08bJJdGg9s2/uEV8gxauBw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE Risk Management System\\ACE Risk Management System\\ACE Risk Management System.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\bellramt\\Documents\\GitHub\\ACE.Trading\\ACE Risk Management System\\ACE Risk Management System\\ACE Risk Management System.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\bellramt\\.nuget\\packages\\cryptoexchange.net\\5.4.3\\cryptoexchange.net.5.4.3.nupkg.sha512",
+    "C:\\Users\\bellramt\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\3.1.0\\microsoft.extensions.dependencyinjection.abstractions.3.1.0.nupkg.sha512",
+    "C:\\Users\\bellramt\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\3.1.0\\microsoft.extensions.logging.abstractions.3.1.0.nupkg.sha512",
+    "C:\\Users\\bellramt\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\bellramt\\.nuget\\packages\\okex.net\\5.3.4\\okex.net.5.3.4.nupkg.sha512"
+  ],
   "logs": []
 }

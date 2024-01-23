@@ -10,11 +10,15 @@ using System.Windows.Forms;
 using System.Xml;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace ACE_Risk_Management_System
+namespace ACE_Risk_Management_System.UserControls
 {
     public partial class OrderControl : UserControl
     {
         public int index = -1;
+
+        public event DataChangedHandler OnDataChanged;
+        public delegate void DataChangedHandler(OrderControl oc);
+
         public OrderControl()
         {
             InitializeComponent();
@@ -29,8 +33,7 @@ namespace ACE_Risk_Management_System
             label.Text = text;
             limitPrice.Value = limit;
             percentage.Value = qtyPercentage;
-            ValueLabel.Text = $"{(valueChange > 0 ? "Gain: $" : "Loss: $")}{valueChange}";
-            ValueLabel.ForeColor = valueChange > 0 ? Color.Green : Color.Red;
+            Value = valueChange;
         }
         public Color LabelColour
         {
@@ -64,6 +67,14 @@ namespace ACE_Risk_Management_System
             }
             set { limitPrice.Value = value; }
         }
+        public decimal Value
+        {
+            set
+            {
+                ValueLabel.Text = $"{(value > 0 ? "Gain: $" : "Loss: $")}{value}";
+                ValueLabel.ForeColor = value > 0 ? Color.Green : Color.Red;
+            }
+        }
 
         private void OrderControl_Load(object sender, EventArgs e)
         {
@@ -74,7 +85,10 @@ namespace ACE_Risk_Management_System
 
         private void percentage_ValueChanged(object sender, EventArgs e)
         {
-
+            if (OnDataChanged != null)
+            {
+                OnDataChanged(this);
+            }
         }
     }
 }

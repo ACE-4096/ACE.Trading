@@ -1,4 +1,4 @@
-﻿namespace ACE_Risk_Management_System
+﻿namespace ACE_Risk_Management_System.UserControls
 {
     partial class OrderControl
     {
