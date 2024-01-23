@@ -37,9 +37,6 @@
             AddTpBtn = new Button();
             tradeEntry = new NumericUpDown();
             label10 = new Label();
-            calcBtn = new Button();
-            tradeRR = new NumericUpDown();
-            label3 = new Label();
             groupBox2 = new GroupBox();
             gainTxt = new Label();
             lossTxt = new Label();
@@ -49,24 +46,23 @@
             label4 = new Label();
             label7 = new Label();
             label5 = new Label();
-            CancelBtn = new Button();
-            MarketBtn = new Button();
             menuStrip1 = new MenuStrip();
             balTxt = new ToolStripTextBox();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             DailyPnlTxt = new ToolStripTextBox();
             riskTxt = new ToolStripTextBox();
             tradePanel = new Panel();
-            label1 = new Label();
+            calcBtn = new Button();
+            checkBox1 = new CheckBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tradeEntry).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)tradeRR).BeginInit();
             groupBox2.SuspendLayout();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(checkBox1);
             groupBox1.Controls.Add(orderPanel);
             groupBox1.Controls.Add(label12);
             groupBox1.Controls.Add(label11);
@@ -76,11 +72,9 @@
             groupBox1.Controls.Add(tradeEntry);
             groupBox1.Controls.Add(label10);
             groupBox1.Controls.Add(calcBtn);
-            groupBox1.Controls.Add(tradeRR);
-            groupBox1.Controls.Add(label3);
             groupBox1.Location = new Point(12, 30);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(399, 253);
+            groupBox1.Size = new Size(399, 412);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Risk Calculator";
@@ -88,15 +82,15 @@
             // 
             // orderPanel
             // 
-            orderPanel.Location = new Point(6, 99);
+            orderPanel.Location = new Point(6, 71);
             orderPanel.Name = "orderPanel";
-            orderPanel.Size = new Size(387, 119);
+            orderPanel.Size = new Size(387, 183);
             orderPanel.TabIndex = 14;
             // 
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(257, 81);
+            label12.Location = new Point(257, 53);
             label12.Name = "label12";
             label12.Size = new Size(39, 15);
             label12.TabIndex = 13;
@@ -105,7 +99,7 @@
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new Point(156, 81);
+            label11.Location = new Point(156, 53);
             label11.Name = "label11";
             label11.Size = new Size(63, 15);
             label11.TabIndex = 12;
@@ -116,7 +110,7 @@
             label2.AutoSize = true;
             label2.Location = new Point(20, 1);
             label2.Name = "label2";
-            label2.Size = new Size(61, 15);
+            label2.Size = new Size(59, 15);
             label2.TabIndex = 11;
             label2.Text = "Trade Info";
             // 
@@ -156,7 +150,7 @@
             tradeEntry.DecimalPlaces = 8;
             tradeEntry.ForeColor = Color.FromArgb(128, 255, 128);
             tradeEntry.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
-            tradeEntry.Location = new Point(128, 48);
+            tradeEntry.Location = new Point(132, 22);
             tradeEntry.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             tradeEntry.Name = "tradeEntry";
             tradeEntry.Size = new Size(105, 23);
@@ -166,46 +160,11 @@
             // label10
             // 
             label10.AutoSize = true;
-            label10.Location = new Point(8, 50);
+            label10.Location = new Point(12, 24);
             label10.Name = "label10";
-            label10.Size = new Size(116, 15);
+            label10.Size = new Size(114, 15);
             label10.TabIndex = 8;
             label10.Text = "Trade Entry Price ($):";
-            // 
-            // calcBtn
-            // 
-            calcBtn.BackColor = SystemColors.ActiveCaptionText;
-            calcBtn.FlatStyle = FlatStyle.Flat;
-            calcBtn.ForeColor = Color.RoyalBlue;
-            calcBtn.Location = new Point(318, 224);
-            calcBtn.Name = "calcBtn";
-            calcBtn.Size = new Size(75, 23);
-            calcBtn.TabIndex = 7;
-            calcBtn.Text = "Calculate";
-            calcBtn.UseVisualStyleBackColor = false;
-            calcBtn.Click += calcBtn_Click;
-            // 
-            // tradeRR
-            // 
-            tradeRR.BackColor = SystemColors.ActiveCaptionText;
-            tradeRR.DecimalPlaces = 2;
-            tradeRR.ForeColor = Color.FromArgb(128, 255, 128);
-            tradeRR.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
-            tradeRR.Location = new Point(171, 17);
-            tradeRR.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
-            tradeRR.Name = "tradeRR";
-            tradeRR.Size = new Size(62, 23);
-            tradeRR.TabIndex = 6;
-            tradeRR.ValueChanged += tradeEntry_ValueChanged;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(6, 19);
-            label3.Name = "label3";
-            label3.Size = new Size(138, 15);
-            label3.TabIndex = 5;
-            label3.Text = "Trade Risk/Reward Ratio:";
             // 
             // groupBox2
             // 
@@ -217,9 +176,7 @@
             groupBox2.Controls.Add(label4);
             groupBox2.Controls.Add(label7);
             groupBox2.Controls.Add(label5);
-            groupBox2.Controls.Add(CancelBtn);
-            groupBox2.Controls.Add(MarketBtn);
-            groupBox2.Location = new Point(12, 289);
+            groupBox2.Location = new Point(12, 445);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(399, 145);
             groupBox2.TabIndex = 8;
@@ -277,7 +234,7 @@
             label4.ForeColor = Color.FromArgb(128, 128, 255);
             label4.Location = new Point(11, 29);
             label4.Name = "label4";
-            label4.Size = new Size(93, 15);
+            label4.Size = new Size(91, 15);
             label4.TabIndex = 13;
             label4.Text = "Target Quantity:";
             // 
@@ -299,32 +256,9 @@
             label5.Size = new Size(0, 15);
             label5.TabIndex = 12;
             // 
-            // CancelBtn
-            // 
-            CancelBtn.BackColor = SystemColors.ActiveCaptionText;
-            CancelBtn.FlatStyle = FlatStyle.Flat;
-            CancelBtn.ForeColor = Color.Red;
-            CancelBtn.Location = new Point(8, 116);
-            CancelBtn.Name = "CancelBtn";
-            CancelBtn.Size = new Size(75, 23);
-            CancelBtn.TabIndex = 10;
-            CancelBtn.Text = "Cancel Trade";
-            CancelBtn.UseVisualStyleBackColor = false;
-            // 
-            // MarketBtn
-            // 
-            MarketBtn.BackColor = SystemColors.ActiveCaptionText;
-            MarketBtn.FlatStyle = FlatStyle.Flat;
-            MarketBtn.ForeColor = Color.Lime;
-            MarketBtn.Location = new Point(318, 116);
-            MarketBtn.Name = "MarketBtn";
-            MarketBtn.Size = new Size(75, 23);
-            MarketBtn.TabIndex = 9;
-            MarketBtn.Text = "Market Entry";
-            MarketBtn.UseVisualStyleBackColor = false;
-            // 
             // menuStrip1
             // 
+            menuStrip1.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
             menuStrip1.Items.AddRange(new ToolStripItem[] { balTxt, settingsToolStripMenuItem, DailyPnlTxt, riskTxt });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
@@ -336,26 +270,37 @@
             // balTxt
             // 
             balTxt.Alignment = ToolStripItemAlignment.Right;
+            balTxt.BackColor = Color.Black;
+            balTxt.BorderStyle = BorderStyle.None;
+            balTxt.ForeColor = Color.DodgerBlue;
             balTxt.Name = "balTxt";
             balTxt.Size = new Size(100, 23);
             // 
             // settingsToolStripMenuItem
             // 
-            settingsToolStripMenuItem.ForeColor = Color.Black;
+            settingsToolStripMenuItem.BackColor = Color.Black;
+            settingsToolStripMenuItem.BackgroundImageLayout = ImageLayout.None;
+            settingsToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            settingsToolStripMenuItem.ForeColor = Color.DeepSkyBlue;
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            settingsToolStripMenuItem.Size = new Size(61, 23);
+            settingsToolStripMenuItem.Size = new Size(70, 23);
             settingsToolStripMenuItem.Text = "Settings";
             settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
             // 
             // DailyPnlTxt
             // 
             DailyPnlTxt.Alignment = ToolStripItemAlignment.Right;
+            DailyPnlTxt.BackColor = SystemColors.InactiveCaptionText;
+            DailyPnlTxt.BorderStyle = BorderStyle.None;
             DailyPnlTxt.Name = "DailyPnlTxt";
             DailyPnlTxt.Size = new Size(100, 23);
             // 
             // riskTxt
             // 
             riskTxt.Alignment = ToolStripItemAlignment.Right;
+            riskTxt.BackColor = SystemColors.InactiveCaptionText;
+            riskTxt.BorderStyle = BorderStyle.None;
+            riskTxt.ForeColor = Color.DodgerBlue;
             riskTxt.Name = "riskTxt";
             riskTxt.Size = new Size(100, 23);
             // 
@@ -363,27 +308,42 @@
             // 
             tradePanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tradePanel.AutoScroll = true;
-            tradePanel.Location = new Point(417, 46);
+            tradePanel.BackColor = Color.FromArgb(0, 0, 64);
+            tradePanel.BorderStyle = BorderStyle.FixedSingle;
+            tradePanel.Location = new Point(417, 31);
             tradePanel.Name = "tradePanel";
-            tradePanel.Size = new Size(145, 388);
+            tradePanel.Size = new Size(157, 564);
             tradePanel.TabIndex = 1;
             // 
-            // label1
+            // calcBtn
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(417, 30);
-            label1.Name = "label1";
-            label1.Size = new Size(42, 15);
-            label1.TabIndex = 10;
-            label1.Text = "Trades";
+            calcBtn.BackColor = SystemColors.ActiveCaptionText;
+            calcBtn.FlatStyle = FlatStyle.Flat;
+            calcBtn.ForeColor = Color.RoyalBlue;
+            calcBtn.Location = new Point(138, 383);
+            calcBtn.Name = "calcBtn";
+            calcBtn.Size = new Size(99, 23);
+            calcBtn.TabIndex = 7;
+            calcBtn.Text = "Enter Trade";
+            calcBtn.UseVisualStyleBackColor = false;
+            calcBtn.Click += calcBtn_Click;
+            // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(243, 386);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(96, 19);
+            checkBox1.TabIndex = 15;
+            checkBox1.Text = "Market Order";
+            checkBox1.UseVisualStyleBackColor = true;
             // 
             // TradeForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ActiveCaptionText;
-            ClientSize = new Size(574, 446);
-            Controls.Add(label1);
+            ClientSize = new Size(574, 602);
             Controls.Add(tradePanel);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
@@ -396,7 +356,6 @@
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)tradeEntry).EndInit();
-            ((System.ComponentModel.ISupportInitialize)tradeRR).EndInit();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
             menuStrip1.ResumeLayout(false);
@@ -408,9 +367,6 @@
         #endregion
 
         private GroupBox groupBox1;
-        private NumericUpDown tradeRR;
-        private Label label3;
-        private Button calcBtn;
         private GroupBox groupBox2;
         private NumericUpDown tradeEntry;
         private Label label10;
@@ -424,10 +380,7 @@
         private Button RemoveTpBtn;
         private Label label2;
         private Label label5;
-        private Button CancelBtn;
-        private Button MarketBtn;
         private Panel tradePanel;
-        private Label label1;
         private Label label7;
         private Label label12;
         private Label label11;
@@ -438,5 +391,7 @@
         private Label label8;
         private Label label6;
         private Label label4;
+        private Button calcBtn;
+        private CheckBox checkBox1;
     }
 }

@@ -17,11 +17,14 @@ namespace ACE_Risk_Management_System
         /// <returns>Total Minimum Loss if Stopped Out</returns>
         public static decimal CalculateLoss(TradeInfo ti)
         {
+            if (ti.EntryPrice == 0) {  return 0; }
+
             var stopOrders = ti.getOrders(OrderType.StopLoss);
 
             decimal loss = 0;
             foreach(var stop in stopOrders)
             {
+                if (stop.TriggerPrice == 0) { return 0; }
                 var lossPercentage = Math.Round(((100 / ti.EntryPrice) * Math.Abs(ti.EntryPrice - stop.TriggerPrice)) - Properties.Settings.Default.Fees, 4);
                 loss += lossPercentage * ((ti.TotalQty * ti.EntryPrice) / 100);
 

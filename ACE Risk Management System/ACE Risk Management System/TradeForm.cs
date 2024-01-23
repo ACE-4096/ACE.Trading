@@ -54,9 +54,6 @@ namespace ACE_Risk_Management_System
 
         private void TradeForm_Load(object sender, EventArgs e)
         {
-            //api.UpdateBalance += Api_UpdateBalance;
-            //api.SubscribeToBalanceUpdates();
-
             Api_UpdateBalance(api.getBalance());
 
 
@@ -100,13 +97,8 @@ namespace ACE_Risk_Management_System
             for (int i = 0; i < slOrders.Count; i++)
             {
                 var ctl = new OrderControl($"Stop-Loss {i + 1}:", slOrders[i].TriggerPrice,
-                    slOrders[i].QuantityRatio, slOrders[i].Quantity);
-                ctl.OnDataChanged += delegate
-                {
-                    slOrders[orderPanel.Controls.IndexOf(ctl)].TriggerPrice = ctl.Limit;
-                    slOrders[orderPanel.Controls.IndexOf(ctl)].QuantityRatio = ctl.Percentage;
-                    ctl.Value = -RiskManagementCalculator.CalculateLoss(trades[currentTrade]);
-                };
+                    slOrders[i].QuantityRatio, 0);
+                ctl.OnDataChanged += Ctl_OnDataChanged;
                 ctl.LabelColour = Color.Red;
                 orderPanel.Controls.Add(ctl);
                 orderPanel.Controls[orderPanel.Controls.Count - 1].Location = new Point(3, 3 + (27 * (orderPanel.Controls.Count - 1)));
@@ -116,17 +108,28 @@ namespace ACE_Risk_Management_System
             {
                 var ctl = new OrderControl($"Take-Profit {i + 1}:", tpOrders[i].TriggerPrice,
                     tpOrders[i].QuantityRatio, tpOrders[i].Quantity);
-                ctl.OnDataChanged += delegate
-                {
-                    tpOrders[orderPanel.Controls.IndexOf(ctl) - 1].TriggerPrice = ctl.Limit;
-                    tpOrders[orderPanel.Controls.IndexOf(ctl) - 1].QuantityRatio = ctl.Percentage;
-                    ctl.Value = RiskManagementCalculator.CalculateGain(trades[currentTrade]);
-                };
+                ctl.OnDataChanged += Ctl_OnDataChanged;
                 ctl.LabelColour = Color.Green;
                 orderPanel.Controls.Add(ctl);
                 orderPanel.Controls[orderPanel.Controls.Count - 1].Location = new Point(3, 3 + (27 * (orderPanel.Controls.Count - 1)));
             }
         }
+
+        private void Ctl_OnDataChanged(OrderControl oc)
+        {
+            trades[currentTrade].Orders[orderPanel.Controls.IndexOf(oc)].TriggerPrice = oc.Limit;
+            trades[currentTrade].Orders[orderPanel.Controls.IndexOf(oc)].QuantityRatio = oc.Percentage;
+            oc.Value = RiskManagementCalculator.CalculateGain(trades[currentTrade]);
+            trades[currentTrade].TotalQty = RiskManagementCalculator.CalculateTargetQuantity(trades[currentTrade]);
+
+            var loss = RiskManagementCalculator.CalculateLoss(trades[currentTrade]);
+            var gain = RiskManagementCalculator.CalculateGain(trades[currentTrade]);
+
+            lossTxt.Text = $"${Math.Round(loss, 4)} ({Math.Round((100 / api.getBalance()) * loss, 4)}%)";
+            gainTxt.Text = $"${Math.Round(gain, 4)} ({Math.Round((100 / api.getBalance()) * gain, 4)}%)";
+            qtyTxt.Text = trades[currentTrade].TotalQty.ToString();
+        }
+
 
         private void RemoveTpBtn_Click(object sender, EventArgs e)
         {
@@ -139,14 +142,7 @@ namespace ACE_Risk_Management_System
 
         private void calcBtn_Click(object sender, EventArgs e)
         {
-            trades[currentTrade].TotalQty = RiskManagementCalculator.CalculateTargetQuantity(trades[currentTrade]);
-
-            var loss = RiskManagementCalculator.CalculateLoss(trades[currentTrade]);
-            var gain = RiskManagementCalculator.CalculateGain(trades[currentTrade]);
-
-            lossTxt.Text = $"${Math.Round(loss, 4)} ({Math.Round((100 / api.getBalance()) * loss,4)}%)";
-            gainTxt.Text = $"${Math.Round(gain, 4)} ({Math.Round((100 / api.getBalance()) * gain, 4)}%)";
-            qtyTxt.Text = trades[currentTrade].TotalQty.ToString();
+            
         }
 
         private void tradeEntry_ValueChanged(object sender, EventArgs e)

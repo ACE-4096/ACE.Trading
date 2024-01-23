@@ -39,7 +39,7 @@
             // 
             tickerLabel.AutoSize = true;
             tickerLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            tickerLabel.ForeColor = SystemColors.ActiveCaptionText;
+            tickerLabel.ForeColor = Color.FromArgb(192, 0, 192);
             tickerLabel.Location = new Point(5, 5);
             tickerLabel.Name = "tickerLabel";
             tickerLabel.Size = new Size(42, 15);

@@ -25,6 +25,7 @@ namespace ACE_Risk_Management_System.UserControls
             label.Text = "TP: ";
             limitPrice.Value = 0;
             percentage.Value = 0;
+            Value = 0;
         }
 
         public OrderControl(string text, decimal limit, decimal qtyPercentage, decimal valueChange)
@@ -71,7 +72,11 @@ namespace ACE_Risk_Management_System.UserControls
         {
             set
             {
-                ValueLabel.Text = $"{(value > 0 ? "Gain: $" : "Loss: $")}{value}";
+                if (value == 0)
+                {
+                    ValueLabel.Text = ""; return;
+                }
+                ValueLabel.Text = $"{(value > 0 ? "Gain: $" : "Loss: $")}{ value }";
                 ValueLabel.ForeColor = value > 0 ? Color.Green : Color.Red;
             }
         }
