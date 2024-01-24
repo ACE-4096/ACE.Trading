@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            checkBox1 = new CheckBox();
             orderPanel = new Panel();
             label12 = new Label();
             label11 = new Label();
@@ -37,6 +38,7 @@
             AddTpBtn = new Button();
             tradeEntry = new NumericUpDown();
             label10 = new Label();
+            calcBtn = new Button();
             groupBox2 = new GroupBox();
             gainTxt = new Label();
             lossTxt = new Label();
@@ -52,8 +54,6 @@
             DailyPnlTxt = new ToolStripTextBox();
             riskTxt = new ToolStripTextBox();
             tradePanel = new Panel();
-            calcBtn = new Button();
-            checkBox1 = new CheckBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tradeEntry).BeginInit();
             groupBox2.SuspendLayout();
@@ -79,6 +79,16 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Risk Calculator";
             groupBox1.Enter += groupBox1_Enter;
+            // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(243, 386);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(96, 19);
+            checkBox1.TabIndex = 15;
+            checkBox1.Text = "Market Order";
+            checkBox1.UseVisualStyleBackColor = true;
             // 
             // orderPanel
             // 
@@ -165,6 +175,19 @@
             label10.Size = new Size(114, 15);
             label10.TabIndex = 8;
             label10.Text = "Trade Entry Price ($):";
+            // 
+            // calcBtn
+            // 
+            calcBtn.BackColor = SystemColors.ActiveCaptionText;
+            calcBtn.FlatStyle = FlatStyle.Flat;
+            calcBtn.ForeColor = Color.RoyalBlue;
+            calcBtn.Location = new Point(138, 383);
+            calcBtn.Name = "calcBtn";
+            calcBtn.Size = new Size(99, 23);
+            calcBtn.TabIndex = 7;
+            calcBtn.Text = "Enter Trade";
+            calcBtn.UseVisualStyleBackColor = false;
+            calcBtn.Click += calcBtn_Click;
             // 
             // groupBox2
             // 
@@ -265,7 +288,6 @@
             menuStrip1.RenderMode = ToolStripRenderMode.Professional;
             menuStrip1.Size = new Size(574, 27);
             menuStrip1.TabIndex = 9;
-            menuStrip1.Text = "menuStrip1";
             // 
             // balTxt
             // 
@@ -314,29 +336,6 @@
             tradePanel.Name = "tradePanel";
             tradePanel.Size = new Size(157, 564);
             tradePanel.TabIndex = 1;
-            // 
-            // calcBtn
-            // 
-            calcBtn.BackColor = SystemColors.ActiveCaptionText;
-            calcBtn.FlatStyle = FlatStyle.Flat;
-            calcBtn.ForeColor = Color.RoyalBlue;
-            calcBtn.Location = new Point(138, 383);
-            calcBtn.Name = "calcBtn";
-            calcBtn.Size = new Size(99, 23);
-            calcBtn.TabIndex = 7;
-            calcBtn.Text = "Enter Trade";
-            calcBtn.UseVisualStyleBackColor = false;
-            calcBtn.Click += calcBtn_Click;
-            // 
-            // checkBox1
-            // 
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(243, 386);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(96, 19);
-            checkBox1.TabIndex = 15;
-            checkBox1.Text = "Market Order";
-            checkBox1.UseVisualStyleBackColor = true;
             // 
             // TradeForm
             // 

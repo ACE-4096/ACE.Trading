@@ -142,7 +142,7 @@ namespace ACE_Risk_Management_System
 
         private void calcBtn_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void tradeEntry_ValueChanged(object sender, EventArgs e)
