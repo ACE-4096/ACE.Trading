@@ -26,5 +26,12 @@ namespace ACE_Risk_Management_System
             this.Close();
             this.Dispose();
         }
+
+        private void SettingsForm_Load(object sender, EventArgs e)
+        {
+            risk.Value = Properties.Settings.Default.Risk;
+            leverage.Value = Properties.Settings.Default.Leverage;
+            fees.Value = Properties.Settings.Default.Fees;
+        }
     }
 }

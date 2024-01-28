@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            button1 = new Button();
             checkBox1 = new CheckBox();
             orderPanel = new Panel();
             label12 = new Label();
@@ -53,7 +54,9 @@
             settingsToolStripMenuItem = new ToolStripMenuItem();
             DailyPnlTxt = new ToolStripTextBox();
             riskTxt = new ToolStripTextBox();
+            tradeOptionsToolStripMenuItem = new ToolStripMenuItem();
             tradePanel = new Panel();
+            TickerTxt = new ToolStripTextBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tradeEntry).BeginInit();
             groupBox2.SuspendLayout();
@@ -62,6 +65,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(button1);
             groupBox1.Controls.Add(checkBox1);
             groupBox1.Controls.Add(orderPanel);
             groupBox1.Controls.Add(label12);
@@ -79,6 +83,18 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Risk Calculator";
             groupBox1.Enter += groupBox1_Enter;
+            // 
+            // button1
+            // 
+            button1.BackColor = SystemColors.ActiveCaptionText;
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.ForeColor = Color.Red;
+            button1.Location = new Point(6, 382);
+            button1.Name = "button1";
+            button1.Size = new Size(42, 23);
+            button1.TabIndex = 16;
+            button1.Text = "BAIL";
+            button1.UseVisualStyleBackColor = false;
             // 
             // checkBox1
             // 
@@ -187,7 +203,6 @@
             calcBtn.TabIndex = 7;
             calcBtn.Text = "Enter Trade";
             calcBtn.UseVisualStyleBackColor = false;
-            calcBtn.Click += calcBtn_Click;
             // 
             // groupBox2
             // 
@@ -282,7 +297,7 @@
             // menuStrip1
             // 
             menuStrip1.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { balTxt, settingsToolStripMenuItem, DailyPnlTxt, riskTxt });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { balTxt, settingsToolStripMenuItem, DailyPnlTxt, riskTxt, tradeOptionsToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.RenderMode = ToolStripRenderMode.Professional;
@@ -326,6 +341,17 @@
             riskTxt.Name = "riskTxt";
             riskTxt.Size = new Size(100, 23);
             // 
+            // tradeOptionsToolStripMenuItem
+            // 
+            tradeOptionsToolStripMenuItem.BackColor = Color.Black;
+            tradeOptionsToolStripMenuItem.BackgroundImageLayout = ImageLayout.None;
+            tradeOptionsToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            tradeOptionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { TickerTxt });
+            tradeOptionsToolStripMenuItem.ForeColor = Color.DeepSkyBlue;
+            tradeOptionsToolStripMenuItem.Name = "tradeOptionsToolStripMenuItem";
+            tradeOptionsToolStripMenuItem.Size = new Size(85, 23);
+            tradeOptionsToolStripMenuItem.Text = "New Trade";
+            // 
             // tradePanel
             // 
             tradePanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -336,6 +362,14 @@
             tradePanel.Name = "tradePanel";
             tradePanel.Size = new Size(157, 564);
             tradePanel.TabIndex = 1;
+            // 
+            // TickerTxt
+            // 
+            TickerTxt.BackColor = Color.Black;
+            TickerTxt.ForeColor = Color.DeepSkyBlue;
+            TickerTxt.Name = "TickerTxt";
+            TickerTxt.Size = new Size(100, 23);
+            TickerTxt.KeyDown += TickerTxt_KeyDown;
             // 
             // TradeForm
             // 
@@ -392,5 +426,8 @@
         private Label label4;
         private Button calcBtn;
         private CheckBox checkBox1;
+        private Button button1;
+        private ToolStripMenuItem tradeOptionsToolStripMenuItem;
+        private ToolStripTextBox TickerTxt;
     }
 }

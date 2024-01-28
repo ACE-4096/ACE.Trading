@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Okex.Net;
 
 namespace ACE_Risk_Management_System
@@ -43,6 +44,36 @@ namespace ACE_Risk_Management_System
                      UpdateBalance(data.AdjustedEquity == null? -1: (decimal)data.AdjustedEquity);
                  }
              });
+        }
+        /// Checks the status of an order given the id
+        /// </summary>
+        /// <param name="OrderId">Exchange Id of the order</param>
+        /// <returns>true if the order is active, false if inactive</returns>
+        public bool CheckOrderStatus(long OrderId)
+        {
+
+            var positions = client.GetAccountPositions(Okex.Net.Enums.OkexInstrumentType.Margin);
+            var order = positions.Data.ToList().Find((pos) => pos.TradeId == OrderId);
+            if (order != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public List<string> getTickers()
+        {
+            var list = new List<string>();
+            var data = client.GetTickers(Okex.Net.Enums.OkexInstrumentType.Any);
+            if (data.Error != null)
+            {
+                return new List<string>();
+            }
+            foreach (var item in data.Data)
+            {
+                list.Add(item.Instrument);
+            }
+            return list;
         }
     }
 }

@@ -15,6 +15,11 @@ namespace ACE_Risk_Management_System.DataTypes
     public class OrderInfo
     {
         /// <summary>
+        /// Order Id used by exchange
+        /// </summary>
+        [JsonProperty]
+        public long OrderId { get; set; } = -1;
+        /// <summary>
         /// Order type relative to the trade as a whole, Stop-Loss or Take-Profit
         /// </summary>
         [JsonProperty]
@@ -52,6 +57,10 @@ namespace ACE_Risk_Management_System.DataTypes
             Quantity = Qty;
         }
 
-
+        public bool PlaceOrder()
+        {
+            //new ExchangeApi()
+            return false;
+        }
     }
 }

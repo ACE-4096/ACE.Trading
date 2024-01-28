@@ -17,6 +17,8 @@ namespace ACE_Risk_Management_System.DataTypes
     public class TradeInfo
     {
         [JsonProperty]
+        public int ID { get; set; } = -1;
+        [JsonProperty]
         public string Ticker { get; set; } = "";
         [JsonProperty]
         public TradeStatus Status { get; set; }

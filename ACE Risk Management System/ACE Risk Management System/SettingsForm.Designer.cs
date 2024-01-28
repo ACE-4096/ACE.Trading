@@ -146,6 +146,7 @@
             MinimumSize = new Size(405, 150);
             Name = "SettingsForm";
             Text = "Settings";
+            Load += SettingsForm_Load;
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)fees).EndInit();

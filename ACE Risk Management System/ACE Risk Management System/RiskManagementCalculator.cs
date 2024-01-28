@@ -44,10 +44,17 @@ namespace ACE_Risk_Management_System
             decimal gain = 0;
             foreach (var profitOrder in takeOrders)
             {
+                // ((100(%) / entry($)) * |entry($) - tp($)|) - fees(%)
                 var gainPecentage = Math.Round(((100 / ti.EntryPrice) * (Math.Abs(ti.EntryPrice - profitOrder.TriggerPrice))) - Properties.Settings.Default.Fees, 4);
-                gain += gainPecentage * ((ti.TotalQty * ti.EntryPrice) / 100);
+                gain += (gainPecentage/100) * (profitOrder.Quantity * ti.EntryPrice);
             }
             return gain;
+        }
+        public static decimal CalculateGain(TradeInfo ti, int orderIndex)
+        {
+                // ((100(%) / entry($)) * |entry($) - tp($)|) - fees(%)
+            var gainPecentage = Math.Round(((100 / ti.EntryPrice) * (Math.Abs(ti.EntryPrice - ti.Orders[orderIndex].TriggerPrice))) - Properties.Settings.Default.Fees, 4); 
+            return (gainPecentage / 100) * (ti.Orders[orderIndex].Quantity * ti.EntryPrice);
         }
 
         public static decimal CalculateTargetQuantity(TradeInfo ti)
