@@ -3600,11 +3600,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\OpenAiCryptoTrader\\OpenAiCryptoTrader.csproj",
+      "projectUniqueName": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\OpenAiCryptoTrader\\OpenAiCryptoTrader.csproj",
       "projectName": "OpenAiCryptoTrader",
-      "projectPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\OpenAiCryptoTrader\\OpenAiCryptoTrader.csproj",
+      "projectPath": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\OpenAiCryptoTrader\\OpenAiCryptoTrader.csproj",
       "packagesPath": "C:\\Users\\Toby\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\OpenAiCryptoTrader\\obj\\",
+      "outputPath": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\OpenAiCryptoTrader\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -3626,11 +3626,11 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\ACE.Trading.csproj": {
-              "projectPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\ACE.Trading.csproj"
+            "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\ACE.Trading.csproj": {
+              "projectPath": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\ACE.Trading.csproj"
             },
-            "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\OpenAI_API.csproj": {
-              "projectPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\OpenAI_API.csproj"
+            "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\OpenAI_API.csproj": {
+              "projectPath": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\OpenAI_API.csproj"
             }
           }
         }
@@ -3639,6 +3639,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -3670,7 +3675,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400\\RuntimeIdentifierGraph.json"
       }
     }
   }

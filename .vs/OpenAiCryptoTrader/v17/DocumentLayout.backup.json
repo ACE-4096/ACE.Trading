@@ -1,0 +1,121 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{22C0EED8-203D-4DFA-9639-1F89CFAA4D84}|ACE.Trading.Data.Graphics\\ACE.Trading.Graphics.csproj|c:\\users\\toby\\onedrive\\documents\\github\\ace.trading\\ace.trading.data.graphics\\predictionview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{22C0EED8-203D-4DFA-9639-1F89CFAA4D84}|ACE.Trading.Data.Graphics\\ACE.Trading.Graphics.csproj|solutionrelative:ace.trading.data.graphics\\predictionview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C160D514-34F7-4C5E-A60D-4F9312B5187E}|ACE.Trading\\ACE.Trading.csproj|c:\\users\\toby\\onedrive\\documents\\github\\ace.trading\\ace.trading\\optimization\\computation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C160D514-34F7-4C5E-A60D-4F9312B5187E}|ACE.Trading\\ACE.Trading.csproj|solutionrelative:ace.trading\\optimization\\computation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C160D514-34F7-4C5E-A60D-4F9312B5187E}|ACE.Trading\\ACE.Trading.csproj|c:\\users\\toby\\onedrive\\documents\\github\\ace.trading\\ace.trading\\analytics\\slopes\\convertions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C160D514-34F7-4C5E-A60D-4F9312B5187E}|ACE.Trading\\ACE.Trading.csproj|solutionrelative:ace.trading\\analytics\\slopes\\convertions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C160D514-34F7-4C5E-A60D-4F9312B5187E}|ACE.Trading\\ACE.Trading.csproj|c:\\users\\toby\\onedrive\\documents\\github\\ace.trading\\ace.trading\\analytics\\predictions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C160D514-34F7-4C5E-A60D-4F9312B5187E}|ACE.Trading\\ACE.Trading.csproj|solutionrelative:ace.trading\\analytics\\predictions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C160D514-34F7-4C5E-A60D-4F9312B5187E}|ACE.Trading\\ACE.Trading.csproj|c:\\users\\toby\\onedrive\\documents\\github\\ace.trading\\ace.trading\\data\\finetunes\\finetune.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C160D514-34F7-4C5E-A60D-4F9312B5187E}|ACE.Trading\\ACE.Trading.csproj|solutionrelative:ace.trading\\data\\finetunes\\finetune.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C160D514-34F7-4C5E-A60D-4F9312B5187E}|ACE.Trading\\ACE.Trading.csproj|c:\\users\\toby\\onedrive\\documents\\github\\ace.trading\\ace.trading\\optimization\\optimizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C160D514-34F7-4C5E-A60D-4F9312B5187E}|ACE.Trading\\ACE.Trading.csproj|solutionrelative:ace.trading\\optimization\\optimizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{e5c86464-96be-4d7c-9a8b-abcb3bbf5f92}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "PredictionView.cs",
+              "DocumentMoniker": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\PredictionView.cs",
+              "RelativeDocumentMoniker": "ACE.Trading.Data.Graphics\\PredictionView.cs",
+              "ToolTip": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\PredictionView.cs",
+              "RelativeToolTip": "ACE.Trading.Data.Graphics\\PredictionView.cs",
+              "ViewState": "AgIAALgBAAAAAAAAAAAgwLoBAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-15T02:21:46.471Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Computation.cs",
+              "DocumentMoniker": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\Optimization\\Computation.cs",
+              "RelativeDocumentMoniker": "ACE.Trading\\Optimization\\Computation.cs",
+              "ToolTip": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\Optimization\\Computation.cs",
+              "RelativeToolTip": "ACE.Trading\\Optimization\\Computation.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAvAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-15T02:21:46.523Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Convertions.cs",
+              "DocumentMoniker": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\Analytics\\Slopes\\Convertions.cs",
+              "RelativeDocumentMoniker": "ACE.Trading\\Analytics\\Slopes\\Convertions.cs",
+              "ToolTip": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\Analytics\\Slopes\\Convertions.cs",
+              "RelativeToolTip": "ACE.Trading\\Analytics\\Slopes\\Convertions.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAvAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-15T02:21:46.527Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Predictions.cs",
+              "DocumentMoniker": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\Analytics\\Predictions.cs",
+              "RelativeDocumentMoniker": "ACE.Trading\\Analytics\\Predictions.cs",
+              "ToolTip": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\Analytics\\Predictions.cs",
+              "RelativeToolTip": "ACE.Trading\\Analytics\\Predictions.cs",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAAA0AAAAbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-15T02:21:46.529Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "FineTune.cs",
+              "DocumentMoniker": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\Data\\FineTunes\\FineTune.cs",
+              "RelativeDocumentMoniker": "ACE.Trading\\Data\\FineTunes\\FineTune.cs",
+              "ToolTip": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\Data\\FineTunes\\FineTune.cs",
+              "RelativeToolTip": "ACE.Trading\\Data\\FineTunes\\FineTune.cs",
+              "ViewState": "AQIAAA8AAAAAAAAAAAAQwFoAAAAjAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-15T02:21:46.532Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Optimizer.cs",
+              "DocumentMoniker": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\Optimization\\Optimizer.cs",
+              "RelativeDocumentMoniker": "ACE.Trading\\Optimization\\Optimizer.cs",
+              "ToolTip": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\Optimization\\Optimizer.cs",
+              "RelativeToolTip": "ACE.Trading\\Optimization\\Optimizer.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAHAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-15T02:21:46.534Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

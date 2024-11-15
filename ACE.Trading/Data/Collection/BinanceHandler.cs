@@ -28,7 +28,7 @@ namespace ACE.Trading.Data.Collection
         {
             client = new BinanceClient(new BinanceClientOptions()
             {
-                ApiCredentials = new BinanceApiCredentials("ZQ5tmZimJlRCc3AVybXEUT8oHZy6QNJdNeU0ILkjotAJypMGTrWgQVDoTvEwouSe", "nmkc0aL7rnjkTnAOtmefOk6YNrHxUow2MgZCtxhC6FgNMAAnsK95BH0Cwk6CESmZ"),
+                ApiCredentials = new BinanceApiCredentials("API_KEY", "API_SECRET"),
                 LogLevel = LogLevel.Debug
             });
         }

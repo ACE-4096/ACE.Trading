@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "EHvuUc0sSqGy3hDhRNMHDue4BWvCad/cPN4XWpF98kP29oBVceCpOpEIcUZjAqjNjkX/tne+9UT9YMGEmAcYfg==",
+  "dgSpecHash": "qfNwjYt4giI=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\ACE.Trading.csproj",
+  "projectFilePath": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\ACE.Trading.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Toby\\.nuget\\packages\\binance.net\\8.6.2\\binance.net.8.6.2.nupkg.sha512",
     "C:\\Users\\Toby\\.nuget\\packages\\cryptoexchange.net\\5.4.3\\cryptoexchange.net.5.4.3.nupkg.sha512",

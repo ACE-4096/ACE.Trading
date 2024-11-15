@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "HRIv7KlEjmC77GAuogqqBchf1mI0fJPg2FQXBHqgMtxET0Fn3FrEJLQcea7kszrhDLXyHaouXEaSLeByI6x2Zg==",
+  "dgSpecHash": "tkmn19QwL8c=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\OpenAiCryptoTrader\\OpenAiCryptoTrader.csproj",
+  "projectFilePath": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\OpenAiCryptoTrader\\OpenAiCryptoTrader.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Toby\\.nuget\\packages\\binance.net\\8.6.2\\binance.net.8.6.2.nupkg.sha512",
     "C:\\Users\\Toby\\.nuget\\packages\\cryptoexchange.net\\5.4.3\\cryptoexchange.net.5.4.3.nupkg.sha512",

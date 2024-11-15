@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OpenAiCryptoTrader")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f0ed2c6acc8bbde87522eafd7b47129a3a859d8d")]
 [assembly: System.Reflection.AssemblyProductAttribute("OpenAiCryptoTrader")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OpenAiCryptoTrader")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -3633,11 +3633,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\ACE.Trading.Graphics.csproj",
+      "projectUniqueName": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\ACE.Trading.Graphics.csproj",
       "projectName": "ACE.Trading.Graphics",
-      "projectPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\ACE.Trading.Graphics.csproj",
+      "projectPath": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\ACE.Trading.Graphics.csproj",
       "packagesPath": "C:\\Users\\Toby\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\obj\\",
+      "outputPath": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading.Data.Graphics\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -3659,8 +3659,8 @@
         "net6.0-windows7.0": {
           "targetAlias": "net6.0-windows",
           "projectReferences": {
-            "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\ACE.Trading.csproj": {
-              "projectPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\ACE.Trading.csproj"
+            "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\ACE.Trading.csproj": {
+              "projectPath": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\ACE.Trading\\ACE.Trading.csproj"
             }
           }
         }
@@ -3669,6 +3669,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -3699,7 +3704,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400\\RuntimeIdentifierGraph.json"
       }
     }
   }

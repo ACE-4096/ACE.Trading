@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\OpenAI_API.csproj": {}
+    "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\OpenAI_API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\OpenAI_API.csproj": {
+    "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\OpenAI_API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\OpenAI_API.csproj",
+        "projectUniqueName": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\OpenAI_API.csproj",
         "projectName": "OpenAI_API",
-        "projectPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\OpenAI_API.csproj",
+        "projectPath": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\OpenAI_API.csproj",
         "packagesPath": "C:\\Users\\Toby\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Toby\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\obj\\",
+        "outputPath": "C:\\Users\\Toby\\OneDrive\\Documents\\GitHub\\ACE.Trading\\OpenAI_API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -39,6 +39,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -70,7 +75,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }
